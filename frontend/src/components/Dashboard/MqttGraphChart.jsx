@@ -2,7 +2,7 @@ function MqttGraphChart() {
 
   return (
     <div>
-      MQTT Graph Chart
+      <h1>MQTT Graph Chart</h1>
     </div>
   )
 }

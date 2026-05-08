@@ -112,7 +112,7 @@ function FakeGraphChart() {
                 </div>
 
                 <div className="logs_panel">
-                    <h2 className="panel_tittle">
+                    <h2 className="panel_title">
                         RealTime logs
                     </h2>
 
