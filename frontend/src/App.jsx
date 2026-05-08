@@ -13,8 +13,9 @@ function App() {
     { label: "Testing", key: "testing" },
     { label: "Fake Data", key: "fake-data" },
     {label:"fake graphchart",key:"fake-graphchart"},
+    {label:"MQTT graphchart",key:"mqtt-graphchart"},
     { label: "IWK Demo", key: "iwk" },
-    { label: "New Label", key: "new label" }
+    { label: "new Label", key: "new label" }
   ]
 
   const menus = [

@@ -100,7 +100,7 @@ body {
   margin-top: 20px;
 }
 .panel_title {
-  color: white;
+  color: yellow;
   margin-bottom: 20px;
 }
 
@@ -111,11 +111,12 @@ body {
 }
 
 .logs_panel {
-  background: #1e293b;
+  background: green;
   padding: 20px;
   border-radius: 12px;
   margin-top: 20px;
 }
+
 .log_item {
   color: #cbd5e1;
   margin-bottom: 10px;

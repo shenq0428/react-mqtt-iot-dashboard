@@ -54,15 +54,15 @@ function FakeGraphChart() {
             <div className="stats_grid">
                 <div className="stat_card">
                     <h3>CPU</h3>
-                    <p>{latestData?.cpu ?? "--"}%</p>
+                    <p>{latestData?.cpu ?? "--"}°C</p>
                 </div>
                 <div className="stat_card">
                     <h3>Humidity</h3>
-                    <p>{latestData?.humidity ?? "--"}%</p>
+                    <p>{latestData?.humidity ?? "--"}°C</p>
                 </div>
                 <div className="stat_card">
                     <h3>Temperature</h3>
-                    <p>{latestData?.temperature ?? "--"}%</p>
+                    <p>{latestData?.temperature ?? "--"}°C</p>
                 </div>
             </div>
 

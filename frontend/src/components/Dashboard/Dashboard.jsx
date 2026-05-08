@@ -1,6 +1,7 @@
 import FakeData from "./FakeData"
 import Testing from "./Testing"
 import FakeGraphChart from "./FakeGraphChart"
+import MqttGraphChart from "./MqttGraphChart.jsx"
 
 function Dashboard({ dashboardView, data, loading }) {
 
@@ -14,6 +15,7 @@ function Dashboard({ dashboardView, data, loading }) {
     if (dashboardView === "testing") { return <Testing data={data} loading={loading} /> }
     if (dashboardView === "fake-data") return <FakeData />
     if (dashboardView === "fake-graphchart")return <FakeGraphChart/>
+    if (dashboardView === "mqtt-graphchart")return <MqttGraphChart/>
     if (dashboardView === "iwk") return <h2>IWK Demo</h2>
 
     return <h2>New Label</h2>
