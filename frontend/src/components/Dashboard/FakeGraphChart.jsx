@@ -45,6 +45,15 @@ function FakeGraphChart() {
     }, [])
 
     const latestData = chartData[chartData.length - 1]
+
+    let cpuColor = "#00ff11"
+    if (latestData?.cpu > 50) {
+        cpuColor = "red"
+    }
+    else if (latestData?.cpu > 40) {
+        cpuColor = "yellow"
+    }
+
     return (
 
         <div>
@@ -54,7 +63,7 @@ function FakeGraphChart() {
             <div className="stats_grid">
                 <div className="stat_card">
                     <h3>CPU</h3>
-                    <p>{latestData?.cpu ?? "--"}°C</p>
+                    <p style={{color:cpuColor}}>{latestData?.cpu ?? "--" }°C</p>
                 </div>
                 <div className="stat_card">
                     <h3>Humidity</h3>
