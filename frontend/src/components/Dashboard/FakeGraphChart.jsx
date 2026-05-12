@@ -45,13 +45,28 @@ function FakeGraphChart() {
     }, [])
 
     const latestData = chartData[chartData.length - 1]
+    const previousData = chartData[chartData.length - 2]
+
+    let trend = "--"
+    if (latestData?.cpu - previousData?.cpu > 0) {
+        trend = "↑"
+    }
+    else if (latestData?.cpu - previousData?.cpu < 0) {
+        trend = "↓"
+    }
 
     let cpuColor = "#00ff11"
+    let cpuStatus = "NORMAL"
+    let cpuStatusColor = "#00ff11"
     if (latestData?.cpu > 50) {
         cpuColor = "red"
+        cpuStatus = "DANGER"
+        cpuStatusColor = "#ff0d00"
     }
     else if (latestData?.cpu > 40) {
         cpuColor = "yellow"
+        cpuStatus = "WARNING"
+        cpuStatusColor = "#f2ff00"
     }
 
     return (
@@ -63,7 +78,9 @@ function FakeGraphChart() {
             <div className="stats_grid">
                 <div className="stat_card">
                     <h3>CPU</h3>
-                    <p style={{color:cpuColor}}>{latestData?.cpu ?? "--" }°C</p>
+                    <p style={{ color: cpuColor }}>{latestData?.cpu ?? "--"}°C</p>
+                    <h3>Status</h3>
+                    <p style={{ color: cpuStatusColor }}>{cpuStatus} & {trend}</p>
                 </div>
                 <div className="stat_card">
                     <h3>Humidity</h3>
