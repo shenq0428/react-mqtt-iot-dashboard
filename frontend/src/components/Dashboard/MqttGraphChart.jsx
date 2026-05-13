@@ -56,13 +56,15 @@ function MqttReusableChart({ title, data, lines }) {
   )
 }
 //reuseable statpanel
-function RealtimeStatPanel({ title, value, }) {
+function RealtimeStatPanel({ title, value, titleColor}) {
 
   return (
     <div className="stat_panel">
+      <div className="mqtt_stat_row">
+        <h3 style={{color:titleColor}}>{title}➔</h3>
 
-      <h3>{title}:  {value}</h3>
-
+        <h1 style={{ color:value === 0 ? "white":"#39ff14"}}>{value}</h1>
+      </div>
     </div>
   )
 }
@@ -144,31 +146,37 @@ function MQTTGraphChart() {
         <RealtimeStatPanel
           title="Blower 1"
           value={latestData?.blower1Power}
+          titleColor="#00ff00"
         />
 
         <RealtimeStatPanel
           title="Blower 2"
           value={latestData?.blower2Power}
+          titleColor="#00ff00"
         />
 
         <RealtimeStatPanel
           title="Blower 3"
           value={latestData?.blower3Power}
+          titleColor="#00ff00"
         />
 
         <RealtimeStatPanel
           title="Pump 1"
           value={latestData?.pump1Power}
+          titleColor="#ffff03"
         />
 
         <RealtimeStatPanel
           title="Pump 2"
           value={latestData?.pump2Power}
+          titleColor="#ffff03"
         />
 
         <RealtimeStatPanel
           title="Pump 3"
           value={latestData?.pump3Power}
+          titleColor="#ffff03"
         />
 
       </div>
