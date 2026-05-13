@@ -128,6 +128,11 @@ body {
   gap: 20px;
   margin-bottom: 20px;
 }
+.mqttdashboard_grid{
+  display: grid;
+grid-template-columns: 1fr 1fr;
+gap:5px; 
+}
 .stat_card {
   background: #1e293b;
   padding: 20px;
@@ -140,7 +145,18 @@ body {
   color: #00ffff;
   margin-bottom: 10px;
 }
-
+.mqtt_stat_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  color:white;
+}
 .stat_card p {
   color: yellow;
   font-size: 32px;
