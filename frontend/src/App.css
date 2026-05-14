@@ -177,3 +177,26 @@ gap:5px;
   margin-right: 500px;
   margin-bottom:50px;
 }
+.alarm_logs_panel {
+
+  background: #1e293b;
+
+  padding: 20px;
+
+  border-radius: 12px;
+
+  margin-top: 30px;
+
+}
+.alarm_logs_panel h2{
+  color:yellow;
+}
+.alarm_log_item {
+
+  padding: 10px;
+
+  border-bottom: 1px solid #334155;
+
+  color: white;
+
+}

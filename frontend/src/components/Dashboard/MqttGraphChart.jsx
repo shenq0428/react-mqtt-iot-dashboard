@@ -81,7 +81,7 @@ function RealtimeStatPanel({ title, power, status, titleColor }) {
 function MQTTGraphChart() {
   const [chartData, setChartData] = useState([])
   const latestData = chartData[chartData.length - 1]
-
+  const [alarmLogs, setAlarmLogs] = useState([])
 
 
   useEffect(() => {
@@ -129,9 +129,61 @@ function MQTTGraphChart() {
         pump2Status: parsedData.pump["pump 2"].run_status,
         pump3Status: parsedData.pump["pump 3"].run_status,
 
+      }
+      //log alarm
+      const newAlarms = []
+      //alarm loop
+      const devicesToCheck = [
+        {
+          name: "Blower 1",
+          power: newPoint.blower1Power,
+        },
+        {
+          name: "Blower 2",
+          power: newPoint.blower2Power,
+        },
+        {
+          name: "Blower 3",
+          power: newPoint.blower3Power,
+        },
+        {
+          name: "Pump 1",
+          power: newPoint.pump1Power,
+        },
+        {
+          name: "Pump 2",
+          power: newPoint.pump2Power,
+        },
+        {
+          name: "Pump 3",
+          power: newPoint.pump3Power,
+        },
+
+      ]
+
+      devicesToCheck.forEach((device) => {
+        if (device.power >= 15) {
+          newAlarms.push({
+            timestamp: parsedData.dts,
+            device: device.name,
+            power: device.power,
+          })
+        }
+      })
+      if (newAlarms.length > 0) {
+
+        setAlarmLogs((prevLogs) => {
+
+          const updatedLogs = [
+            ...newAlarms,
+            ...prevLogs,
+          ]
+
+          return updatedLogs.slice(0, 20)
+
+        })
 
       }
-
       // Update realtime chart data
       setChartData((prevData) => {
 
@@ -255,6 +307,20 @@ function MQTTGraphChart() {
           },
         ]}
         />
+      </div>
+
+      <div className="alarm_logs_panel">
+        <h2>Alarm Logs</h2>
+        {alarmLogs.map((log, index) => (
+          <div key={index}
+            className="alarm_log_item">
+            {log.timestamp}
+            {"|"}
+            {log.device}
+            {"|"}
+            Power: {log.power}
+          </div>
+        ))}
       </div>
     </>
   )
