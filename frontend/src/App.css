@@ -170,6 +170,9 @@ gap:5px;
 .mqtt_stat_row h3 {
   font-size: 20px;
 }
+.mqtt_stat_panel h2 {
+  margin-left:300px;
+}
 .mqtt_stat_row h1 {
   margin-right: 500px;
   margin-bottom:50px;

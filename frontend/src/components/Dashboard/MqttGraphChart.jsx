@@ -56,15 +56,24 @@ function MqttReusableChart({ title, data, lines }) {
   )
 }
 //reuseable statpanel
-function RealtimeStatPanel({ title, value, titleColor}) {
+function RealtimeStatPanel({ title, power, status, titleColor }) {
 
   return (
     <div className="stat_panel">
       <div className="mqtt_stat_row">
-        <h3 style={{color:titleColor}}>{title}➔</h3>
 
-        <h1 style={{ color:value === 0 ? "white":"#39ff14"}}>{value}</h1>
+        <h3 style={{ color: titleColor }}>
+          {title}
+        </h3>
+
+        <h1 style={{ color: power === 0 ? "red" : "#39ff14" }}>
+          {power}
+        </h1>
+
       </div>
+
+      <h2 style={{ color: status === 1 ? "#39ff14" : "red" }}>
+        {status === 1 ? "RUNNING" : "STOPPED"}</h2>
     </div>
   )
 }
@@ -111,6 +120,16 @@ function MQTTGraphChart() {
         pump2Power: parsedData.pump["pump 2"].power,
         pump3Power: parsedData.pump["pump 3"].power,
 
+        //Blower Status
+        blower1Status: parsedData.blower["blower 1"].run_status,
+        blower2Status: parsedData.blower["blower 2"].run_status,
+        blower3Status: parsedData.blower["blower 3"].run_status,
+
+        pump1Status: parsedData.pump["pump 1"].run_status,
+        pump2Status: parsedData.pump["pump 2"].run_status,
+        pump3Status: parsedData.pump["pump 3"].run_status,
+
+
       }
 
       // Update realtime chart data
@@ -145,37 +164,43 @@ function MQTTGraphChart() {
 
         <RealtimeStatPanel
           title="Blower 1"
-          value={latestData?.blower1Power}
-          titleColor="#00ff00"
+          power={latestData?.blower1Power}
+          status={latestData?.blower1Status}
+          titleColor="#00ffd5"
         />
 
         <RealtimeStatPanel
           title="Blower 2"
-          value={latestData?.blower2Power}
-          titleColor="#00ff00"
+          power={latestData?.blower2Power}
+          status={latestData?.blower2Status}
+          titleColor="#00ffd5"
         />
 
         <RealtimeStatPanel
           title="Blower 3"
-          value={latestData?.blower3Power}
-          titleColor="#00ff00"
+          power={latestData?.blower3Power}
+          status={latestData?.blower3Status}
+          titleColor="#00ffd5"
         />
 
         <RealtimeStatPanel
           title="Pump 1"
-          value={latestData?.pump1Power}
+          power={latestData?.pump1Power}
+          status={latestData?.pump1Status}
           titleColor="#ffff03"
         />
 
         <RealtimeStatPanel
           title="Pump 2"
-          value={latestData?.pump2Power}
+          power={latestData?.pump2Power}
+          status={latestData?.pump2Status}
           titleColor="#ffff03"
         />
 
         <RealtimeStatPanel
           title="Pump 3"
-          value={latestData?.pump3Power}
+          power={latestData?.pump3Power}
+          status={latestData?.pump3Status}
           titleColor="#ffff03"
         />
 
