@@ -25,25 +25,25 @@ function MqttReusableChart({ title, data, lines }) {
 
       <ResponsiveContainer width="100%" height={400}>
 
-        <LineChart data={data}>
-
+        <LineChart data={data} >
           <CartesianGrid strokeDasharray="3 3" />
-
           <XAxis dataKey="time" />
-
           <YAxis />
-
           <Tooltip />
-
           <Legend />
-
           {lines.map((line) => (
-
             <Line
               key={line.dataKey}
               type="monotone"
               dataKey={line.dataKey}
               stroke={line.color}
+
+              strokeWidth={1}
+              dot={false}
+              //dot={true}
+              //isAnimationActive={false}
+              isAnimationActive={false}
+              animationDuration={300}
             />
 
           ))}
@@ -162,7 +162,7 @@ function MQTTGraphChart() {
       ]
 
       devicesToCheck.forEach((device) => {
-        if (device.power >= 15) {
+        if (device.power >= 16) {
           newAlarms.push({
             timestamp: parsedData.dts,
             device: device.name,
