@@ -311,16 +311,24 @@ function MQTTGraphChart() {
 
       <div className="alarm_logs_panel">
         <h2>Alarm Logs</h2>
-        {alarmLogs.map((log, index) => (
-          <div key={index}
-            className="alarm_log_item">
-            {log.timestamp}
-            {"|"}
-            {log.device}
-            {"|"}
-            Power: {log.power}
-          </div>
-        ))}
+        <table className="alarm_table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Device</th>
+              <th>Power</th>
+            </tr>
+          </thead>
+          <tbody>
+            {alarmLogs.map((log, index) => (
+              <tr key={index}>
+                <td>{log.timestamp}</td>
+                <td>{log.device}</td>
+                <td>{log.power}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   )

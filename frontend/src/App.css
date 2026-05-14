@@ -179,24 +179,48 @@ gap:5px;
 }
 .alarm_logs_panel {
 
-  background: #1e293b;
+  background: #0f172a;
 
   padding: 20px;
 
   border-radius: 12px;
 
-  margin-top: 30px;
+  margin-top: 20px;
 
 }
 .alarm_logs_panel h2{
   color:yellow;
 }
-.alarm_log_item {
+
+.alarm_table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+  margin-top: 15px;
+
+}
+.alarm_table th {
+
+  background: #334155;
+
+  color: white;
+
+  padding: 12px;
+
+  text-align: left;
+
+}
+.alarm_table td {
 
   padding: 10px;
 
   border-bottom: 1px solid #334155;
+  color:yellow;
+}
+.alarm_table tr:hover {
 
-  color: white;
+  background: #1e293b;
 
 }
