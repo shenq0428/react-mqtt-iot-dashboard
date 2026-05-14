@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import "./App.css"
 import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard/Dashboard'
+import {Routes,Route} from "react-router-dom"
 
 function App() {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState("dashboard")
+  //const [page, setPage] = useState("dashboard")
   const [dashboardView, setDashboardView] = useState(null)
 
   const dashboardMenu = [
@@ -19,7 +20,7 @@ function App() {
   ]
 
   const menus = [
-    { label: "Home", page: "home", icon: "🏠" },
+    { label: "Home", page: "", icon: "🏠" },
     { label: "Dashboard", page: "dashboard", icon: "📊" },
     { label: "Settings", page: "settings", icon: "⚙️" },
     { label: "AI Assistants", page: "ai-assistants", icon: "🤖" }
@@ -33,7 +34,7 @@ function App() {
         setLoading(false)
       })
   }, [])
-
+  /*
   // ✅ 页面渲染函数（干净很多）
   function renderPage() {
     if (page === "dashboard") {
@@ -56,21 +57,28 @@ function App() {
 
     return <h1>Home</h1>
   }
-
+  
+  */
   return (
     <div className="layout">
 
       <Sidebar
         menus={menus}
-        page={page}
-        setPage={setPage}
+        //page={page}
+        //setPage={setPage}
         dashboardMenu={dashboardMenu}
         dashboardView={dashboardView}
         setDashboardView={setDashboardView}
       />
 
       <div className="main">
-        {renderPage()}
+        <Routes>
+          <Route path="/" element={<h1>Home</h1>}/>
+          <Route path="/dashboard" element={<Dashboard dashboardView={dashboardView} data={data} loading={loading}/>}/>
+          <Route path="/settings" element={<h1>Settings</h1>}/>
+          <Route path="/ai-assistants" element={<h1>AI Assistants</h1>}/>
+
+        </Routes>
       </div>
 
     </div>
