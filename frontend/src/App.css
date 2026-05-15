@@ -21,18 +21,16 @@ body {
 }
 
 .sidebar {
-  width: 150px;        /* 固定宽度 */
+  width: 200px;        /* 固定宽度 */
   flex-shrink: 0;        /* ❗防止被压缩（重点） */
   background: var(--bg-sidebar);
   padding: 0px;
-
   overflow-y: auto;      /* sidebar 自己滚动 */
 }
 
 .main {
   flex: 1;              /* 占满剩下空间 */
   padding: 20px;
-
   overflow-y: auto;     /* main 自己滚动 */
 }
 
@@ -47,14 +45,24 @@ body {
   border-radius: 6px;
 }
 
-.sidebar p {
+.sidebar_link {
+  display: flex;
+  align-items: center;
+
   padding: 10px;
-  cursor: pointer;
-  
+
   border-radius: 6px;
+
+  cursor: pointer;
+
+  color: var(--text-main);
+
+  text-decoration: none;
+
+  margin-bottom: 4px;
 }
 
-.sidebar p:hover {
+.sidebar_link:hover {
   background: var(--bg-card);
   color: var(--text-main);
 }
@@ -77,22 +85,33 @@ body {
   gap: 4px;
 }
 
-.dashboard_submenu p {
+.submenu_link {
   font-size: 14px;
+
   padding: 6px;
+
   color: var(--text-secondary);
+
   cursor: pointer;
-  margin-left:20px;
+
+  margin-left: 20px;
+
+  text-decoration: none;
+
+  border-radius: 6px;
 }
-.dashboard_submenu p.active_submenu {
+.active_submenu {
   background: rgb(62, 93, 214);
-  color:yellow;
+  color: yellow;
 }
 
-.dashboard_submenu p:hover {
+.submenu_link:hover {
   background: var(--bg-card);
 }
-
+.submenu_link.active_submenu {
+  background: yellow;
+  color: red;
+}
 .graph_panel {
   background: #1e293b;
   padding: 20px;

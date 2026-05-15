@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 function Sidebar({
   menus,
@@ -6,7 +6,7 @@ function Sidebar({
   dashboardView,
   setDashboardView
 }) {
-
+  const location = useLocation()
   return (
 
     <div className="sidebar">
@@ -17,8 +17,7 @@ function Sidebar({
 
           <Link
             to={`/${menu.page}`}
-            className="sidebar_link"
-          >
+            className={location.pathname === `/${menu.page}` ? "sidebar_link active" : "sidebar_link"}>
 
             {menu.icon && (
               <span style={{ marginRight: 6 }}>
@@ -31,7 +30,29 @@ function Sidebar({
           </Link>
 
           {/* dashboard submenu later */}
+          {menu.page === "dashboard" && location.pathname.startsWith("/dashboard") && (
 
+            <div className="dashboard_submenu">
+
+              {dashboardMenu.map((sub) => (
+
+                <Link
+                  key={sub.key}
+                  to={`/dashboard/${sub.key}`}
+                  className={location.pathname === `/dashboard/${sub.key}` 
+                  ? "submenu_link active_submenu" 
+                  : "submenu_link"}
+                >
+
+                  {sub.label}
+
+                </Link>
+
+              ))}
+
+            </div>
+
+          )}
         </div>
 
       ))}
