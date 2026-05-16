@@ -59,7 +59,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Overview />} />
           {/* Nested routes for dashboard sub-pages */}
-          <Route path="/dashboard/*" element={<DashboardLayout data={data} loading={loading} />} />
+          <Route path="/dashboard" element={<DashboardLayout />} >
+            <Route path="testing" element={<TestingPage data={data} loading={loading} />} />
+            <Route path="fake-data" element={<FakeDataPage />} />
+            <Route path="fake-graphchart" element={<FakeGraphPage />} />
+            <Route path="mqtt-graphchart" element={<MQTTPage />} />
+            <Route path="iwk" element={<h1>IWK Page</h1>} />
+            <Route path="new-label" element={<h1>New Label Page</h1>} />
+          </Route>
           <Route path="/settings" element={<Settings />} />
           <Route path="/ai-assistants" element={<AIAssistants />} />
         </Routes>

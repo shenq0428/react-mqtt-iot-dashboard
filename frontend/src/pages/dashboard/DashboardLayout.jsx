@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 
 import DashboardOverview from "./DashboardOverview"
 import TestingPage from "./TestingPage"
@@ -10,17 +11,19 @@ function DashboardLayout({ data, loading }) {
 
     return (
 
-        <Routes>
+        <div className="dashboard_layout">
 
-            <Route path="/" element={<DashboardOverview />} />
-            <Route path="testing" element={<TestingPage data={data} loading={loading} />} />
-            <Route path="fake-data" element={<FakeDataPage />} />
-            <Route path="fake-graphchart" element={<FakeGraphPage />} />
-            <Route path="mqtt-graphchart" element={<MQTTPage />} />
-            <Route path="iwk" element={<h1>IWK Page</h1>} />
-            <Route path="new-label" element={<h1>New Label Page</h1>} />
+            <div className="dashboard_header">
 
-        </Routes>
+                <h1>IoT Dashboard</h1>
+
+                <p>Realtime MQTT Monitoring System</p>
+
+            </div>
+
+            <Outlet />
+
+        </div>
 
     )
 
