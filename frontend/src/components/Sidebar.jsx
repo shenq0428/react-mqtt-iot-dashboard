@@ -8,13 +8,9 @@ function Sidebar({
 }) {
   const location = useLocation()
   return (
-
     <div className="sidebar">
-
       {menus.map((menu) => (
-
         <div key={menu.page}>
-
           <Link
             to={`/${menu.page}`}
             className={location.pathname === `/${menu.page}` ? "sidebar_link active" : "sidebar_link"}>
@@ -45,22 +41,14 @@ function Sidebar({
                 >
 
                   {sub.label}
-
                 </Link>
-
               ))}
-
             </div>
-
           )}
         </div>
-
       ))}
-
     </div>
-
   )
-
 }
 
 export default Sidebar

@@ -12,6 +12,7 @@ import MQTTPage from "./pages/dashboard/MQTTPage"
 import FakeDataPage from "./pages/dashboard/FakeDataPage"
 import TestingPage from "./pages/dashboard/TestingPage"
 import FakeGraphPage from "./pages/dashboard/FakeGraphPage"
+import DashboardLayout from "./pages/dashboard/DashboardLayout"
 
 function App() {
   const [data, setData] = useState([])
@@ -57,13 +58,8 @@ function App() {
       <div className="main">
         <Routes>
           <Route path="/" element={<Overview />} />
-          <Route path="/dashboard" element={<DashboardOverview />} />
-          <Route path="/dashboard/testing" element={<TestingPage data={data} loading={loading} />} />
-          <Route path="/dashboard/fake-data" element={<FakeDataPage />} />
-          <Route path="/dashboard/fake-graphchart" element={<FakeGraphPage />} />
-          <Route path="/dashboard/mqtt-graphchart" element={<MQTTPage />} />
-          <Route path="/dashboard/iwk" element={<h1>IWK Page</h1>} />
-          <Route path="/dashboard/new-label" element={<h1>New Label Page</h1>} />
+          {/* Nested routes for dashboard sub-pages */}
+          <Route path="/dashboard/*" element={<DashboardLayout data={data} loading={loading} />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/ai-assistants" element={<AIAssistants />} />
         </Routes>

@@ -9,7 +9,7 @@ A custom IoT dashboard built with React, Node.js, and MQTT to replace Grafana fo
 * Frontend: React (Vite)
 * Backend: Node.js (Express)
 * Messaging: MQTT
-* Database: (Planned - PostgreSQL)
+* Database: (Planned - PostgreSQL for login authentication * authorizaiton in future, influxdb for timeseries data for grapchart future)
 
 ---
 
@@ -65,6 +65,89 @@ README.md
 See `diary.md` for progress logs.
 
 ---
+# Frontend Architecture Notes
+
+## 1. Old Navigation System
+
+Previously the app used:
+
+- useState(page)
+- setPage()
+- if(page === "...")
+
+This is called state-based rendering.
+
+Problems:
+- no real URL
+- refresh loses current page
+- browser back button does not work
+- not scalable
+
+---
+
+## 2. React Router Migration
+
+Now the app uses:
+
+- BrowserRouter
+- Routes
+- Route
+- Link
+
+Navigation is now URL-based.
+
+Benefits:
+- real URLs
+- browser history works
+- scalable
+- bookmarkable pages
+
+---
+
+## 3. Pages vs Components
+
+### pages/
+
+Used for route-level pages.
+
+Examples:
+- Settings
+- DashboardLayout
+- MQTTPage
+
+### components/
+
+Used for reusable UI/features.
+
+Examples:
+- Sidebar
+- MQTTGraphChart
+- AlarmTable
+
+---
+
+## 4. Nested Routing
+
+Dashboard routes are grouped inside DashboardLayout.
+
+App.jsx only manages top-level routes.
+
+DashboardLayout manages dashboard internal routes.
+
+Example:
+- /dashboard/testing
+- /dashboard/mqtt-graphchart
+
+---
+
+## 5. Active Route Highlighting
+
+Sidebar uses:
+
+- useLocation()
+- location.pathname
+
+to detect current route and apply active CSS classes.
 
 ## ⚠️ Rules (for myself)
 

@@ -187,21 +187,6 @@ gap: 20px;
   font-size: 32px;
   font-weight: bold;
 }
-.mqtt_stat_row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.mqtt_stat_row h3 {
-  font-size: 20px;
-}
-.mqtt_stat_panel h2 {
-  margin-left:300px;
-}
-.mqtt_stat_row h1 {
-  margin-right: 500px;
-  margin-bottom:50px;
-}
 .alarm_logs_panel {
 
   background: #0f172a;
