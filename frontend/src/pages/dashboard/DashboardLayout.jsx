@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom"
-import { Outlet } from "react-router-dom"
+import { Outlet, NavLink } from "react-router-dom"
 
 import DashboardOverview from "./DashboardOverview"
 import TestingPage from "./TestingPage"
@@ -19,6 +19,22 @@ function DashboardLayout({ data, loading }) {
 
                 <p>Realtime MQTT Monitoring System</p>
 
+            </div>
+            <div className="dashboard_tabs">
+                <NavLink to="/dashboard" className="dashboard_tab" >
+                Overview</NavLink>  
+                <NavLink to="/dashboard/testing" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
+                Testing</NavLink>
+                <NavLink to="/dashboard/fake-data" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
+                Fake Data</NavLink>
+                <NavLink to="/dashboard/fake-graphchart" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
+                Fake Graph</NavLink>
+                <NavLink to="/dashboard/mqtt-graphchart" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
+                MQTT Graph</NavLink>
+                <NavLink to="/dashboard/iwk" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
+                IWK Demo</NavLink>
+                <NavLink to="/dashboard/new-label" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
+                New Label</NavLink>
             </div>
 
             <Outlet />
