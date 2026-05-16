@@ -35,9 +35,9 @@ function Sidebar({
                 <Link
                   key={sub.key}
                   to={`/dashboard/${sub.key}`}
-                  className={location.pathname === `/dashboard/${sub.key}` 
-                  ? "submenu_link active_submenu" 
-                  : "submenu_link"}
+                  className={location.pathname === `/dashboard/${sub.key}`
+                    ? "submenu_link active_submenu"
+                    : "submenu_link"}
                 >
 
                   {sub.label}
@@ -45,8 +45,30 @@ function Sidebar({
               ))}
             </div>
           )}
+
         </div>
       ))}
+      <div className="support_widget">
+
+        <img
+          src="/rocket.png"
+          alt="rocket"
+          className="support_rocket"
+        />
+
+        <h3 className="support_title">
+          Need Help?
+        </h3>
+
+        <a
+          href="https://wa.me/601116148101"
+          target="_blank"
+          className="support_button"
+        >
+          WhatsApp Support
+        </a>
+
+      </div>
     </div>
   )
 }

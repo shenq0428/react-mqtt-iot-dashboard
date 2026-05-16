@@ -26,6 +26,9 @@ body {
   background: var(--bg-sidebar);
   padding: 0px;
   overflow-y: auto;      /* sidebar 自己滚动 */
+  display: flex;
+
+flex-direction: column;
 }
 
 .main {
@@ -335,5 +338,99 @@ gap: 20px;
   box-shadow:
     0 0 12px rgba(0,255,255,0.3),
     0 0 25px rgba(0,255,255,0.12);
+
+}
+.support_button {
+
+  text-decoration: none;
+
+  padding: 10px 16px;
+
+  border-radius: 10px;
+
+  background: rgba(0,255,255,0.12);
+
+  color: #00ffff;
+
+  font-weight: bold;
+
+  transition: all 0.25s ease;
+
+}
+.support_button:hover {
+
+  background: rgba(0,255,255,0.22);
+
+  box-shadow:
+    0 0 12px rgba(0,255,255,0.25);
+
+  transform: translateY(-2px);
+
+}
+.support_rocket {
+
+  width: 90px;
+
+  height: auto;
+
+  animation: floatRocket 3s ease-in-out infinite;
+}
+.support_widget {
+
+  margin-top: auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 20px;
+
+  border-radius: 18px;
+
+  background: #111827;
+
+  min-height: 180px;
+
+  box-shadow:
+    0 0 18px rgba(0,255,255,0.08);
+
+}
+.support_content {
+  display:flex;
+  position: relative;
+
+  z-index: 2;
+
+  margin-left: 60px;
+
+}
+.support_title {
+
+  color: white;
+
+  font-size: 18px;
+
+  margin: 0;
+
+}
+@keyframes floatRocket {
+
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 
 }
