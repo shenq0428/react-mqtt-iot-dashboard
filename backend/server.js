@@ -1,44 +1,33 @@
 require("dotenv").config()
-const mqtt = require("mqtt")
-const { Server } = require("socket.io")
+
+const express = require("express")
+const cors = require("cors")
 const http = require("http")
+const { Server } = require("socket.io")
+
+const startMQTTBridge = require("./gateway/mqttSocketBridge")
+
+const app = express()
+
+// Middleware
+app.use(cors())
+app.use(express.json())
+
+// Simple API test
+app.get("/api/test", (req, res) => {
+  res.json({
+    message: "Backend API working",
+  })
+})
 
 // Create HTTP server
-const server = http.createServer()
+const server = http.createServer(app)
 
-// Create Socket.IO server
+// Create websocket server
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
   },
-})
-
-// MQTT Connection
-const client = mqtt.connect(process.env.MQTT_URL, {
-  username: process.env.MQTT_USERNAME,
-  password: process.env.MQTT_PASSWORD,
-})
-
-// MQTT Connected
-client.on("connect", () => {
-  console.log("Connected to MQTT Broker")
-
-  client.subscribe("data/DEMO_IWK_260325", (err) => {
-    if (!err) {
-      console.log("Subscribed to topic")
-    }
-  })
-})
-
-// MQTT Message Received
-client.on("message", (topic, message) => {
-  const data = message.toString()
-
-  console.log(`Topic: ${topic}`)
-  console.log(`Message: ${data}`)
-
-  // Send data to frontend
-  io.emit("mqtt-message", data)
 })
 
 // Frontend websocket connected
@@ -46,7 +35,12 @@ io.on("connection", (socket) => {
   console.log("Frontend connected")
 })
 
-// Start websocket server
-server.listen(3001, () => {
-  console.log("WebSocket server running on port 3001")
+// Start MQTT bridge
+startMQTTBridge(io)
+
+const PORT = process.env.PORT || 3001
+
+// Start backend server
+server.listen(PORT, () => {
+  console.log(`Backend server running on port ${PORT}`)
 })

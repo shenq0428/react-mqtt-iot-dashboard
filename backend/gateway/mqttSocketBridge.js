@@ -1,0 +1,30 @@
+const mqtt = require("mqtt")
+
+function startMQTTBridge(io) {
+  // MQTT Connection
+  const client = mqtt.connect(process.env.MQTT_URL, {
+    username: process.env.MQTT_USERNAME,
+    password: process.env.MQTT_PASSWORD,
+  })
+
+  // MQTT Connected
+  client.on("connect", () => {
+    console.log("Connected to MQTT Broker at backend")
+
+    client.subscribe("data/DEMO_IWK_260325", (err) => {
+      if (!err) {
+        console.log("Subscribed to topic at backend")
+      }
+    })
+  })
+
+  // MQTT Message Received
+  client.on("message", (topic, message) => {
+    const data = message.toString()
+
+    // Send data to frontend
+    io.emit("mqtt-message", data)
+  })
+}
+
+module.exports = startMQTTBridge

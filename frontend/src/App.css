@@ -375,6 +375,10 @@ gap: 20px;
 
   animation: floatRocket 3s ease-in-out infinite;
 }
+/*.support_rocket:hover {
+
+  animation: floatRocket 3s ease-in-out infinite;
+}*/
 .support_widget {
 
   margin-top: auto;

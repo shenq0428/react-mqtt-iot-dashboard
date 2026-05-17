@@ -1,0 +1,8 @@
+- React + Vite frontend 
+- Sidebar routing 
+- Nested dashboard layout 
+- Outlet architecture 
+- Dashboard shell 
+- MQTTGraphChart 
+- Fake graph/data pages 
+- Support widget
