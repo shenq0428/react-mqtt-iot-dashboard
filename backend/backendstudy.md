@@ -159,3 +159,5 @@ backend state
 database
 historical storage
 authentication
+
+未来靠memory state + redis?做一个current user online

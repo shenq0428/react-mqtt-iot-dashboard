@@ -13,12 +13,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-// Simple API test
-app.get("/api/test", (req, res) => {
-  res.json({
-    message: "Backend API working",
-  })
-})
+const testRoutes = require("./routes/testRoutes")
+app.use("/api",testRoutes)
 
 // Create HTTP server
 const server = http.createServer(app)
