@@ -101,7 +101,7 @@ function MQTTGraphChart() {
       // Convert JSON string -> JavaScript object
       const parsedData = JSON.parse(data)
 
-      console.log(parsedData)
+      //console.log(parsedData)
 
       // Create one telemetry point
       const newPoint = {
@@ -202,26 +202,32 @@ function MQTTGraphChart() {
     fetch("http://localhost:3001/api/test")
       .then((res) => res.json())
       .then((data) => {
-        console.log("Backend API response:", data)
+        console.log("FRONTEND GET response:", data)
       })
-      
-    //testing post api
-      fetch("http://localhost:3001/api/alarm",{
-        method:"POST",
 
-        headers:{
-          "Content-Type":"application/json",
-        },
-        body:JSON.stringify({
-          device:"Blower 1",
-          power:18,
-        }),
-      }).then((res)=>res.json())
-        .then((data)=>{console.log("POST reponse:",data)})
-      // Cleanup websocket
-      return () => {
-        socket.off("mqtt-message")
-      }
+    //testing post api
+    fetch("http://localhost:3001/api/alarm", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        device: "Blower 1",
+        power: 18,
+      }),
+    }).then((res) => res.json())
+      .then((data) => { console.log("FRONTEND POST response:", data) })
+    // Cleanup websocket
+    return () => {
+      socket.off("mqtt-message")
+    }
+
+    fetch("http://localhost:3001/api/threshold")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("FRONTEND GET response (Threshold):", data.currentThreshold)
+      })
 
   }, [])
 
