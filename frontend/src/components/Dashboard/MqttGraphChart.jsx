@@ -219,16 +219,29 @@ function MQTTGraphChart() {
     }).then((res) => res.json())
       .then((data) => { console.log("FRONTEND POST response:", data) })
     // Cleanup websocket
-    return () => {
-      socket.off("mqtt-message")
-    }
+
 
     fetch("http://localhost:3001/api/threshold")
       .then((res) => res.json())
       .then((data) => {
         console.log("FRONTEND GET response (Threshold):", data.currentThreshold)
       })
+    //frontend patch function
+    fetch("http://localhost:3001/api/device/123",{
+      method:"PATCH",
+      headers:{"Content-Type":"application/json",},
+      body:JSON.stringify({
+        status:"online"
+      })
+    })
+    //frotend delete function
+    fetch("http://localhost:3001/api/alarm/999",{
+      method:"DELETE"
+    })
 
+    return () => {
+      socket.off("mqtt-message")
+    }
   }, [])
 
   // console.log(chartData)

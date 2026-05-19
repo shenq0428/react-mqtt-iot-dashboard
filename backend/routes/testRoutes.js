@@ -40,7 +40,31 @@ router.post("/threshold", (req, res) => {
   })
 
 })
+//patch
+router.patch("/device/:id", (req, res) => {
 
+  console.log("PATCH device:", req.params.id)
+
+  console.log(req.body)
+
+  res.json({
+    message: "Device updated",
+    deviceId: req.params.id,
+    updatedData: req.body,
+  })
+
+})
+//delete function 
+router.delete("/alarm/:id", (req, res) => {
+
+  console.log("DELETE alarm:", req.params.id)
+
+  res.json({
+    message: "Alarm deleted",
+    alarmId: req.params.id,
+  })
+
+})
 // req.query exmaple
 router.get("/search", (req, res) => {
 
@@ -50,5 +74,14 @@ router.get("/search", (req, res) => {
     queryData: req.query,
   })
 })
+//route.params example
+router.get("/device/:id", (req, res) => {
+  console.log("Device id:", req.params.id)
+
+  res.json({
+    deviceId: req.params.id,
+  })
+})
+
 
 module.exports = router
