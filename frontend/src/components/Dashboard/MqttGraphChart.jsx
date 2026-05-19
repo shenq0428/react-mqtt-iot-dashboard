@@ -99,7 +99,7 @@ function MQTTGraphChart() {
       //console.log("Realtime MQTT Data:", data)
 
       // Convert JSON string -> JavaScript object
-      const parsedData = JSON.parse(data)
+      const parsedData = (data)
 
       //console.log(parsedData)
 

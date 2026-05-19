@@ -1,4 +1,5 @@
 const mqtt = require("mqtt")
+const writeTelemetry = require ("../influxdb/influxWrite.js")
 
 function startMQTTBridge(io) {
   // WebSocket frontend connected
@@ -35,10 +36,13 @@ function startMQTTBridge(io) {
 
   // MQTT Message Received
   client.on("message", (topic, message) => {
-    const data = message.toString()
-
+    //const data = message.toString()
+    const parseData=JSON.parse(message.toString())
+    console.log(parseData)
+    writeTelemetry(parseData)
     // Send data to frontend
-    io.emit("mqtt-message", data)
+    //io.emit("mqtt-message", data)
+    io.emit("mqtt-message",parseData)
   })
 }
 
