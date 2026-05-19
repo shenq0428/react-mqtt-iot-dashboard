@@ -6,6 +6,7 @@ const http = require("http")
 const { Server } = require("socket.io")
 
 const startMQTTBridge = require("./gateway/mqttSocketBridge")
+const getTelemetryHistory = require("./influxdb/influxQuery")
 
 const app = express()
 
@@ -35,6 +36,24 @@ io.on("connection", (socket) => {
 startMQTTBridge(io)
 
 const PORT = process.env.PORT || 3001
+
+app.get("/api/history", async (req, res) => {
+
+  try {
+
+    const data = await getTelemetryHistory();
+
+    res.json(data);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      error: "Failed to fetch telemetry history"
+    });
+  }
+})
 
 // Start backend server
 server.listen(PORT, () => {

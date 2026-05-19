@@ -45,7 +45,7 @@ function writeTelemetry(parsedData) {
             writeApi.writePoint(point);
         }
     );
-    //writeApi.flush();
+    writeApi.flush();
 
     console.log("Telemetry written to InfluxDB");
 }
