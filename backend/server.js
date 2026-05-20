@@ -32,7 +32,8 @@ io.on("connection", (socket) => {
   console.log("Frontend connected")
 })
 
-// Start MQTT bridge
+console.log("Start MQTT Bridge")
+// Start MQTT bridge, it contain the writeTelemetry function of influxWrite
 startMQTTBridge(io)
 
 const PORT = process.env.PORT || 3001

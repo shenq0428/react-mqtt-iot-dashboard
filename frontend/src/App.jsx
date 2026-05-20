@@ -13,6 +13,7 @@ import FakeDataPage from "./pages/dashboard/FakeDataPage"
 import TestingPage from "./pages/dashboard/TestingPage"
 import FakeGraphPage from "./pages/dashboard/FakeGraphPage"
 import DashboardLayout from "./pages/dashboard/DashboardLayout"
+import IwkDemoPage from './pages/dashboard/IwkDemoPage'
 
 function App() {
   const [data, setData] = useState([])
@@ -25,7 +26,7 @@ function App() {
     { label: "Fake-Data", key: "fake-data" },
     { label: "fake-graphchart", key: "fake-graphchart" },
     { label: "MQTT-graphchart", key: "mqtt-graphchart" },
-    { label: "IWK-Demo", key: "iwk" },
+    { label: "IWK-Demo", key: "iwk-demo" },
     { label: "new-Label", key: "new-label" }
   ]
 
@@ -64,7 +65,7 @@ function App() {
             <Route path="fake-data" element={<FakeDataPage />} />
             <Route path="fake-graphchart" element={<FakeGraphPage />} />
             <Route path="mqtt-graphchart" element={<MQTTPage />} />
-            <Route path="iwk" element={<h1>IWK Page</h1>} />
+            <Route path="iwk-demo" element={<IwkDemoPage/>} />
             <Route path="new-label" element={<h1>New Label Page</h1>} />
           </Route>
           <Route path="/settings" element={<Settings />} />

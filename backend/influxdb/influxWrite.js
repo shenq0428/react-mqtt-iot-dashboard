@@ -10,10 +10,10 @@ const bucket = process.env.INFLUX_BUCKET;
 const client = new InfluxDB({ url, token });
 
 const writeApi = client.getWriteApi(org, bucket);
-
+let writtenId = 0;
 function writeTelemetry(parsedData) {
     const siteId = parsedData.id;
-
+    
     // LOOP BLOWERS
     Object.entries(parsedData.blower).forEach(
         ([equipmentName, equipmentData]) => {
@@ -46,8 +46,8 @@ function writeTelemetry(parsedData) {
         }
     );
     writeApi.flush();
-
-    console.log("Telemetry written to InfluxDB");
+    writtenId++;
+    console.log(`Telemetry written ${writtenId}to InfluxDB`);
 }
 
 module.exports = writeTelemetry;

@@ -6,6 +6,7 @@ import TestingPage from "./TestingPage"
 import FakeDataPage from "./FakeDataPage"
 import MQTTPage from "./MQTTPage"
 import FakeGraphPage from "./FakeGraphPage"
+import IwkDemoPage from "./IwkDemoPage"
 
 function DashboardLayout({ data, loading }) {
 
@@ -31,7 +32,7 @@ function DashboardLayout({ data, loading }) {
                 Fake Graph</NavLink>
                 <NavLink to="/dashboard/mqtt-graphchart" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
                 MQTT Graph</NavLink>
-                <NavLink to="/dashboard/iwk" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
+                <NavLink to="/dashboard/iwk-demo" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
                 IWK Demo</NavLink>
                 <NavLink to="/dashboard/new-label" className={({ isActive }) => isActive    ? "dashboard_tab active_dashboard_tab"    : "dashboard_tab"}>
                 New Label</NavLink>

@@ -202,7 +202,7 @@ function MQTTGraphChart() {
     fetch("http://localhost:3001/api/test")
       .then((res) => res.json())
       .then((data) => {
-        console.log("FRONTEND GET response:", data)
+        //console.log("FRONTEND GET response:", data)
       })
 
     //testing post api
@@ -217,14 +217,15 @@ function MQTTGraphChart() {
         power: 18,
       }),
     }).then((res) => res.json())
-      .then((data) => { console.log("FRONTEND POST response:", data) })
+      .then((data) => { //console.log("FRONTEND POST response:", data)
+         })
     // Cleanup websocket
 
 
     fetch("http://localhost:3001/api/threshold")
       .then((res) => res.json())
       .then((data) => {
-        console.log("FRONTEND GET response (Threshold):", data.currentThreshold)
+        //console.log("FRONTEND GET response (Threshold):", data.currentThreshold)
       })
     //frontend patch function
     fetch("http://localhost:3001/api/device/123",{

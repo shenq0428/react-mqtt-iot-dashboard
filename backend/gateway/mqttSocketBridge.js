@@ -39,7 +39,6 @@ function startMQTTBridge(io) {
     //const data = message.toString()
     const parseData = JSON.parse(message.toString())
     console.log(parseData)
-    writeTelemetry(parseData)
     // Send data to frontend
     io.emit("mqtt-message", parseData)
     // Save telemetry into InfluxDB

@@ -2,7 +2,7 @@ import FakeData from "./FakeData"
 import Testing from "./Testing"
 import FakeGraphChart from "./FakeGraphChart"
 import MqttGraphChart from "./MqttGraphChart.jsx"
-
+import IwkDemo from "./IwkDemo.jsx"
 function Dashboard({ dashboardView, data, loading }) {
 
   function renderContent() {
@@ -16,7 +16,7 @@ function Dashboard({ dashboardView, data, loading }) {
     if (dashboardView === "fake-data") return <FakeData />
     if (dashboardView === "fake-graphchart")return <FakeGraphChart/>
     if (dashboardView === "mqtt-graphchart")return <MqttGraphChart/>
-    if (dashboardView === "iwk") return <h2>IWK Demo</h2>
+    if (dashboardView === "iwk") return <IwkDemo/>
 
     return <h2>New Label</h2>
   }
@@ -28,4 +28,4 @@ function Dashboard({ dashboardView, data, loading }) {
   )
 }
 
-export default Dashboard
+//export default Dashboard

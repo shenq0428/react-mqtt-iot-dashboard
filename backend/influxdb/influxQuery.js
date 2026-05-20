@@ -15,7 +15,8 @@ async function getTelemetryHistory() {
 
   const fluxQuery = `
     from(bucket: "${bucket}")
-      |> range(start: -1h)
+      |> range(start: -1m)
+      |> limit(n:60)
   `;
 
   const results = [];
