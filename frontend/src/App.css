@@ -69,6 +69,7 @@ flex-direction: column;
   background: var(--bg-card);
   color: var(--text-main);
 }
+
 :root {
   --bg-main: #0f172a;        /* 深蓝黑背景 */
   --bg-card: #1e293b;        /* 卡片 */
@@ -234,8 +235,40 @@ gap: 20px;
 }
 
 .dashboard_layout {
+
   display: flex;
+
   flex-direction: column;
+
+  min-height: 100vh;
+
+  background:
+
+    radial-gradient(
+      circle at top left,
+      rgba(0,255,255,0.10),
+      transparent 28%
+    ),
+
+    radial-gradient(
+      circle at top right,
+      rgba(122,0,255,0.10),
+      transparent 28%
+    ),
+
+    radial-gradient(
+      circle at bottom left,
+      rgba(0,140,255,0.06),
+      transparent 25%
+    ),
+
+    linear-gradient(
+      135deg,
+      #020617,
+      #0f172a,
+      #111827
+    );
+
 }
 
 .dashboard_header {
@@ -251,15 +284,16 @@ gap: 20px;
   color: #00ffff;
 
   margin-bottom: 8px;
-
-  font-size: 32px;
+  margin-left:25%;
+  font-size: 52px;
 }
 
-.dashboard_header p {
+.dashboard_layout p {
   color: #94a3b8;
-
-  font-size: 14px;
+  font-size: 30px;
+  letter-spacing: 1px;
 }
+
 .dashboard_header::before {
   content: "";
   position: absolute;
@@ -513,4 +547,18 @@ gap: 20px;
     transform: translateY(0px);
   }
 
+}
+
+.Iwk_header h1{
+  color: white;
+}
+
+.MQTTGraphChart_header h1 {
+
+  color: white;
+
+}
+
+.FakeGraphChart_header h2{
+  color:white;
 }

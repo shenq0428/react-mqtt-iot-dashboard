@@ -72,9 +72,10 @@ function FakeGraphChart() {
     return (
 
         <div>
+            <div className="FakeGraphChart_header">
             <h2 >Fake Graph Chart🐙</h2>
             <p>wait for 3 second,information hierarchy design</p>
-
+            </div>
             <div className="stats_grid">
                 <div className="stat_card">
                     <h3>CPU</h3>

@@ -21,10 +21,10 @@ function DashboardLayout({ data, loading }) {
                 <div className="corner_dot bottom_right"></div>
 
                 <h1>Nova Lobster IoT Dashboard</h1>
-
+    </div>
                 <p>Realtime MQTT Monitoring System</p>
 
-            </div>
+            
             <div className="dashboard_tabs">
                 <NavLink to="/dashboard" className="dashboard_tab" >
                     Overview</NavLink>

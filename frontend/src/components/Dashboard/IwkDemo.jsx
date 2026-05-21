@@ -186,7 +186,7 @@ function IwkDemo() {
 
         <>
             {/* HEADER */}
-            <div>
+            <div className="Iwk_header">
                 <h1>DEMO_IWK_260325</h1>
                 <h3>
                     Graph Points: {graphData.length}

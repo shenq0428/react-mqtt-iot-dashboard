@@ -249,7 +249,11 @@ function MQTTGraphChart() {
 
   return (
     <>
-      <h1>MQTT Graph Chart</h1>
+      <div className="MQTTGraphChart_header">
+       <h1>
+  MQTT Graph Chart
+</h1>
+      </div>
       <div className="mqtt_stat_grid">
 
         <RealtimeStatPanel
