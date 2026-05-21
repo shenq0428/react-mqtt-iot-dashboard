@@ -110,77 +110,79 @@ function IwkDemo() {
             }, refreshInterval)
 
         }
-        // REALTIME MQTT WEBSOCKET
-        socket.on("mqtt-message", (data) => {
+        if (refreshInterval === 0) {
+            // REALTIME MQTT WEBSOCKET
+            socket.on("mqtt-message", (data) => {
 
-            const roundedTime =
+                const roundedTime =
 
-                Math.floor(Date.now() / 1000) * 1000
+                    Math.floor(Date.now() / 1000) * 1000
 
-            const realtimePoint = {
+                const realtimePoint = {
 
-                timestamp: roundedTime,
+                    timestamp: roundedTime,
 
-                time: new Date(
-                    roundedTime
-                ).toLocaleTimeString()
-
-            }
-
-            // BLOWERS
-            Object.entries(data.blower).forEach(
-                ([equipmentName, equipmentData]) => {
-                    const formattedEquipment =
-                        equipmentName.replace(" ", "_")
-
-                    // ONLY ADD SELECTED
-                    if (
-                        selectedEquipments.includes(
-                            formattedEquipment
-                        )
-                    ) {
-                        realtimePoint[formattedEquipment] =
-                            equipmentData["motor-amp"]
-                    }
+                    time: new Date(
+                        roundedTime
+                    ).toLocaleTimeString()
 
                 }
-            )
 
-            // PUMPS
-            Object.entries(data.pump).forEach(
-                ([equipmentName, equipmentData]) => {
+                // BLOWERS
+                Object.entries(data.blower).forEach(
+                    ([equipmentName, equipmentData]) => {
+                        const formattedEquipment =
+                            equipmentName.replace(" ", "_")
 
-                    const formattedEquipment =
-                        equipmentName.replace(" ", "_")
+                        // ONLY ADD SELECTED
+                        if (
+                            selectedEquipments.includes(
+                                formattedEquipment
+                            )
+                        ) {
+                            realtimePoint[formattedEquipment] =
+                                equipmentData["motor-amp"]
+                        }
 
-                    // ONLY ADD SELECTED
-                    if (
-                        selectedEquipments.includes(
-                            formattedEquipment
-                        )
-                    ) {
-                        realtimePoint[formattedEquipment] =
-                            equipmentData["motor-amp"]
                     }
-                }
-            )
-            // APPEND REALTIME DATA
-            setGraphData((prev) => {
-                const updated = [
-                    ...prev,
-                    realtimePoint
-                ]
-                // KEEP LAST 100 POINTS
-                return updated.slice(-100)
+                )
+
+                // PUMPS
+                Object.entries(data.pump).forEach(
+                    ([equipmentName, equipmentData]) => {
+
+                        const formattedEquipment =
+                            equipmentName.replace(" ", "_")
+
+                        // ONLY ADD SELECTED
+                        if (
+                            selectedEquipments.includes(
+                                formattedEquipment
+                            )
+                        ) {
+                            realtimePoint[formattedEquipment] =
+                                equipmentData["motor-amp"]
+                        }
+                    }
+                )
+                // APPEND REALTIME DATA
+                setGraphData((prev) => {
+                    const updated = [
+                        ...prev,
+                        realtimePoint
+                    ]
+                    // KEEP LAST 100 POINTS
+                    return updated.slice(-100)
+                })
             })
-        })
+        }
         // CLEANUP SOCKET
         return () => {
             socket.off("mqtt-message")
 
             clearInterval(intervalId)
         }
-    }, [selectedEquipments])
+    }, [selectedEquipments,refreshInterval])
 
     return (
 
@@ -253,8 +255,8 @@ function IwkDemo() {
                     }}
                 >
                     <option value={0}>
-                        OFF</option>
-                    <option value={3}>
+                        AUTO</option>
+                    <option value={3000}>
                         3 Seconds</option>
                     <option value={5000}>
                         5 Seconds</option>
