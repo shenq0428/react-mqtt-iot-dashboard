@@ -11,17 +11,17 @@ import {
 
 function IwkDemo() {
     const equipmentColors = {
-    blower_1: "#00FFFF",
-    blower_2: "#FF6B6B",
-    blower_3: "#FFD93D",
-}
+        blower_1: "#00FFFF",
+        blower_2: "#FF6B6B",
+        blower_3: "#FFD93D",
+    }
     // ALL TELEMETRY DATA
     const [graphData, setGraphData] = useState([])
 
     // SELECTED EQUIPMENTS
-    const [selectedEquipments, setSelectedEquipments] =
-        useState(["blower_1"])
+    const [selectedEquipments, setSelectedEquipments] = useState(["blower_1"])
 
+    const [refreshInterval, setRefreshInterval] = useState(0)
     // HANDLE CHECKBOX CLICK
     function handleEquipmentChange(equipment) {
         setSelectedEquipments((prev) => {
@@ -35,9 +35,7 @@ function IwkDemo() {
             return [...prev, equipment]
         })
     }
-
-    // FETCH HISTORICAL DATA
-    useEffect(() => {
+    function fetchHistoryData() {
         fetch("http://localhost:3001/api/history")
             .then((response) => response.json())
             .then((data) => {
@@ -99,6 +97,19 @@ function IwkDemo() {
             .catch((error) => {
                 console.error(error)
             })
+    }
+
+    // FETCH HISTORICAL DATA
+    useEffect(() => {
+        fetchHistoryData()
+        let intervalId
+        if (refreshInterval > 0) {
+            intervalId = setInterval(() => {
+                console.log("Auto Refresh Triggered")
+                fetchHistoryData()
+            }, refreshInterval)
+
+        }
         // REALTIME MQTT WEBSOCKET
         socket.on("mqtt-message", (data) => {
 
@@ -119,7 +130,6 @@ function IwkDemo() {
             // BLOWERS
             Object.entries(data.blower).forEach(
                 ([equipmentName, equipmentData]) => {
-
                     const formattedEquipment =
                         equipmentName.replace(" ", "_")
 
@@ -129,10 +139,8 @@ function IwkDemo() {
                             formattedEquipment
                         )
                     ) {
-
                         realtimePoint[formattedEquipment] =
                             equipmentData["motor-amp"]
-
                     }
 
                 }
@@ -169,6 +177,8 @@ function IwkDemo() {
         // CLEANUP SOCKET
         return () => {
             socket.off("mqtt-message")
+
+            clearInterval(intervalId)
         }
     }, [selectedEquipments])
 
@@ -191,35 +201,70 @@ function IwkDemo() {
                     height={300}
                     data={graphData}
                 >
-
                     <CartesianGrid strokeDasharray="3 3" />
-
                     <XAxis dataKey="time" />
-
                     <YAxis />
-
                     <Tooltip />
-
                     {
                         selectedEquipments.map((equipment) => (
-
                             <Line
                                 key={equipment}
                                 type="monotone"
-                              dataKey={equipment}
+                                dataKey={equipment}
                                 strokeWidth={2}
                                 stroke={equipmentColors[equipment]}
                                 dot={false}
                                 isAnimationActive={false}
                                 connectNulls={true}
                             />
-
                         ))
                     }
 
                 </LineChart>
             </div>
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    marginTop: "20px",
+                    marginBottom: "20px",
+                    padding: "12px 16px",
+                    background: "#111827",
+                    borderRadius: "10px",
+                    width: "fit-content"
+                }}
+            >
 
+                <h4 style={{ margin: 0, color: "#E5E7EB" }}>
+                    Auto Refresh
+                </h4>
+
+                <select
+                    value={refreshInterval}
+
+                    onChange={(e) =>
+                        setRefreshInterval(
+                            Number(e.target.value)
+                        )
+                    }
+                    style={{
+                        padding: "6px 10px", borderRadius: "6px", border: "none", background: "#1F2937", color: "white", cursor: "pointer"
+                    }}
+                >
+                    <option value={0}>
+                        OFF</option>
+                    <option value={3}>
+                        3 Seconds</option>
+                    <option value={5000}>
+                        5 Seconds</option>
+                    <option value={10000}>
+                        10 Seconds </option>
+                    <option value={30000}>
+                        30 Seconds</option>
+                </select>
+
+            </div>
             {/* EQUIPMENT FILTER */}
             <div>
                 <label>
@@ -233,8 +278,7 @@ function IwkDemo() {
                         onChange={() =>
                             handleEquipmentChange(
                                 "blower_1"
-                            )}
-                    />
+                            )} />
                     Blower 1
                 </label>
 
@@ -249,8 +293,7 @@ function IwkDemo() {
                         onChange={() =>
                             handleEquipmentChange(
                                 "blower_2"
-                            )}
-                    />
+                            )} />
                     Blower 2
                 </label>
 
@@ -265,8 +308,7 @@ function IwkDemo() {
                         onChange={() =>
                             handleEquipmentChange(
                                 "blower_3"
-                            )}
-                    />
+                            )} />
                     Blower 3
                 </label>
             </div>
