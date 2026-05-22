@@ -1,7 +1,7 @@
 function Settings() {
 
   return (
-    <h1>Settings Page</h1>
+    <h1 style={{color:"white"}}>Settings Page</h1>
   )
 
 }

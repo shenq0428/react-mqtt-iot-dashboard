@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import socket from "../../services/socketClient"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 //icon import 
-import { Wifi, Activity, Database, Clock3 } from "lucide-react"
+import { Wifi, Activity, MessageSquareMore, Clock3, Landmark } from "lucide-react"
 
 
 function IwkDemo() {
@@ -10,6 +10,9 @@ function IwkDemo() {
         blower_1: "#00FFFF",
         blower_2: "#FF6B6B",
         blower_3: "#FFD93D",
+        pump_1: "#A855F7",
+        pump_2: "#22C55E",
+        pump_3: "#F97316",
     }
     // ALL TELEMETRY DATA
     const [graphData, setGraphData] = useState([])
@@ -21,7 +24,10 @@ function IwkDemo() {
 
     //record message in websocket
     const [messageCount, setMessageCount] = useState(0)
-
+    //MQTT STATUS dashboard panel
+    const [mqttConnected, setMqttConnected] = useState(false)
+    //LAST ONLINE dashboard panel
+    const [lastOnline, setLastOnline] = useState("--:--:--")
     // HANDLE CHECKBOX CLICK
     function handleEquipmentChange(equipment) {
         setSelectedEquipments((prev) => {
@@ -94,6 +100,7 @@ function IwkDemo() {
                 )
                 //step 5
                 setGraphData(groupedData)
+                setLastOnline(new Date().toLocaleTimeString())
             })
             .catch((error) => {
                 console.error(error)
@@ -112,14 +119,20 @@ function IwkDemo() {
 
         }
         if (refreshInterval === 0) {
+            setMqttConnected(socket.connected)
+
+            socket.on("connect", () => {
+                setMqttConnected(true)
+            })
+            socket.on("disconnect", () => {
+                setMqttConnected(false)
+            })
             // REALTIME MQTT WEBSOCKET
             socket.on("mqtt-message", (data) => {
 
-                setMessageCount((prev) => {
-                })
-                const roundedTime =
+                setMessageCount((prev) => prev + 1)
 
-                    Math.floor(Date.now() / 1000) * 1000
+                const roundedTime = Math.floor(Date.now() / 1000) * 1000
 
                 const realtimePoint = {
 
@@ -131,6 +144,8 @@ function IwkDemo() {
 
                 }
 
+                //last online dashboard panel
+                setLastOnline(new Date().toLocaleTimeString())
                 // BLOWERS
                 Object.entries(data.blower).forEach(
                     ([equipmentName, equipmentData]) => {
@@ -193,9 +208,6 @@ function IwkDemo() {
             {/* HEADER */}
             <div className="Iwk_header">
                 <h1>DEMO_IWK_260325</h1>
-                <h3>
-                    Graph Points: {graphData.length}
-                </h3>
             </div>
             {/* DASHBOARD CARDS */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px", marginBottom: "20px" }}
@@ -205,41 +217,45 @@ function IwkDemo() {
                         <div>
                             <h3 style={{ color: "#00FFFF", marginBottom: 0 }}
                             >MQTT Status</h3>
-                            <h1 style={{ color: "#4ADE80", marginBottom: "30px" }}
-                            > Connected</h1>
+                            <h1 style={{ color: mqttConnected ? "#4ADE80" : "#FF4D4D", marginBottom: "30px" }}
+                            >{mqttConnected ? "Connected" : "Disconnected"}</h1>
                         </div>
-                        <Wifi size={42} color="#3B82F6" opacity={0.4} />
+                        <Wifi color={mqttConnected ? "#f700ff" : "#FF4D4D"} size={64} />
                     </div>
                 </div>
                 <div style={{ background: "#111827", borderRadius: "16px", padding: "20px", boxShadow: `0 0 15px rgba(0,255,255,0.18),0 0 30px rgba(0,255,255,0.10),0 0 60px rgba(0,255,255,0.05)` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} >
                         <div>
                             <h3 style={{ color: "#00FFFF", marginBottom: 0 }}
-                            >ACTIVE EQUIPMENT</h3>
+                            >SELECTED EQUIPMENT</h3>
                             <h1 style={{ color: "yellow", marginBottom: "30px" }}
                             >{selectedEquipments.length}</h1>
-                        </div>     <Activity size={42} color="#3B82F6" opacity={0.4} />
+                        </div>
+                        <Activity size={64} color="#f700ff" />
                     </div>
                 </div>
                 <div style={{ background: "#111827", borderRadius: "16px", padding: "20px", boxShadow: `0 0 15px rgba(0,255,255,0.18),0 0 30px rgba(0,255,255,0.10),0 0 60px rgba(0,255,255,0.05)` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} >
                         <div>
                             <h3 style={{ color: "#00FFFF", marginBottom: 0 }}
-                            >LIVE MESSAGES</h3>
+                            >REFRESH MODE</h3>
                             <h1 style={{ color: "yellow", marginBottom: "30px" }}
-                            >{messageCount}</h1>
-                        </div>    <Database size={42} color="#3B82F6" opacity={0.4} />
-                    </div></div>
+                            >{refreshInterval === 0 ? "Real Time" : `${refreshInterval / 1000}s`}</h1>
+                        </div>
+                        <MessageSquareMore size={64} color="#f700ff" />
+                    </div>
+                </div>
                 <div style={{ background: "#111827", borderRadius: "16px", padding: "20px", boxShadow: `0 0 15px rgba(0,255,255,0.18),0 0 30px rgba(0,255,255,0.10),0 0 60px rgba(0,255,255,0.05)` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} >
                         <div>
                             <h3 style={{ color: "#00FFFF", marginBottom: "0px" }}
-                            >SYSTEM UPTIME</h3>
+                            >LAST ONLINE</h3>
                             <h1 style={{ color: "yellow", marginBottom: "30px" }}
-                            > 0day 7h</h1>
+                            >{lastOnline}</h1>
                         </div>
-                        <Clock3 size={42} color="#3B82F6" opacity={0.4} />
-                    </div></div>
+                        <Clock3 size={64} color="#f700ff" />
+                    </div>
+                </div>
             </div>
             {/* GRAPH */}
             <div

@@ -1,7 +1,8 @@
 function AIAssistants() {
 
   return (
-    <h1>AI Assistants Page</h1>
+    
+    <h1 style={{color:"white"}}>AI Assistants Page</h1>
   )
 
 }

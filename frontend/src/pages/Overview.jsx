@@ -1,7 +1,9 @@
 function Overview() {
 
   return (
-    <h1>Overview Page</h1>
+    <div>
+    <h1 style={{color:"white"}}>HOME Page</h1>
+    </div>
   )
 
 }
