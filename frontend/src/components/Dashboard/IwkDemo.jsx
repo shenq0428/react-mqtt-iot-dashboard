@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import socket from "../../services/socketClient"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts"
 //icon import 
 import { Wifi, Activity, MessageSquareMore, Clock3, Landmark } from "lucide-react"
 
@@ -18,7 +18,7 @@ function IwkDemo() {
     const [graphData, setGraphData] = useState([])
 
     // SELECTED EQUIPMENTS
-    const [selectedEquipments, setSelectedEquipments] = useState(["blower_1", "blower_2", "blower_3"])
+    const [selectedEquipments, setSelectedEquipments] = useState(["blower_1", "blower_2", "blower_3", "pump_1", "pump_2", "pump_3"])
 
     const [refreshInterval, setRefreshInterval] = useState(0)
 
@@ -45,13 +45,26 @@ function IwkDemo() {
         fetch("http://localhost:3001/api/history")
             .then((response) => response.json())
             .then((data) => {
+                console.log(
+                    data.filter(
+                        (item) =>
+                            item.equipment?.includes("blower")
+                    )
+                )
+
                 const filteredData = data
                     .filter(
                         (item) =>
                             selectedEquipments.includes(item.equipment) &&
                             item._field === "motor_amp"
                     )
-                    .slice(-300)
+                console.log(
+                    "LAST 20 FILTERED:",
+                    filteredData.slice(-20)
+                )
+
+                const slicedData =
+                    filteredData.slice(-300)
                 //step 2 : fix the main point
                 const groupedData = []
                 // step 3: fix the timestamp sychronization
@@ -98,6 +111,21 @@ function IwkDemo() {
                         //new Date(`1970/01/01 ${b.time}`)
                         a.timestamp - b.timestamp
                 )
+                console.log(
+                    "blower_1 fetch count:",
+                    groupedData.filter(
+                        (point) =>
+                            point.blower_1 !== undefined
+                    ).length
+                )
+                console.log(
+                    "blower_2 fetch count:",
+                    groupedData.filter(
+                        (point) =>
+                            point.blower_2 !== undefined
+                    ).length
+                )
+
                 //step 5
                 setGraphData(groupedData)
                 setLastOnline(new Date().toLocaleTimeString())
@@ -144,8 +172,29 @@ function IwkDemo() {
 
                 }
 
+                const filteredData = []
+
+                selectedEquipments.forEach(
+                    (equipment) => {
+
+                        const equipmentData = data
+                            .filter(
+                                (item) =>
+                                    item.equipment === equipment &&
+                                    item._field === "motor_amp"
+                            )
+                            .slice(-50)
+
+                        filteredData.push(
+                            ...equipmentData
+                        )
+
+                    }
+                )
+
                 //last online dashboard panel
                 setLastOnline(new Date().toLocaleTimeString())
+
                 // BLOWERS
                 Object.entries(data.blower).forEach(
                     ([equipmentName, equipmentData]) => {
@@ -162,6 +211,14 @@ function IwkDemo() {
                                 equipmentData["motor-amp"]
                         }
 
+                        if (formattedEquipment === "blower_1") {
+
+                            console.log(
+                                "blower_1 realtime:",
+                                equipmentData["motor-amp"]
+                            )
+
+                        }
                     }
                 )
 
@@ -183,14 +240,29 @@ function IwkDemo() {
                         }
                     }
                 )
+
+                //console.log("Realtime Point:", realtimePoint)
                 // APPEND REALTIME DATA
                 setGraphData((prev) => {
+                    const existingPoint =
+                        prev.find((point) => point.timestamp === roundedTime)
+
+                    // SAME SECOND ,merge all data to 1 same data time
+                    if (existingPoint) {
+
+                        Object.assign(
+                            existingPoint,
+                            realtimePoint
+                        )
+                        return [...prev]
+                    }
+
                     const updated = [
                         ...prev,
                         realtimePoint
                     ]
                     // KEEP LAST 100 POINTS
-                    return updated.slice(-100)
+                    return updated.slice(-200)
                 })
             })
         }
@@ -260,12 +332,9 @@ function IwkDemo() {
             {/* GRAPH */}
             <div
                 style={{
-                    background: "#0b1220",
-
+                    background: `linear-gradient(180deg, #0F172A, #020617)`,
                     padding: "20px",
-
                     borderRadius: "12px",
-
                     width: "100%"
                 }}
             >
@@ -273,14 +342,32 @@ function IwkDemo() {
                 <div>
 
                     <LineChart
-                        width={1400}
-                        height={500}
+                        width={1600}
+                        height={750}
                         data={graphData}
                     >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="time" />
-                        <YAxis />
-                        <Tooltip />
+                        <CartesianGrid
+                            stroke="#334155"
+                            strokeDasharray="3 3"
+                        />
+                        <XAxis
+                            dataKey="time"
+                            stroke="#94A3B8"
+                        />
+
+                        <YAxis
+                            stroke="#94A3B8"
+                            domain={[0, "dataMax + 20"]}
+                        />
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: "#111827",
+                                border: "1px solid #00FFFF",
+                                borderRadius: "10px",
+                                color: "#fff"
+                            }}
+                        />
+                        <Legend />
                         {
                             selectedEquipments.map((equipment) => (
                                 <Line
@@ -288,6 +375,7 @@ function IwkDemo() {
                                     type="natural"
                                     dataKey={equipment}
                                     strokeWidth={2}
+                                    activeDot={{ r: 6 }}
                                     stroke={equipmentColors[equipment]}
                                     dot={false}
                                     isAnimationActive={false}
@@ -295,7 +383,6 @@ function IwkDemo() {
                                 />
                             ))
                         }
-
                     </LineChart>
                 </div>
             </div>
@@ -362,51 +449,40 @@ function IwkDemo() {
             >
 
                 <label>
-                    <button onClick={() => setSelectedEquipments(["blower_1", "blower_2", "blower_3"])}>
-                        SELECT ALL
+                    <button onClick={() => setSelectedEquipments(["blower_1", "blower_2", "blower_3", "pump_1", "pump_2", "pump_3"])}>
+                        SELECT ALL EQUIPMENT
                     </button>
-                    <input
-                        type="checkbox"
-                        checked={
-                            selectedEquipments.includes(
-                                "blower_1"
-                            )
-                        }
-                        onChange={() =>
-                            handleEquipmentChange(
-                                "blower_1"
-                            )} />
+                </label>
+                <label>
+                    <input type="checkbox" checked={selectedEquipments.includes("blower_1")}
+                        onChange={() => handleEquipmentChange("blower_1")} />
                     Blower 1
                 </label>
-
                 <label>
-                    <input
-                        type="checkbox"
-                        checked={
-                            selectedEquipments.includes(
-                                "blower_2"
-                            )
-                        }
-                        onChange={() =>
-                            handleEquipmentChange(
-                                "blower_2"
-                            )} />
+                    <input type="checkbox" checked={selectedEquipments.includes("blower_2")}
+                        onChange={() => handleEquipmentChange("blower_2")} />
                     Blower 2
+                </label>
+                <label>
+                    <input type="checkbox" checked={selectedEquipments.includes("blower_3")}
+                        onChange={() => handleEquipmentChange("blower_3")} />
+                    Blower 3
                 </label>
 
                 <label>
-                    <input
-                        type="checkbox"
-                        checked={
-                            selectedEquipments.includes(
-                                "blower_3"
-                            )
-                        }
-                        onChange={() =>
-                            handleEquipmentChange(
-                                "blower_3"
-                            )} />
-                    Blower 3
+                    <input type="checkbox" checked={selectedEquipments.includes("pump_1")}
+                        onChange={() => handleEquipmentChange("pump_1")} />
+                    Pump 1
+                </label>
+                <label>
+                    <input type="checkbox" checked={selectedEquipments.includes("pump_2")}
+                        onChange={() => handleEquipmentChange("pump_2")} />
+                    Pump 2
+                </label>
+                <label>
+                    <input type="checkbox" checked={selectedEquipments.includes("pump_3")}
+                        onChange={() => handleEquipmentChange("pump_3")} />
+                    Pump 3
                 </label>
             </div>
         </div>
