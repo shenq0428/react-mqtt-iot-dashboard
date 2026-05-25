@@ -172,6 +172,7 @@ function IwkDemo() {
 
                 }
 
+                /*
                 const filteredData = []
 
                 selectedEquipments.forEach(
@@ -191,7 +192,7 @@ function IwkDemo() {
 
                     }
                 )
-
+*/
                 //last online dashboard panel
                 setLastOnline(new Date().toLocaleTimeString())
 

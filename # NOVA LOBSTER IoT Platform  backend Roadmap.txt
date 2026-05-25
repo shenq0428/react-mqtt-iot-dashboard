@@ -1,0 +1,188 @@
+# NOVA LOBSTER IoT Platform Roadmap
+
+## CURRENT STATUS (COMPLETED)
+
+### Frontend Dashboard Foundation
+
+* React Dashboard
+* Recharts Telemetry Graph
+* Multi-equipment Overlay
+* Equipment Filters
+* Dashboard Cards
+* Glow / Cyberpunk UI
+* Realtime WebSocket
+* Polling Mode
+* Refresh Mode System
+* MQTT Status
+* Last Update System
+* Realtime Telemetry Debugging
+
+### Backend / Infrastructure
+
+* MQTT Broker (Mosquitto)
+* InfluxDB Cloud
+* Node.js Backend
+* Socket.IO WebSocket Bridge
+
+### Architecture Concepts Learned
+
+* Polling vs Realtime Streaming
+* Realtime State Synchronization
+* Telemetry Windowing
+* Multi-device Telemetry
+* Realtime Debugging
+* MQTT Event System
+* WebSocket Lifecycle
+* Observability Dashboard Concepts
+
+---
+
+# NEXT PHASE (CURRENT MAIN FOCUS)
+
+## Fullstack Authentication System
+
+### Backend Authentication
+
+* Register API
+* Login API
+* JWT Authentication
+* Password Hashing (bcrypt)
+* Auth Middleware
+* Protected APIs
+* Role-based Access Control
+
+### Database System
+
+* PostgreSQL
+* Users Table
+* Roles Table
+* Session Tracking
+* Audit Logs
+
+### Frontend Authentication
+
+* Login Page
+* Register Page
+* Protected Routes
+* Token Storage
+* Auto Login
+* Logout System
+
+---
+
+# ADMIN SYSTEM
+
+## Admin Dashboard
+
+Admin can:
+
+* View all users
+* View online/offline users
+* View telemetry overview
+* View all devices
+* Manage alarms
+* Manage user access
+
+## User Dashboard
+
+User can:
+
+* View own dashboard
+* View assigned devices
+* View telemetry data only for own devices
+
+---
+
+# USER ONLINE/OFFLINE SYSTEM
+
+## Realtime User Tracking
+
+* Detect user login
+* Detect disconnect
+* Show online users
+* Show active sessions
+* Admin realtime monitoring
+
+---
+
+# FUTURE PHASES
+
+## Alarm System
+
+* High motor amp warning
+* Offline device detection
+* Telemetry timeout detection
+* Threshold alerts
+* Realtime warning cards
+
+## Device State System
+
+* Device online/offline
+* Stale telemetry
+* Fault detection
+* Health monitoring
+
+## Multi-page Dashboard
+
+* Overview
+* Blowers
+* Pumps
+* Alarms
+* Analytics
+* Settings
+
+## Advanced Observability
+
+* Historical playback
+* Time-range selector
+* Aggregation
+* Analytics
+* AI anomaly detection
+
+## Deployment Architecture
+
+Frontend:
+
+* Vercel / Netlify
+
+Backend:
+
+* AWS EC2
+
+Database:
+
+* PostgreSQL
+* InfluxDB Cloud
+
+MQTT:
+
+* Mosquitto Broker
+
+---
+
+# IMPORTANT LEARNING DIRECTION
+
+Current Priority:
+
+1. Backend Engineering
+2. Authentication System
+3. Role-based Architecture
+4. Admin/User Separation
+5. Fullstack System Design
+
+Lower Priority For Now:
+
+* Component Extraction
+* Advanced React Refactoring
+* Topic Architecture Optimization
+
+---
+
+# LONG TERM GOAL
+
+Build a full industrial-style IoT telemetry and observability platform similar to:
+
+* Grafana
+* SCADA Systems
+* Industrial Monitoring Platforms
+* Enterprise Telemetry Dashboards

@@ -129,6 +129,7 @@ function MQTTGraphChart() {
         pump3Status: parsedData.pump["pump 3"].run_status,
 
       }
+      console.log(newPoint)
       //log alarm
       const newAlarms = []
       //alarm loop
