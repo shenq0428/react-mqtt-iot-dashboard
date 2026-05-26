@@ -1,0 +1,301 @@
+# Backend Data Structure Notes
+
+## STRING
+
+String = text data.
+
+Example:
+
+```js
+"nova"
+"hello world"
+"123456"
+```
+
+Usually wrapped with quotes.
+
+---
+
+# ARRAY
+
+Array = multiple items in a list.
+
+Example:
+
+```js
+const fruits = [
+   "apple",
+   "banana",
+   "orange"
+]
+```
+
+Uses:
+
+```js
+[]
+```
+
+Access item:
+
+```js
+fruits[0]
+```
+
+Result:
+
+```js
+"apple"
+```
+
+---
+
+# OBJECT
+
+Object = structured data with named fields.
+
+Example:
+
+```js
+const user = {
+
+   username: "nova",
+
+   password: "123456"
+
+}
+```
+
+Uses:
+
+```js
+{}
+```
+
+Format:
+
+```js
+key : value
+```
+
+Access data:
+
+```js
+user.username
+```
+
+Result:
+
+```js
+"nova"
+```
+
+---
+
+# ARRAY OF OBJECTS
+
+Very common in backend/database systems.
+
+Example:
+
+```js
+const users = [
+
+   {
+      username: "nova"
+   },
+
+   {
+      username: "lobster"
+   }
+
+]
+```
+
+Meaning:
+
+Multiple user objects stored inside one array.
+
+---
+
+# JSON
+
+JSON = JavaScript Object Notation.
+
+Used for frontend/backend communication.
+
+Example:
+
+```json
+{
+   "username": "nova",
+   "password": "123456"
+}
+```
+
+Looks like object, but:
+
+* keys require double quotes
+* only data allowed
+* used for network transmission
+
+---
+
+# JSON.stringify()
+
+Convert:
+
+```text
+Object → String
+```
+
+Example:
+
+```js
+const user = {
+
+   username: "nova"
+
+}
+
+JSON.stringify(user)
+```
+
+Result:
+
+```js
+'{"username":"nova"}'
+```
+
+Why?
+
+Because network/API transmission often sends text data.
+
+---
+
+# JSON.parse()
+
+Convert:
+
+```text
+String → Object
+```
+
+Example:
+
+```js
+const data =
+'{"username":"nova"}'
+
+JSON.parse(data)
+```
+
+Result:
+
+```js
+{
+   username: "nova"
+}
+```
+
+---
+
+# Fullstack API Flow
+
+Frontend:
+
+```js
+fetch("http://localhost:3001/register")
+```
+
+↓
+
+Frontend sends JSON data.
+
+↓
+
+Backend receives request.
+
+↓
+
+Express parses JSON automatically using:
+
+```js
+app.use(express.json())
+```
+
+↓
+
+Backend accesses:
+
+```js
+req.body.username
+```
+
+↓
+
+Backend processes logic.
+
+↓
+
+Backend sends response:
+
+```js
+res.json({
+   message: "Register Success"
+})
+```
+
+↓
+
+Frontend/Postman receives response.
+
+---
+
+# Important Concepts
+
+## console.log()
+
+Backend/server terminal output only.
+
+Used for debugging.
+
+Example:
+
+```js
+console.log(users)
+```
+
+Appears in terminal.
+
+---
+
+# res.json()
+
+Sends HTTP response back to frontend/Postman.
+
+Example:
+
+```js
+res.json({
+   message: "Success"
+})
+```
+
+Appears in frontend/Postman response.
+
+---
+
+# app.listen(PORT)
+
+Starts backend HTTP server.
+
+Example:
+
+```js
+app.listen(3001)
+```
+
+Meaning:
+
+Node.js backend is now listening for requests on port 3001.
