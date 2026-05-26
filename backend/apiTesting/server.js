@@ -8,7 +8,35 @@ const app = express()
 
 const users = []
 
-// MIDDLEWARE
+
+// MIDDLEWARE resuseable authentication function
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers.authorization
+    // NO TOKEN
+    if (!authHeader) {
+        return res.status(401).json({
+            message: "No token provided"
+        })
+    }
+    // REMOVE "Bearer "
+    const token = authHeader.split(" ")[1]
+    try {
+        //jwt verify will get the iat and exp from the token and check if it's valid
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        )
+        req.user = decoded
+        next()
+    }
+    catch (error) {
+        res.status(401).json({
+            message: "Invalid Token"
+        })
+    }
+}
+
+
 app.use(cors())
 app.use(express.json())
 
@@ -46,8 +74,10 @@ app.post("/register", (req, res) => {
     // CREATE USER
     const newUser = {
         username,
-        password
+        password,
+        role: "admin"
     }
+
     users.push(newUser)
     console.log(users)
 
@@ -79,9 +109,14 @@ app.post("/login", (req, res) => {
     //login success
     //generate JWT token
     const token = jwt.sign(
-        { username: user.username },
+        {
+            username: user.username,
+            role: user.role
+        },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        {
+            expiresIn: "1h"
+        },
     )
     //return token and user info
     res.json({
@@ -91,37 +126,29 @@ app.post("/login", (req, res) => {
     })
 })
 
-app.get("/dashboard", (req, res) => {
-    console.log("DASHBOARD ROUTE HIT")
-    const authHeader = req.headers.authorization
+// PROTECTED DASHBOARD ROUTE by using the authenticateToken middleware (reuseable for any route that needs authentication))
+app.get("/dashboard", authenticateToken, (req, res) => {
 
-    // NO TOKEN
-    if (!authHeader) {
-        return res.status(401).json({
-            message: "No token provided"
+    res.json({
+        message: "Protected Dashboard Access",
+        decoded_user: req.user
+    })
+}
+
+)
+
+//admin route example
+app.get("/admin", authenticateToken, (req, res) => {
+    //check if user is admin
+    if (req.user.role !== "admin") {
+        return res.status(403).json({
+            message: "Access denied"
         })
     }
-
-    // REMOVE "Bearer "
-    const token = authHeader.split(" ")[1]
-    try {
-        const decoded =
-            jwt.verify(
-                token,
-                process.env.JWT_SECRET
-            )
-
-        res.json({
-            message: "Protected Dashboard Access",
-            user: decoded
-        })
-    } catch (error) {
-        res.status(401).json({
-            message: "Invalid Token"
-        })
-
-    }
-
+    res.json({
+        message: "Welcome Admin",
+        decoded_user: req.user
+    })
 })
 
 const PORT = process.env.PORT || 3001
