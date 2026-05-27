@@ -9,6 +9,8 @@ const app = express()
 const users = []
 
 
+
+
 // MIDDLEWARE resuseable authentication function
 function authenticateToken(req, res, next) {
     const authHeader = req.headers.authorization
@@ -39,6 +41,11 @@ function authenticateToken(req, res, next) {
 
 app.use(cors())
 app.use(express.json())
+
+//从routes/authRoutes.js调用authRoutes
+const authRoutes = require("../routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
 
 // TEST ROUTE
 app.get("/", (req, res) => {
