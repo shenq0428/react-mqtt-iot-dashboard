@@ -3,21 +3,30 @@
 ```mermaid
 flowchart TD
 
-A[Register] --> B[bcrypt.hash()]
+A[Register]
+--> B[bcrypt hash]
+
 B --> C[Store Hashed Password]
+
 C --> D[(PostgreSQL)]
 
-E[Login] --> F[SELECT User]
-F --> G[bcrypt.compare()]
-G --> H[jwt.sign()]
+E[Login]
+--> F[Select User]
+
+F --> G[bcrypt compare]
+
+G --> H[jwt sign]
+
 H --> I[JWT Token]
 
 I --> J[Frontend LocalStorage]
 
 J --> K[Authorization Bearer Token]
+
 K --> L[verifyToken Middleware]
 
-L --> M[jwt.verify()]
+L --> M[jwt verify]
+
 M --> N[req.user]
 
 N --> O[Protected Route]
@@ -27,34 +36,36 @@ O --> P[checkAdmin Middleware]
 P --> Q[Admin Route]
 ```
 
+
 # JWT Middleware Verification Flow
 
 ```mermaid
 flowchart TD
 
 A[Request]
---> B[Authorization Header Exists?]
+--> B{Authorization Header Exists}
 
-B -->|No| C[401 No Token Provided]
+B -->|No| C[401 No Token]
 
 B -->|Yes| D[Extract JWT Token]
 
-D --> E[jwt.verify()]
+D --> E[jwt verify]
 
 E -->|Invalid| F[401 Invalid Token]
 
-E -->|Valid| G[Check Expiry]
+E -->|Valid| G{Token Expired}
 
-G -->|Expired| H[401 Token Expired]
+G -->|Yes| H[401 Expired]
 
-G -->|Valid| I[Get Payload]
+G -->|No| I[Get Payload]
 
 I --> J[req.user = decoded]
 
-J --> K[next()]
+J --> K[next]
 
 K --> L[Protected Controller]
 ```
+
 
 # Authentication vs Authorization
 
