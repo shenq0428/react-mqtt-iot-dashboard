@@ -1,3 +1,49 @@
+# Nova Lobster Backend Fundamentals Notes
+
+# Complete Authentication Flow
+
+Register
+↓
+bcrypt.hash()
+↓
+Store Hashed Password
+↓
+PostgreSQL
+
+Login
+↓
+SELECT User
+↓
+bcrypt.compare()
+↓
+jwt.sign()
+↓
+JWT Token
+
+Frontend
+↓
+Store Token (LocalStorage)
+
+Request
+↓
+Authorization: Bearer Token
+↓
+verifyToken Middleware
+↓
+jwt.verify()
+↓
+req.user
+↓
+Protected Route
+
+Authorization
+↓
+checkAdmin Middleware
+↓
+Admin Route
+
+---
+
 # Register Flow
 
 用户输入 email / password
@@ -18,6 +64,7 @@ PostgreSQL 储存 user data
 ↓
 return success response
 
+---
 
 # Login Flow
 
@@ -39,10 +86,47 @@ jwt.sign()
 ↓
 return token 给 frontend
 
+---
+
+# JWT Middleware Verification Flow
+
+Frontend / Postman Request
+↓
+Authorization Header
+
+Authorization: Bearer <JWT_TOKEN>
+
+↓
+req.headers.authorization
+↓
+检查 Authorization Header 是否存在
+↓
+检查 Token 是否存在
+↓
+Token 格式是否正确
+↓
+jwt.verify(token, JWT_SECRET)
+↓
+验证签名是否正确
+↓
+检查 Token 是否过期
+↓
+取得 Payload（decoded）
+↓
+req.user = decoded
+↓
+next()
+↓
+Protected Route Controller
+↓
+Response
+
+---
 
 # Auth Core Concept
 
 Register:
+
 plaintext password
 ↓
 hash + salt
@@ -50,20 +134,80 @@ hash + salt
 store hashed password in database
 
 Login:
+
 input password
 ↓
 bcrypt.compare()
 ↓
 compare with stored hash
 ↓
-if correct → generate JWT
+if correct
+↓
+generate JWT
 
+JWT Verify:
+
+JWT Token
+↓
+jwt.verify()
+↓
+验证签名
+↓
+验证过期时间
+↓
+取得 Payload
+↓
+req.user
+
+---
+
+# Authentication vs Authorization
+
+Authentication：
+
+你是谁？
+
+通过：
+
+JWT
+↓
+verifyToken Middleware
+
+取得：
+
+req.user
+
+---
+
+Authorization：
+
+你能做什么？
+
+通过：
+
+Role Middleware
+
+例如：
+
+if(req.user.role !== "admin")
+
+决定：
+
+允许访问
+
+或
+
+403 Forbidden
+
+---
 
 # Backend Request Lifecycle
 
 Frontend / Postman Request
 ↓
 Route
+↓
+Middleware
 ↓
 Controller
 ↓
@@ -73,6 +217,7 @@ Database Query
 ↓
 JSON Response
 
+---
 
 # Database Relationship Concept
 
@@ -84,21 +229,65 @@ mqtt_logs
 ↓
 alerts
 
-Backend architecture 本质是：
-Data + Relationship + Flow
+Backend Architecture 本质：
 
+Data
++
+Relationship
++
+Flow
+
+---
 
 # Time-Series Data Tradeoff
 
-Raw data = 高准确度，但储存成本高。
-Summary data = 准确度较低，但储存成本较低。
+Raw Data
+
+优点：
+
+* 高准确度
+* 可重新分析
+
+缺点：
+
+* 高储存成本
+* 查询较慢
+
+---
+
+Summary Data
+
+优点：
+
+* 储存成本低
+* 查询速度快
+
+缺点：
+
+* 精度下降
+* 无法还原所有细节
+
+---
+
+结论：
 
 随着数据越来越旧，
+
 详细精度的重要性通常会低于整体趋势的重要性。
 
-# Nova Lobster Backend Fundamentals Notes
+因此：
 
-## 1. String
+Raw Data
+↓
+Daily Summary
+↓
+Monthly Summary
+
+是一种常见的 Time-Series Storage Strategy。
+
+---
+
+# 1. String
 
 String = 文字资料
 
@@ -116,7 +305,7 @@ Examples:
 
 ---
 
-## 2. Number
+# 2. Number
 
 Number = 数字
 
@@ -134,7 +323,7 @@ Examples:
 
 ---
 
-## 3. Object
+# 3. Object
 
 Object = 一个东西的属性集合
 
@@ -160,7 +349,7 @@ user.username
 
 ---
 
-## 4. Array
+# 4. Array
 
 Array = 一堆东西放在一起
 
@@ -189,7 +378,9 @@ users[0]
 }
 ```
 
-### Object vs Array
+---
+
+# Object vs Array
 
 Object：
 
@@ -216,7 +407,7 @@ const users = [
 
 ---
 
-## 5. push()
+# 5. push()
 
 push() = 加入新的资料到 Array
 
@@ -240,7 +431,7 @@ users.push({
 
 ---
 
-## 6. find()
+# 6. find()
 
 find() = 在 Array 里面寻找符合条件的资料
 
@@ -266,7 +457,7 @@ undefined
 
 ---
 
-## 7. JSON
+# 7. JSON
 
 JSON = Frontend 与 Backend 通讯的标准格式
 
@@ -279,19 +470,17 @@ JSON = Frontend 与 Backend 通讯的标准格式
 
 用途：
 
-```text
 Frontend
 ↓
 Internet
 ↓
 Backend
-```
 
 传送资料。
 
 ---
 
-## 8. JSON.stringify()
+# 8. JSON.stringify()
 
 Object → String
 
@@ -311,7 +500,7 @@ const text = JSON.stringify(user)
 
 ---
 
-## 9. JSON.parse()
+# 9. JSON.parse()
 
 String → Object
 
@@ -331,9 +520,9 @@ const user = JSON.parse(text)
 
 ---
 
-## 10. JWT Example
+# 10. JWT Example
 
-Login 成功：
+Login：
 
 ```js
 const token = jwt.sign(
@@ -347,6 +536,21 @@ const token = jwt.sign(
     }
 )
 ```
+
+---
+
+JWT Payload：
+
+```js
+{
+    username: user.username,
+    role: user.role
+}
+```
+
+Payload = JWT 携带的数据
+
+---
 
 验证 JWT：
 
@@ -368,6 +572,8 @@ decoded：
 }
 ```
 
+---
+
 Middleware：
 
 ```js
@@ -387,7 +593,6 @@ req.user.role
 
 # Core Flow Summary
 
-```text
 String
 ↓
 Object
@@ -409,4 +614,9 @@ JWT
 Middleware
 ↓
 req.user
-```
+↓
+Authentication
+↓
+Authorization
+↓
+Protected Route
