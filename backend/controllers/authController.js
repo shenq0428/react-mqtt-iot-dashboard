@@ -82,6 +82,7 @@ const loginUser = async (req, res) => {
             {
                 id: user.id,
                 role: user.role,
+                company_id: user.company_id,
             },
             process.env.JWT_SECRET,
             {
@@ -103,4 +104,72 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser };
+//get me function to return current user info based on token
+const getCurrentUser = async (req, res) => {
+    try {
+        const users = await pool.query(
+            `SELECT u.id,u.username,u.email,u.role,c.company_name 
+            FROM users u 
+            LEFT JOIN companies c 
+            ON u.company_id = c.id
+            WHERE u.id = $1`,
+            [req.user.id]
+
+        );
+        res.status(200).json({
+            message: "User Info",
+            user: users.rows[0],
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            message: "Server error",
+        });
+
+    }
+};
+
+const getUsers = async (req, res) => {
+    try {
+        let users;
+        if (req.user.role === "superadmin") {
+            users = await pool.query(
+                `
+                SELECT
+                    u.id,
+                    u.username,
+                    u.email,
+                    u.role,
+                    c.company_name
+                FROM users u
+                LEFT JOIN companies c
+                ON u.company_id = c.id
+                `
+            );
+        } else {
+            users = await pool.query(
+                `
+                SELECT
+                    id,
+                    username,
+                    email,
+                    role,
+                    company_id
+                FROM users
+                WHERE company_id = $1
+                `,
+                [req.user.company_id]
+            );
+        }
+        res.status(200).json(users.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Server error",
+        });
+    }
+};
+module.exports = { registerUser, loginUser, getCurrentUser, getUsers };
