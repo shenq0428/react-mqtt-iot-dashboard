@@ -153,13 +153,15 @@ const getUsers = async (req, res) => {
             users = await pool.query(
                 `
                 SELECT
-                    id,
-                    username,
+                    u.id,
+                    u.username,
                     email,
-                    role,
-                    company_id
+                    u.role,
+                    c.company_name
                 FROM users
-                WHERE company_id = $1
+                LEFT JOIN companies c
+                ON users.company_id = c.id
+                WHERE u.company_id = $1
                 `,
                 [req.user.company_id]
             );

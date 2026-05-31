@@ -1,4 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
+import { useContext } from "react";
+  import { AuthContext } from "../context/AuthContext";
 
 function Sidebar({
   menus,
@@ -6,9 +8,25 @@ function Sidebar({
   dashboardView,
   setDashboardView
 }) {
-  const location = useLocation()
+
+  const location = useLocation();
+
+  const { user } = useContext(AuthContext);
+  
   return (
     <div className="sidebar">
+      <div className="user_card">
+        <h3>
+          {user?.username || "GUEST"}
+        </h3>
+        <p>
+          {user?.role || "Not Logged In"}
+        </p>
+        <small>
+          {user?.company_name || ""}
+        </small>
+
+      </div>
       {menus.map((menu) => (
         <div key={menu.page}>
           <Link

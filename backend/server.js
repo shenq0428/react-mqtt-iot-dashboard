@@ -1,62 +1,51 @@
-require("dotenv").config()
+require("dotenv").config();
 
-const express = require("express")
-const cors = require("cors")
-const http = require("http")
-const { Server } = require("socket.io")
+const express = require("express");
+const cors = require("cors");
+const http = require("http");
+const { Server } = require("socket.io");
 
-const startMQTTBridge = require("./gateway/mqttSocketBridge")
-const getTelemetryHistory = require("./influxdb/influxQuery")
+const startMQTTBridge = require("./gateway/mqttSocketBridge");
 
-const app = express()
+// Routes
+const testRoutes = require("./routes/testRoutes");
+const historyRoutes = require("./routes/historyRoutes");
+const authRoutes = require("./routes/authRoutes");
+
+const app = express();
 
 // Middleware
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
-const testRoutes = require("./routes/testRoutes")
-app.use("/api",testRoutes)
+// Routes
+app.use("/api", testRoutes);
+app.use("/api/history", historyRoutes);
+app.use("/api/auth", authRoutes);
 
 // Create HTTP server
-const server = http.createServer(app)
+const server = http.createServer(app);
 
 // Create websocket server
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
   },
-})
+});
 
 // Frontend websocket connected
 io.on("connection", (socket) => {
-  console.log("Frontend connected")
-})
+  console.log("Frontend connected");
+});
 
-console.log("Start MQTT Bridge")
-// Start MQTT bridge, it contain the writeTelemetry function of influxWrite
-startMQTTBridge(io)
+console.log("Start MQTT Bridge");
 
-const PORT = process.env.PORT || 3001
+// Start MQTT bridge
+startMQTTBridge(io);
 
-app.get("/api/history", async (req, res) => {
-
-  try {
-
-    const data = await getTelemetryHistory();
-
-    res.json(data);
-
-  } catch (error) {
-
-    console.error(error);
-
-    res.status(500).json({
-      error: "Failed to fetch telemetry history"
-    });
-  }
-})
+const PORT = process.env.PORT || 3001;
 
 // Start backend server
 server.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`)
-})
+  console.log(`Backend server running on port ${PORT}`);
+});

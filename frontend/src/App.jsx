@@ -14,6 +14,7 @@ import TestingPage from "./pages/dashboard/TestingPage"
 import FakeGraphPage from "./pages/dashboard/FakeGraphPage"
 import DashboardLayout from "./pages/dashboard/DashboardLayout"
 import IwkDemoPage from './pages/dashboard/IwkDemoPage'
+import Login from "./pages/login"
 
 function App() {
   const [data, setData] = useState([])
@@ -34,7 +35,8 @@ function App() {
     { label: "Home", page: "", icon: "🏠" },
     { label: "Dashboard", page: "dashboard", icon: "📊" },
     { label: "Settings", page: "settings", icon: "⚙️" },
-    { label: "AI Assistants", page: "ai-assistants", icon: "🤖" }
+    { label: "AI Assistants", page: "ai-assistants", icon: "🤖" },
+    { label: "Login", page: "login", icon: "🔑" }
   ]
 
   useEffect(() => {
@@ -70,6 +72,7 @@ function App() {
           </Route>
           <Route path="/settings" element={<Settings />} />
           <Route path="/ai-assistants" element={<AIAssistants />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
 
