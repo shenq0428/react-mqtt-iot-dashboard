@@ -1,11 +1,13 @@
 import { useState, useContext } from "react";
 import { loginUser, getCurrentUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../context/AuthContext";
 
 function Login() {
 
     const { setUser } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -30,6 +32,7 @@ function Login() {
             const response = await getCurrentUser();
             setUser(response.user);
 
+            navigate("/");
         } catch (err) {
             console.error(err);
         }
@@ -38,26 +41,18 @@ function Login() {
     return (
         <div>
             <h1 style={{ color: "white" }}>Login</h1>
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) =>
-                    setEmail(e.target.value)
-                }
-            />
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) =>
-                    setPassword(e.target.value)
-                }
-            />
+
+            <input type="email" placeholder="Email" value={email} onChange={(e) =>
+                setEmail(e.target.value)
+            } />
+
+            <input type="password" placeholder="Password" value={password} onChange={(e) =>
+                setPassword(e.target.value)
+            } />
+
             <button onClick={handleLogin}>
                 Login
             </button>
-
         </div>
     );
 }

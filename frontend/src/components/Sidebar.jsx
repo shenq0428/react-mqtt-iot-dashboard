@@ -1,20 +1,17 @@
 import { Link, useLocation } from "react-router-dom"
 import { useContext } from "react";
-  import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
-function Sidebar({
-  menus,
-  dashboardMenu,
-  dashboardView,
-  setDashboardView
-}) {
+function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
 
   const location = useLocation();
 
-  const { user } = useContext(AuthContext);
-  
+  const { user, setUser } = useContext(AuthContext);
+
+
   return (
     <div className="sidebar">
+      
       <div className="user_card">
         <h3>
           {user?.username || "GUEST"}
@@ -25,8 +22,8 @@ function Sidebar({
         <small>
           {user?.company_name || ""}
         </small>
-
       </div>
+
       {menus.map((menu) => (
         <div key={menu.page}>
           <Link
@@ -66,6 +63,18 @@ function Sidebar({
 
         </div>
       ))}
+
+      <div className="login_logout_button">
+        {!user ? (
+          <Link to="/login" className="sidebar_link">
+            Login
+          </Link>) : (
+          <Link to="/logout" className="sidebar_link">
+            Logout
+          </Link>
+        )}
+      </div>
+      
       <div className="support_widget">
 
         <img
