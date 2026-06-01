@@ -26,7 +26,7 @@ function DashboardLayout({ data, loading }) {
 
             
             <div className="dashboard_tabs">
-                <NavLink to="/dashboard" className="dashboard_tab" >
+                <NavLink to="/dashboard/overview" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
                     Overview</NavLink>
                 <NavLink to="/dashboard/testing" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
                     Testing</NavLink>

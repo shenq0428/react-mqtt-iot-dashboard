@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom"
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import '@fortawesome/fontawesome-free/css/all.min.css';//for arrwow icon
 
 function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
 
@@ -8,61 +9,122 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
 
   const { user, setUser } = useContext(AuthContext);
 
-
+  const [isDashboardSubmenuOpen, setIsDashboardSubmenuOpen] = useState(location.pathname.startsWith("/dashboard"));
   return (
     <div className="sidebar">
-      
+
       <div className="user_card">
-        <h3>
+        <h3 style={{ marginBottom: 4, color: "cyan" }}>
           {user?.username || "GUEST"}
         </h3>
+
         <p>
           {user?.role || "Not Logged In"}
         </p>
+
         <small>
           {user?.company_name || ""}
         </small>
       </div>
 
-      {menus.map((menu) => (
-        <div key={menu.page}>
-          <Link
-            to={`/${menu.page}`}
-            className={location.pathname === `/${menu.page}` ? "sidebar_link active" : "sidebar_link"}>
+      {menus.filter((menu) =>
+        menu.roles.includes(user?.role || "guest"))
+        .map((menu) => (
+          <div key={menu.page}>
 
-            {menu.icon && (
-              <span style={{ marginRight: 6 }}>
-                {menu.icon}
-              </span>
+            {menu.page === "dashboard" ? (
+
+              <div
+                className="sidebar_link"
+                onClick={() =>
+                  setIsDashboardSubmenuOpen(
+                    !isDashboardSubmenuOpen
+                  )
+                }
+              >
+
+                {menu.icon && (
+                  <span style={{ marginRight: 6 }}>
+                    {menu.icon}
+                  </span>
+                )}
+
+                {menu.label}
+
+                <span style={{ marginLeft: "auto" }}>
+                  {isDashboardSubmenuOpen ? (
+                    <i className="fa-solid fa-chevron-down"></i>
+                  ) : (
+                    <i className="fa-solid fa-chevron-right"></i>
+                  )}
+                </span>
+
+              </div>
+
+            ) : (
+
+              <Link
+                to={`/${menu.page}`}
+                className={
+                  location.pathname === `/${menu.page}`
+                    ? "sidebar_link active"
+                    : "sidebar_link"
+                }
+              >
+
+                {menu.icon && (
+                  <span style={{ marginRight: 6 }}>
+                    {menu.icon}
+                  </span>
+                )}
+
+                {menu.label}
+
+              </Link>
+
             )}
 
-            {menu.label}
+            {/* dashboard submenu */}
+            {menu.page === "dashboard" &&
+              isDashboardSubmenuOpen && (
 
-          </Link>
+                <div className="dashboard_submenu">
 
-          {/* dashboard submenu later */}
-          {menu.page === "dashboard" && location.pathname.startsWith("/dashboard") && (
+                  {dashboardMenu.map((sub) => (
 
-            <div className="dashboard_submenu">
+                    <Link
+                      key={sub.key}
 
-              {dashboardMenu.map((sub) => (
+                      to={
+                        sub.key
+                          ? `/dashboard/${sub.key}`
+                          : "/dashboard"
+                      }
 
-                <Link
-                  key={sub.key}
-                  to={`/dashboard/${sub.key}`}
-                  className={location.pathname === `/dashboard/${sub.key}`
-                    ? "submenu_link active_submenu"
-                    : "submenu_link"}
-                >
+                      className={
+                        (
+                          sub.key === ""
+                            ? location.pathname === "/dashboard"
+                            : location.pathname === `/dashboard/${sub.key}`
+                        )
+                          ? "submenu_link active_submenu"
+                          : "submenu_link"
+                      }
+                    >
 
-                  {sub.label}
-                </Link>
-              ))}
-            </div>
-          )}
+                      {sub.label}
 
-        </div>
-      ))}
+                    </Link>
+
+                  ))}
+
+                </div>
+
+              )}
+
+          </div>
+        ))}
+
 
       <div className="login_logout_button">
         {!user ? (
@@ -74,7 +136,7 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
           </Link>
         )}
       </div>
-      
+
       <div className="support_widget">
 
         <img

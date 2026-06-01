@@ -4,16 +4,22 @@ import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../context/AuthContext";
 
+import "./LoginLogout.css";
+
 function Login() {
 
     const { setUser } = useContext(AuthContext);
+
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
+
     const [password, setPassword] = useState("");
 
     const handleLogin = async () => {
+
         try {
+
             const data = await loginUser(
                 email,
                 password
@@ -23,36 +29,55 @@ function Login() {
                 "token",
                 data.token
             );
-            console.log("LOGIN:", data);
 
-            const users = await getCurrentUser();
-            localStorage.setItem("user", JSON.stringify(users.user));
-            console.log("USER:", users);
+            console.log(
+                "LOGIN:",
+                data
+            );
 
-            const response = await getCurrentUser();
-            setUser(response.user);
+            const userData = await getCurrentUser();
+
+            localStorage.setItem("user", JSON.stringify(userData.user));
+
+            setUser(userData.user);
+
+            console.log(
+                "USER:",
+                userData
+            );
 
             navigate("/");
+
         } catch (err) {
             console.error(err);
         }
     };
 
     return (
-        <div>
-            <h1 style={{ color: "white" }}>Login</h1>
 
-            <input type="email" placeholder="Email" value={email} onChange={(e) =>
-                setEmail(e.target.value)
-            } />
+        <div className="auth_container">
+            <div className="auth_card">
 
-            <input type="password" placeholder="Password" value={password} onChange={(e) =>
-                setPassword(e.target.value)
-            } />
+                <h1 className="auth_logo">
+                    🦞 Nova Lobster
+                </h1>
 
-            <button onClick={handleLogin}>
-                Login
-            </button>
+                <p className="auth_subtitle">
+                    Industrial Monitoring Platform
+                </p>
+
+                <input type="email" placeholder="Email" value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+
+                <input type="password" placeholder="Password" value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button className="auth_button" onClick={handleLogin}>
+                    CONNECT
+                </button>
+            </div>
         </div>
     );
 }

@@ -16,6 +16,8 @@ import DashboardLayout from "./pages/dashboard/DashboardLayout"
 import IwkDemoPage from './pages/dashboard/IwkDemoPage'
 import Login from "./pages/login"
 import Logout from "./pages/logout"
+import Profile from "./pages/Profile.jsx";
+import Diary from "./pages/Diary.jsx";
 
 function App() {
   const [data, setData] = useState([])
@@ -24,6 +26,7 @@ function App() {
   const [dashboardView, setDashboardView] = useState(null)
 
   const dashboardMenu = [
+    {label: "Overview", key: "overview" },
     { label: "Testing", key: "testing" },
     { label: "Fake-Data", key: "fake-data" },
     { label: "fake-graphchart", key: "fake-graphchart" },
@@ -32,11 +35,13 @@ function App() {
     { label: "new-Label", key: "new-label" }
   ]
 
-  const menus = [
-    { label: "Home", page: "", icon: "🏠" },
-    { label: "Dashboard", page: "dashboard", icon: "📊" },
-    { label: "Settings", page: "settings", icon: "⚙️" },
-    { label: "AI Assistants", page: "ai-assistants", icon: "🤖" },
+  const menuConfig = [
+    { label: "Home", page: "", icon: "🏠", roles:["guest","user","admin","superadmin"] },
+    { label: "Dashboard Overview", page: "dashboard", icon: "📊", roles:["guest","user","admin","superadmin"] },
+    { label: "Settings", page: "settings", icon: "⚙️", roles:["user","admin","superadmin"] },
+    { label: "AI Assistants", page: "ai-assistants", icon: "🤖", roles:["user","admin","superadmin"] },
+    { label: "Profile", page: "profile", icon: "👤", roles:["user","admin","superadmin"] },
+    { label: "Diary", page: "diary", icon: "📓", roles:["superadmin"] }
   ]
 
   useEffect(() => {
@@ -52,7 +57,7 @@ function App() {
     <div className="layout">
 
       <Sidebar
-        menus={menus}
+        menus={menuConfig}
         dashboardMenu={dashboardMenu}
         dashboardView={dashboardView}
         setDashboardView={setDashboardView}
@@ -63,6 +68,7 @@ function App() {
           <Route path="/" element={<Overview />} />
           {/* Nested routes for dashboard sub-pages */}
           <Route path="/dashboard" element={<DashboardLayout />} >
+            <Route path="overview" element={<DashboardOverview />} />
             <Route path="testing" element={<TestingPage data={data} loading={loading} />} />
             <Route path="fake-data" element={<FakeDataPage />} />
             <Route path="fake-graphchart" element={<FakeGraphPage />} />
@@ -72,6 +78,8 @@ function App() {
           </Route>
           <Route path="/settings" element={<Settings />} />
           <Route path="/ai-assistants" element={<AIAssistants />} />
+          <Route path="/diary" element={<Diary />} /> 
+          <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
         </Routes>

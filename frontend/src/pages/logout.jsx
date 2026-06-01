@@ -2,61 +2,73 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
+import "./LoginLogout.css";
+
 function Logout() {
 
-  const { setUser } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const [confirmLogout, setConfirmLogout] = useState(false);
+    const [confirmLogout, setConfirmLogout] = useState(false);
 
-  const handleLogout = () => {
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+        setUser(null);
+        navigate("/login");
+    };
 
-    setUser(null);
+    return (
+        <div className="auth_container">
 
-    navigate("/login");
-  };
+            <div className="auth_card">
 
-  return (
+                <h1 className="auth_logo">
+                    🦞 Nova Lobster
+                </h1>
 
-    <div>
+                <p className="auth_subtitle">
+                    Terminate Current Session
+                </p>
 
-      <h1>Logout</h1>
+                <div className="logout_info">
+                    <p>
+                        User:
+                        <strong>
+                            {" "}
+                            {user?.username}
+                        </strong>
+                    </p>
 
-      <p>
-        Are you sure you want to logout?
-      </p>
+                    <p>
+                        Role:
+                        <strong>
+                            {" "}
+                            {user?.role}
+                        </strong>
+                    </p>
 
-      {!confirmLogout ? (
+                </div>
 
-        <button
-          onClick={() => setConfirmLogout(true)}
-        >
-          🚪 Logout
-        </button>
+                {!confirmLogout ? (
+                    //!confimm logout not equal to true show normal button if confirm logout is true show warning button
+                    <button className="auth_button" onClick={() => setConfirmLogout(true)}>
+                        🚪 TERMINATE SESSION
+                    </button>
+                ) : (
+                    <button className="auth_button warning" onClick={handleLogout}>
+                        ⚠️ CLICK AGAIN TO CONFIRM
+                    </button>
+                )}
 
-      ) : (
-
-        <button
-          onClick={handleLogout}
-        >
-          ⚠️ Click Again To Confirm Logout
-        </button>
-
-      )}
-
-      <button
-        onClick={() => navigate("/")}
-      >
-        Cancel
-      </button>
-
-    </div>
-
-  );
+                <button className="auth_secondary_button" onClick={() => navigate("/")}           >
+                    CANCEL
+                </button>
+            </div>
+        </div>
+    );
 }
 
 export default Logout;
