@@ -90,7 +90,10 @@ function App() {
           <Route path="/profile" element={<ProtectedRoute allowedRoles={["user", "admin", "superadmin"]}><Profile /></ProtectedRoute>} />
           <Route path="audit-logs" element={<ProtectedRoute allowedRoles={["superadmin"]}><AuditLogs /></ProtectedRoute>} />
           <Route path="user-management" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><UserManagement /></ProtectedRoute>} />
-          <Route path="account-management" element={<ProtectedRoute allowedRoles={["superadmin"]}><AccountManagement /></ProtectedRoute>} />
+          <Route path="account-management" element={<ProtectedRoute allowedRoles={["superadmin"]}><AccountManagement /></ProtectedRoute>} >
+            <Route path="view users" element={<h1>View Users</h1>} />
+            <Route path="add user" element={<h1>Add User</h1>} />
+          </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
         </Routes>
