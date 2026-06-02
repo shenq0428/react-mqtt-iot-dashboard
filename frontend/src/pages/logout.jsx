@@ -55,16 +55,16 @@ function Logout() {
                 {!confirmLogout ? (
                     //!confimm logout not equal to true show normal button if confirm logout is true show warning button
                     <button className="auth_button" onClick={() => setConfirmLogout(true)}>
-                        🚪 TERMINATE SESSION
+                        🙁 TERMINATE SESSION
                     </button>
                 ) : (
                     <button className="auth_button warning" onClick={handleLogout}>
-                        ⚠️ CLICK AGAIN TO CONFIRM
+                        (╥﹏╥) CLICK AGAIN TO CONFIRM
                     </button>
                 )}
 
                 <button className="auth_secondary_button" onClick={() => navigate("/")}           >
-                    CANCEL
+                    😋 CANCEL
                 </button>
             </div>
         </div>

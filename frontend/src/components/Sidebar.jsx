@@ -22,9 +22,6 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
           {user?.role || "Not Logged In"}
         </p>
 
-        <small>
-          {user?.company_name || ""}
-        </small>
       </div>
 
       {menus.filter((menu) =>
@@ -36,11 +33,7 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
 
               <div
                 className="sidebar_link"
-                onClick={() =>
-                  setIsDashboardSubmenuOpen(
-                    !isDashboardSubmenuOpen
-                  )
-                }
+                onClick={() => setIsDashboardSubmenuOpen(!isDashboardSubmenuOpen)}
               >
 
                 {menu.icon && (
@@ -63,12 +56,10 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
 
             ) : (
 
-              <Link
-                to={`/${menu.page}`}
-                className={
-                  location.pathname === `/${menu.page}`
-                    ? "sidebar_link active"
-                    : "sidebar_link"
+              <Link to={`/${menu.page}`}
+                className={location.pathname === `/${menu.page}`
+                  ? "sidebar_link active"
+                  : "sidebar_link"
                 }
               >
 
@@ -130,9 +121,10 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
         {!user ? (
           <Link to="/login" className="sidebar_link">
             Login
-          </Link>) : (
-          <Link to="/logout" className="sidebar_link">
-            Logout
+          </Link>
+          ) : (
+          <Link to="/logout" className="sidebar_link" style={{ color: "red" }}>
+            😭Logout
           </Link>
         )}
       </div>

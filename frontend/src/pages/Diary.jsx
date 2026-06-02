@@ -36,6 +36,8 @@ function Diary() {
       <p>1/6/2026: done backend login and logout logic but not yet done for css,done login and logoutcss.
         2:change the navbar menu into menuConfig and added roles inside to map out according user roles.
         3:change the dashboard into toggle state </p>
+      <p>2/6/2026: added protected route component to protect the routes according to user roles, added profile page and added profile link in navbar, 
+        added audit logs page and user management page and company management page and add diary page and only superadmin can access the diary page.</p>
       
       <textarea
         rows="10"
