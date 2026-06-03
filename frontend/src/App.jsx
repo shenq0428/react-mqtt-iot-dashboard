@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import "./App.css"
 import Sidebar from './components/Sidebar'
+import Navbar from "./components/Navbar";
 
 import { Routes, Route } from "react-router-dom"
 import Overview from "./pages/Overview"
@@ -49,7 +50,7 @@ function App() {
     { label: "Company Management", page: "account-management", icon: "📝", roles: ["superadmin"] },
     { label: "Diary", page: "diary", icon: "📓", roles: ["superadmin"] },
     { label: "Profile", page: "profile", icon: "👤", roles: ["user", "admin", "superadmin"] },
-    { label: "Settings", page: "settings", icon: "⚙️", roles: [ "admin", "superadmin"] },
+    { label: "Settings", page: "settings", icon: "⚙️", roles: ["admin", "superadmin"] },
   ]
 
   useEffect(() => {
@@ -62,43 +63,43 @@ function App() {
   }, [])
 
   return (
-    <div className="layout">
 
-      <Sidebar
-        menus={menuConfig}
-        dashboardMenu={dashboardMenu}
-        dashboardView={dashboardView}
-        setDashboardView={setDashboardView}
-      />
-
-      <div className="main">
-        <Routes>
-          <Route path="/" element={<Overview />} />
-          {/* Nested routes for dashboard sub-pages */}
-          <Route path="/dashboard" element={<DashboardLayout />} >
-            <Route path="overview" element={<DashboardOverview />} />
-            <Route path="testing" element={<TestingPage data={data} loading={loading} />} />
-            <Route path="fake-data" element={<FakeDataPage />} />
-            <Route path="fake-graphchart" element={<FakeGraphPage />} />
-            <Route path="mqtt-graphchart" element={<MQTTPage />} />
-            <Route path="iwk-demo" element={<IwkDemoPage />} />
-            <Route path="new-label" element={<h1>New Label Page</h1>} />
-          </Route>
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/ai-assistants" element={<AIAssistants />} />
-          <Route path="/diary" element={<ProtectedRoute allowedRoles={["superadmin"]}><Diary /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute allowedRoles={["user", "admin", "superadmin"]}><Profile /></ProtectedRoute>} />
-          <Route path="audit-logs" element={<ProtectedRoute allowedRoles={["superadmin"]}><AuditLogs /></ProtectedRoute>} />
-          <Route path="user-management" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><UserManagement /></ProtectedRoute>} />
-          <Route path="account-management" element={<ProtectedRoute allowedRoles={["superadmin"]}><AccountManagement /></ProtectedRoute>} >
-            <Route path="view users" element={<h1>View Users</h1>} />
-            <Route path="add user" element={<h1>Add User</h1>} />
-          </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />} />
-        </Routes>
+      <div className="layout">
+        <Sidebar
+          menus={menuConfig}
+          dashboardMenu={dashboardMenu}
+          setDashboardView={setDashboardView}
+        />
+        <div className="content">
+          <Navbar />
+        <div className="main">
+          <Routes>
+            <Route path="/" element={<Overview />} />
+            {/* Nested routes for dashboard sub-pages */}
+            <Route path="/dashboard" element={<DashboardLayout />} >
+              <Route path="overview" element={<DashboardOverview />} />
+              <Route path="testing" element={<TestingPage data={data} loading={loading} />} />
+              <Route path="fake-data" element={<FakeDataPage />} />
+              <Route path="fake-graphchart" element={<FakeGraphPage />} />
+              <Route path="mqtt-graphchart" element={<MQTTPage />} />
+              <Route path="iwk-demo" element={<IwkDemoPage />} />
+              <Route path="new-label" element={<h1>New Label Page</h1>} />
+            </Route>
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/ai-assistants" element={<AIAssistants />} />
+            <Route path="/diary" element={<ProtectedRoute allowedRoles={["superadmin"]}><Diary /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute allowedRoles={["user", "admin", "superadmin"]}><Profile /></ProtectedRoute>} />
+            <Route path="audit-logs" element={<ProtectedRoute allowedRoles={["superadmin"]}><AuditLogs /></ProtectedRoute>} />
+            <Route path="user-management" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><UserManagement /></ProtectedRoute>} />
+            <Route path="account-management" element={<ProtectedRoute allowedRoles={["superadmin"]}><AccountManagement /></ProtectedRoute>} >
+              <Route path="view users" element={<h1>View Users</h1>} />
+              <Route path="add user" element={<h1>Add User</h1>} />
+            </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout />} />
+          </Routes>
+        </div>
       </div>
-
     </div>
   )
 }

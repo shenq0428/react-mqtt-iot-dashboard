@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import '@fortawesome/fontawesome-free/css/all.min.css';//for arrwow icon
 
@@ -10,20 +10,19 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
   const { user, setUser } = useContext(AuthContext);
 
   const [isDashboardSubmenuOpen, setIsDashboardSubmenuOpen] = useState(location.pathname.startsWith("/dashboard"));
+
+  const isDashboardPage =location.pathname.startsWith("/dashboard");
+
+  const [editingUserId, setEditingUserId] = useState(null);
+
   return (
     <div className="sidebar">
-
-      <div className="user_card">
-        <h3 style={{ marginBottom: 4, color: "cyan" }}>
-          {user?.username || "GUEST"}
-        </h3>
-
-        <p>
-          {user?.role || "Not Logged In"}
-        </p>
-
+      <div className="sidebar_header">
+      <div className="sidebar_logo">
+        🦞 Nova Lobster
       </div>
-
+    </div>
+    <div className="sidebar_menu">
       {menus.filter((menu) =>
         menu.roles.includes(user?.role || "guest"))
         .map((menu) => (
@@ -32,15 +31,11 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
             {menu.page === "dashboard" ? (
 
               <div
-                className="sidebar_link"
+                className={isDashboardPage ? "sidebar_link active" : "sidebar_link"}
                 onClick={() => setIsDashboardSubmenuOpen(!isDashboardSubmenuOpen)}
               >
 
-                {menu.icon && (
-                  <span style={{ marginRight: 6 }}>
-                    {menu.icon}
-                  </span>
-                )}
+                {menu.icon && (<span style={{ marginRight: 6 }}>            {menu.icon}       </span>)}
 
                 {menu.label}
 
@@ -56,18 +51,9 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
 
             ) : (
 
-              <Link to={`/${menu.page}`}
-                className={location.pathname === `/${menu.page}`
-                  ? "sidebar_link active"
-                  : "sidebar_link"
-                }
-              >
+              <Link to={`/${menu.page}`} className={location.pathname === `/${menu.page}` ? "sidebar_link active" : "sidebar_link"}  >
 
-                {menu.icon && (
-                  <span style={{ marginRight: 6 }}>
-                    {menu.icon}
-                  </span>
-                )}
+                {menu.icon && (<span style={{ marginRight: 6 }}>  {menu.icon} </span>)}
 
                 {menu.label}
 
@@ -92,42 +78,33 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
                           : "/dashboard"
                       }
 
-                      className={
-                        (
-                          sub.key === ""
-                            ? location.pathname === "/dashboard"
-                            : location.pathname === `/dashboard/${sub.key}`
-                        )
-                          ? "submenu_link active_submenu"
-                          : "submenu_link"
-                      }
+                      className={(sub.key === ""
+                        ? location.pathname === "/dashboard"
+                        : location.pathname === `/dashboard/${sub.key}`)
+                        ? "submenu_link active_submenu"
+                        : "submenu_link"}
                     >
 
                       {sub.label}
-
                     </Link>
-
                   ))}
-
-                </div>
-
+               </div>
               )}
-
           </div>
         ))}
-
 
       <div className="login_logout_button">
         {!user ? (
           <Link to="/login" className="sidebar_link">
             Login
           </Link>
-          ) : (
+        ) : (
           <Link to="/logout" className="sidebar_link" style={{ color: "red" }}>
             😭Logout
           </Link>
         )}
       </div>
+</div>
 
       <div className="support_widget">
 

@@ -12,7 +12,8 @@
 
   border-radius: 16px;
 
-  background: rgba(255, 255, 255, 0.03);
+
+  background: rgb(79, 30, 156);
 
   border: 1px solid rgba(0, 255, 255, 0.08);
 
@@ -27,7 +28,7 @@
 
 .user_management_title {
 
-  color: white;
+  color: rgb(201, 201, 201);
 
   text-align: center;
 
@@ -45,7 +46,7 @@
 
   display: block;
 
-  width: 350px;
+  width: 90%;
 
   margin: 20px auto;
 
@@ -62,6 +63,21 @@
   font-size: 14px;
 
   outline: none;
+
+  box-sizing: border-box;
+}
+
+.user_count {
+
+  width: 90%;
+
+  margin: 10px auto;
+
+  color: #00ffff;
+
+  font-size: 14px;
+
+  font-weight: 600;
 
 }
 

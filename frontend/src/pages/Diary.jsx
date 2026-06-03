@@ -37,7 +37,8 @@ function Diary() {
         2:change the navbar menu into menuConfig and added roles inside to map out according user roles.
         3:change the dashboard into toggle state </p>
       <p>2/6/2026: added protected route component to protect the routes according to user roles, added profile page and added profile link in navbar, 
-        added audit logs page and user management page and company management page and add diary page and only superadmin can access the diary page.</p>
+        added audit logs page and user management page and company management page and add diary page and only superadmin can access the diary page.
+        done the user management read functionality </p>
       
       <textarea
         rows="10"
