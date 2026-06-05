@@ -545,3 +545,10 @@
 
     font-weight: 600;
 }
+
+.error_message {
+    color: #ff6666;
+    font-size: 12px;
+    margin-top: 4px;
+    margin-bottom: 10px;
+}

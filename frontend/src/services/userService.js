@@ -74,3 +74,22 @@ export const deleteUser = async (id) => {
     );
   return response.data;
 }
+
+export const getCompanies = async () => {
+
+  const token =
+    localStorage.getItem("token");
+
+  const response =
+    await axios.get(
+      "http://localhost:3001/api/companies",
+      {
+        headers: {
+          Authorization:
+            `Bearer ${token}`
+        }
+      }
+    );
+
+  return response.data;
+};

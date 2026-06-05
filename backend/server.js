@@ -13,6 +13,7 @@ const testRoutes = require("./routes/testRoutes");
 const historyRoutes = require("./routes/historyRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const companyRoutes =  require("./routes/companyRoutes");
 const app = express();
 
 // Middleware
@@ -24,7 +25,7 @@ app.use("/api", testRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-
+app.use( "/api/companies",  companyRoutes);
 // Create HTTP server
 const server = http.createServer(app);
 

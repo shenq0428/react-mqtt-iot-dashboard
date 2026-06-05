@@ -1,5 +1,5 @@
 import { useEffect, useState, Fragment } from "react";
-import { getUsers, updateUserStatus, deleteUser, createUser } from "../services/userService.js";
+import { getUsers, updateUserStatus, deleteUser, createUser, getCompanies } from "../services/userService.js";
 import './UserManagement.css';
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { MdVisibility } from "react-icons/md";
@@ -28,10 +28,13 @@ function UserManagement() {
 
   const [phoneNumber, setPhoneNumber] = useState("");
   //company fake data
-  const [companies, setCompanies] = useState([{ id: 1, company_name: "Nova Lobster Sdn Bhd", }, { id: 2, company_name: "Pikachu Steam Energy Sdn Bhd", },]);
+  const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState("");
   //display create account message
   const [message, setMessage] = useState("");
+  //frontend validation
+  const [errors, setErrors] = useState({});
+
 
   const filteredUsers = users.filter((user) =>
     user.username?.toLowerCase().includes(search.toLowerCase())
@@ -47,8 +50,16 @@ function UserManagement() {
       setUsers(data);
     };
 
+    //读取company
+    const loadCompanies = async () => {
+
+      const data = await getCompanies();
+      console.log("COMPANIES:", data);
+      setCompanies(data);
+    };
 
     loadUsers();
+    loadCompanies ();
 
   }, []);
 
@@ -80,7 +91,7 @@ function UserManagement() {
             <th>Company</th>
             <th>Role</th>
             <th>Type</th>
-            <th>Expiry</th>
+            <th>Expiry Date</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -189,22 +200,29 @@ function UserManagement() {
 
             <label>Username</label>
             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+            {errors.username && (<p className="error_message"> {errors.username} </p>)}
+
             <label>Email</label>
             <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+            {errors.email && (<p className="error_message"> {errors.email} </p>)}
+
             <label>Phone Number</label>
             <input type="text" placeholder="0123456789 / nullable" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+            {errors.phoneNumber && (<p className="error_message"> {errors.phoneNumber} </p>)}
 
             <label>Password</label>
             <div className="password_panel">
               <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} />
               <button type="button" className="password_display" onClick={() => setShowPassword(!showPassword)}>  {showPassword ? <MdVisibilityOff /> : <MdVisibility />} </button>
             </div>
+            {errors.password && (<p className="error_message"> {errors.password} </p>)}
 
             <label>Company</label>
             <select value={selectedCompany} onChange={(e) => setSelectedCompany(e.target.value)}>
               <option value="">  Select Company</option>
               {companies.map((company) => (<option key={company.id} value={company.id}  >     {company.company_name}  </option>))}
             </select>
+            {errors.company && (<p className="error_message"> {errors.company} </p>)}
 
             <label>Role</label>
             <select value={role} onChange={(e) => setRole(e.target.value)}>
@@ -218,16 +236,63 @@ function UserManagement() {
               <option value="temporary">Temporary</option>
             </select>
 
+
             {
               privilegeType === "temporary" && (
                 <>
                   <label> Expiry Date </label>
                   <input className="datetime_icon" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
+                  {errors.expiresAt && (<p className="error_message"> {errors.expiresAt} </p>)}
                 </>
               )
             }
 
             <button className="create_submit_btn" onClick={async () => {
+              // ====================
+              // Validation
+              // ====================
+              const validationErrors = {};
+
+              // Username
+              if (!username.trim()) { validationErrors.username = "Username is required"; }
+
+              // Email
+              if (!email.trim()) { validationErrors.email = "Email is required"; }
+              else if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+              ) { validationErrors.email = "Invalid email format"; }
+
+              // Password
+              if (!password.trim()) { validationErrors.password = "Password is required"; }
+              if (phoneNumber && !/^\d{10,11}$/.test(phoneNumber)
+              ) {
+                validationErrors.phoneNumber = "Phone number must be 10-11 digits";
+              }
+
+              //company 
+              if (!selectedCompany) { validationErrors.company = "Please select a company"; }
+
+              //privilege types expiredate 
+              if (privilegeType === "temporary" && !expiresAt
+              ) {
+                validationErrors.expiresAt = "Expiry date is required";
+              }
+              //expired date future date validation
+              if (privilegeType === "temporary" && expiresAt && new Date(expiresAt) <= new Date()
+              ) {
+                validationErrors.expiresAt = "Expiry date must be in the future";
+              }
+
+              // 最后统一检查
+              if (Object.keys(validationErrors).length > 0
+              ) {
+                setErrors(validationErrors);
+                return;
+              }
+              setErrors({});
+
+              /////////////////////
+              /////payload//////////
+              //////////////////////
               const payload = {
                 username,
                 email,
@@ -240,12 +305,11 @@ function UserManagement() {
               };
               const result = await createUser(payload);
               console.log("selectedCompany:", selectedCompany);
-console.log("payload:", payload);
+              console.log("payload:", payload);
               console.log(result);
               setMessage(result.message);
               if (
-                result.message ===
-                "User  created successfully"
+                result.message.includes("created successfully")
               ) {
 
                 const data = await getUsers();
@@ -269,12 +333,12 @@ console.log("payload:", payload);
               Create User
             </button>
             {
-    message && (
-        <div className="create_message">
-            {message}
-        </div>
-    )
-}
+              message && (
+                <div className="create_message">
+                  {message}
+                </div>
+              )
+            }
           </div >
         )
       }
