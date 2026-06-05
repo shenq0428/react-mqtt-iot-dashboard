@@ -672,19 +672,9 @@ gap: 20px;
   margin: 0;
 }
 @keyframes floatRocket {
-
-  0% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
-
+  0% {   transform: translateY(0px);}
+  50% {   transform: translateY(-20px); }
+  100% {   transform: translateY(0px); }
 }
 
 .Iwk_header h1{

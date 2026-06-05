@@ -6,7 +6,8 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const startMQTTBridge = require("./gateway/mqttSocketBridge");
-
+//npm install express-list-endpoints to test api
+const listEndpoints = require("express-list-endpoints");
 // Routes
 const testRoutes = require("./routes/testRoutes");
 const historyRoutes = require("./routes/historyRoutes");
@@ -41,6 +42,6 @@ startMQTTBridge(io);
 const PORT = process.env.PORT || 3001;
 
 // Start backend server
-server.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
-});
+server.listen(PORT, () => { console.log(`Backend server running on port ${PORT}`);});
+
+console.log( listEndpoints(app));

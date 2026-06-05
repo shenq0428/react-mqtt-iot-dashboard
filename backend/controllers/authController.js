@@ -1,4 +1,5 @@
 //调用registerUser函数和loginUser函数给routes/authRoutes.js使用
+//authController=身份认证(Authentication)
 
 const pool = require("../config/db");
 const bcrypt = require("bcrypt");
@@ -64,6 +65,13 @@ const loginUser = async (req, res) => {
         }
 
         const user = userResult.rows[0];
+
+        //检查teomporary account时间是否超时
+        if (
+            user.privilege_type === "temporary" && user.expires_at && new Date(user.expires_at) < new Date()
+        ) return res.status(403).json({
+            message: "Account expired"
+        });
 
         // compare password
         const isMatch = await bcrypt.compare(
@@ -132,46 +140,5 @@ const getCurrentUser = async (req, res) => {
     }
 };
 
-const getUsers = async (req, res) => {
-    try {
-        let users;
-        if (req.user.role === "superadmin") {
-            users = await pool.query(
-                `
-                SELECT
-                    u.id,
-                    u.username,
-                    u.email,
-                    u.role,
-                    c.company_name
-                FROM users u
-                LEFT JOIN companies c
-                ON u.company_id = c.id
-                `
-            );
-        } else {
-            users = await pool.query(
-                `
-                SELECT
-                    u.id,
-                    u.username,
-                    email,
-                    u.role,
-                    c.company_name
-                FROM users
-                LEFT JOIN companies c
-                ON users.company_id = c.id
-                WHERE u.company_id = $1
-                `,
-                [req.user.company_id]
-            );
-        }
-        res.status(200).json(users.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            message: "Server error",
-        });
-    }
-};
-module.exports = { registerUser, loginUser, getCurrentUser, getUsers };
+
+module.exports = { registerUser, loginUser, getCurrentUser };

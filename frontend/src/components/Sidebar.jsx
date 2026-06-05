@@ -13,7 +13,7 @@ function Sidebar({ menus, dashboardMenu, dashboardView, setDashboardView }) {
 
   const isDashboardPage =location.pathname.startsWith("/dashboard");
 
-  const [editingUserId, setEditingUserId] = useState(null);
+
 
   return (
     <div className="sidebar">

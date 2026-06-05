@@ -266,3 +266,282 @@
   transition: 0.2s ease;
 
 }
+
+.status_badge.inactive {
+  background: rgba(255, 0, 0, 0.15);
+  color: #ff6666;
+}
+
+.create_user_panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 420px;
+    height: 100vh;
+
+    background: red;
+    z-index: 9999;
+}
+
+.panel_header button {
+
+    background: transparent;
+
+    border: none;
+
+    color: white;
+
+    font-size: 22px;
+
+    cursor: pointer;
+}
+
+.panel_header button:hover {
+
+    color: #00ffff;
+}
+
+.panel_header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.create_panel {
+    width: 90%;
+    margin: 10px auto;
+
+    display: flex;
+    justify-content: flex-end;
+}
+
+.create_user_btn {
+
+    padding: 10px 18px;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(0,255,255,.25);
+
+    background: rgba(0,255,255,.08);
+
+    color: #00ffff;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all .2s ease;
+
+    box-shadow:
+        0 0 10px rgba(0,255,255,.08);
+}
+
+.create_user_btn:hover {
+
+    background: rgba(0,255,255,.15);
+
+    border-color: rgba(0,255,255,.5);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0 15px rgba(0,255,255,.25);
+}
+
+.create_user_btn:active {
+
+    transform: translateY(0);
+}
+
+.user_management_header {
+    width: 90%;
+    margin: 10px auto;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.create_user_panel {
+
+    position: fixed;
+
+    top: 0;
+    right: 0;
+
+    width: 420px;
+    height: 100vh;
+
+    background: #111;
+
+    border-left: 1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        -10px 0 30px rgba(255,255,255,.04);
+
+    z-index: 999;
+
+    padding: 20px;
+}
+
+.panel_header h2 {
+
+    color: white;
+
+    margin: 0;
+
+    font-size: 20px;
+}
+
+.create_user_panel label {
+
+    color: #bfbfbf;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.create_user_panel input,
+.create_user_panel select {
+
+    width: 100%;
+
+    padding: 10px;
+
+    margin-top: 6px;
+
+    border-radius: 8px;
+
+    background: #1a1a1a;
+
+    border: 1px solid #2c2c2c;
+
+    color: white;
+}
+
+.create_user_panel input:focus,
+.create_user_panel select:focus {
+
+    outline: none;
+
+    border-color: #00ffff;
+
+    box-shadow:
+        0 0 10px rgba(0,255,255,.2);
+}
+
+.create_submit_btn {
+
+    width: 100%;
+
+    margin-top: 24px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(0,255,255,.2);
+
+    background: rgba(0,255,255,.08);
+
+    color: #00ffff;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.password_panel {
+
+    position: relative;
+
+    width: 100%;
+}
+.password_panel input {
+
+    width: 100%;
+
+    padding-right: 40px;
+
+    box-sizing: border-box;
+}
+.password_display {
+
+    position: absolute;
+
+    right: 12px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    background: transparent;
+
+    border: none;
+
+    padding: 0;
+
+    margin: 0;
+
+    color: #cfcfcf;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+.password_toggle {
+
+    position: absolute;
+
+    right: 10px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    background: transparent;
+
+    border: none;
+
+    cursor: pointer;
+
+    color: #bfbfbf;
+
+    font-size: 18px;
+}
+
+.password_toggle:hover {
+
+    color: white;
+}
+
+.datetime_icon::-webkit-calendar-picker-indicator {
+
+    filter: invert(1);
+}
+
+.create_message {
+    margin-top: 15px;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    background: rgba(0,255,136,.15);
+
+    color: #00ff88;
+
+    font-weight: 600;
+}

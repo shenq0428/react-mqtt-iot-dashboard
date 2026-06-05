@@ -1,0 +1,68 @@
+Nova Lobster - User Status Security
+
+Database:
+
+users.status
+
+Values:
+
+* active
+* inactive
+
+---
+
+Login
+
+Before generating JWT:
+
+if (user.status === "inactive") {
+return res.status(403).json({
+message: "Account is deactivated"
+});
+}
+
+---
+
+Important:
+
+Do NOT store status in JWT.
+
+JWT:
+
+{
+id,
+role,
+company_id
+}
+
+Reason:
+
+User status can change after login.
+
+---
+
+verifyToken Middleware
+
+After JWT verification:
+
+SELECT status
+FROM users
+WHERE id = decoded.id
+
+If status = inactive
+
+→ 403 Forbidden
+
+→ Block all API access
+
+---
+
+Final Rule
+
+ACTIVE
+✓ Login
+✓ API Access
+
+INACTIVE
+✗ Login
+✗ API Access
