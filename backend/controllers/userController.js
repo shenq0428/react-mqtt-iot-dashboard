@@ -2,6 +2,7 @@
 // users table crud :create read update delete
 const pool = require("../config/db");
 const bcrypt = require("bcrypt");
+const { createAuditLog } = require("../utils/auditLogger");
 
 //create User function 
 const createUser = async (req, res) => {
@@ -9,16 +10,7 @@ const createUser = async (req, res) => {
         // ====================
         // Request Body
         // ====================
-        let {
-            username,
-            email,
-            password,
-            role,
-            privilege_type,
-            expires_at,
-            phone_number,
-            company_id,
-        } = req.body;
+        let { username, email, password, role, privilege_type, expires_at, phone_number, company_id, } = req.body;
 
         // ====================
         // Validation
@@ -42,10 +34,9 @@ const createUser = async (req, res) => {
         }
 
         //拿来限制只有admin只能够创造user但是不能够创造admin对吧，但是假设有人输入"role":"charizard" 还是能够进去
-        if (req.user.role === "admin" && role !== "user") {
-            return res.status(403).json({
-                message: "Admin can only create users"
-            });
+        if (req.user.role === "admin" && role !== "user"
+        ) {
+            return res.status(403).json({ message: "Admin can only create users" });
         }
 
         //限制superadmin不能创造superadmin
@@ -58,15 +49,13 @@ const createUser = async (req, res) => {
         if (
             privilege_type === "temporary" && !expires_at
         ) {
-            return res.status(400).json({
-                message: "Temporary account requires expiry date"
-            });
+            return res.status(400).json({ message: "Temporary account requires expiry date" });
         }
 
         // ====================
         // Data Normalization
         // ====================
-if (privilege_type === "permanent") {
+        if (privilege_type === "permanent") {
             expires_at = null;
         }
 
@@ -85,7 +74,7 @@ if (privilege_type === "permanent") {
             });
         }
 
-         // ====================
+        // ====================
         // Password Hashing
         // ====================
         // Hash password
@@ -98,18 +87,26 @@ if (privilege_type === "permanent") {
         const newUser = await pool.query(
             `  INSERT INTO users (username, email, password, role, privilege_type, expires_at,  phone_number,company_id)
             VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *  `,
-            [
-                username,
-                email,
-                hashedPassword,
-                role,
-                privilege_type,
-                expires_at,
-                phone_number,
-                company_id,
-            ]
+            [username, email, hashedPassword, role, privilege_type, expires_at, phone_number, company_id,]
         );
-        
+
+        // ====================
+        // Insert audit log
+        // ====================
+        await createAuditLog({
+            actor_user_id: req.user.id,
+            actor_username: req.user.username,
+            actor_role: req.user.role,
+            company_id: req.user.company_id,
+            action: "CREATE_USER",
+            target_type: "user",
+            target_id: newUser.rows[0].id,
+            description: `Created ${role} account ${newUser.rows[0].username}`,
+            ip_address: req.ip,
+            user_agent: req.headers["user-agent"],
+            location: "Unknown",
+        })
+
         // ====================
         // Response
         // ====================
@@ -178,19 +175,53 @@ const updateUserStatus = async (req, res) => {
     //结果有可能会是 PATCH /api/users/8/status  body:{status:"active"} 代表把id为8的用户的状态改成active，或者是{status:"inactive"} 代表把id为8的用户的状态改成inactive
     const { id } = req.params;
     const { status } = req.body;
-
+    //放在try外面少一次 SQL 查询，确保status没有异常
+    if (status !== "active" && status !== "inactive") { return res.status(400).json({ message: "Invalid status" }); }
+    
     try {
-        if (status !== "active" && status !== "inactive"
-        ) {
-            return res.status(400).json({ message: "Invalid status" });
+        //step 1 查目标用户 储存进去targetUser const里面.
+        const targetUser = await pool.query(` SELECT username, role, status FROM users WHERE id = $1 `, [id]);
+
+        // step 2 检查用户的存在,
+        if (targetUser.rows.length === 0) { return res.status(404).json({ message: "User not found" }); }
+
+        //step 3 拿资料，然后把旧的资料存进去oldStatus 然后之后再来做对比 避免什么都没改变点击了save就自动储存
+        const username = targetUser.rows[0].username;
+        const role = targetUser.rows[0].role;
+        const oldStatus = targetUser.rows[0].status;
+
+        //step 4确保superadmin状态不会被修改 
+        if (role === "superadmin") { return res.status(403).json({ message: "Cannot modify superadmin account" }); }
+
+        //step 5 检查是否有修改 status
+        if (oldStatus === status) {
+            return res.status(400).json({ message: "no status changes" })
         }
 
-        const results = await pool.query(
-            "UPDATE users SET status = $1 WHERE id = $2 RETURNING *",
-            [status, id]
-        );
+        //step6 输入进去postgre
+        const results = await pool.query("UPDATE users SET status = $1 WHERE id = $2 RETURNING *", [status, id]);
+
+        // ====================
+        // step 7Insert audit log
+        // ====================
+        await createAuditLog({
+            actor_user_id: req.user.id,
+            actor_username: req.user.username,
+            actor_role: req.user.role,
+            company_id: req.user.company_id,
+            action: "UPDATE_USER_STATUS",
+            target_type: "user",
+            target_id: Number(id),
+            description: `Changed status from ${oldStatus} to ${status} for ${role} account ${username}`,
+            ip_address: req.ip,
+            user_agent: req.headers["user-agent"],
+            location: "Unknown",
+        });
+
         res.status(200).json(results.rows[0]);
+
     } catch (err) {
+
         console.error(err);
         res.status(500).json({ message: "Server error", });
     }
@@ -201,17 +232,45 @@ const deleteUser = async (req, res) => {
 
     const { id } = req.params;
 
-    //avoid delete own account
+    //avoid delete own account// 不需要数据库所以放在try的外面
     if (Number(req.user.id) === Number(id)) {
-        return res.status(400).json({
-            message: "Cannot delete your own account"
-        });
+        return res.status(400).json({ message: "Cannot delete your own account" });
     }
     try {
-        const result = await pool.query(
-            ` DELETE FROM users  WHERE id = $1  RETURNING *  `,
-            [id]
-        );
+        const targetUser = await pool.query(`SELECT username,role FROM users WHERE id =$1 `, [id]);
+
+        //检查不存在的用户
+        if (targetUser.rows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const username = targetUser.rows[0].username;
+        const role = targetUser.rows[0].role;
+
+        //避免admin删除superadmin
+        if (role === "superadmin") {
+            return res.status(403).json({ message: "Cannot delete superadmin account" });
+        }
+
+        //delete function
+        const result = await pool.query(` DELETE FROM users  WHERE id = $1  RETURNING *  `, [id]);
+
+        // ====================
+        // Delete audit log
+        // ====================
+        await createAuditLog({
+            actor_user_id: req.user.id,
+            actor_username: req.user.username,
+            actor_role: req.user.role,
+            company_id: req.user.company_id,
+            action: "DELETE_USER",
+            target_type: "user",
+            target_id: Number(id),
+            description: `Deleted ${role} account ${username}`,
+            ip_address: req.ip,
+            user_agent: req.headers["user-agent"],
+            location: "Unknown",
+        });
         res.status(200).json(result.rows[0]);
     } catch (err) {
         console.error(err);
@@ -221,5 +280,5 @@ const deleteUser = async (req, res) => {
     }
 };
 
-//module.exports = {createUser, getUsers, updateUserStatus, updateUser, deleteUser};
-module.exports = { getUsers, updateUserStatus, deleteUser, createUser }; 
+//module.exports = {createUser, getUsers, updateUserStatus, updateUser, deleteUser, createAuditLog };
+module.exports = { getUsers, updateUserStatus, deleteUser, createUser, createAuditLog }; 
