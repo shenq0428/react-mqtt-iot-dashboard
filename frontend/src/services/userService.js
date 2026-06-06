@@ -10,23 +10,22 @@ import axios from "axios";
 const API_URL = "http://localhost:3001/api/users";
 
 export const createUser = async (userData) => {
+
   const token = localStorage.getItem("token");
 
-  const response = await fetch("http://localhost:3001/api/users",
-    {
-      method: "POST",
+  const response =
+    await axios.post(
+      API_URL,
+      userData,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${token}`
+        }
+      }
+    );
 
-      headers: {
-        "Content-Type": "application/json",
-
-        Authorization: `Bearer ${token}`,
-      },
-
-      body: JSON.stringify(userData),
-    }
-  );
-
-  return await response.json();
+  return response.data;
 };
 
 export const getUsers = async () => {
@@ -59,7 +58,7 @@ export const updateUserStatus = async (id, status) => {
       }
     );
   return response.data;
-}
+};
 
 export const deleteUser = async (id) => {
   const token = localStorage.getItem("token");
@@ -73,16 +72,34 @@ export const deleteUser = async (id) => {
       }
     );
   return response.data;
-}
+};
 
 export const getCompanies = async () => {
 
-  const token =
-    localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
   const response =
     await axios.get(
       "http://localhost:3001/api/companies",
+      {
+        headers: {
+          Authorization:
+            `Bearer ${token}`
+        }
+      }
+    );
+
+  return response.data;
+};
+
+export const updateUser = async (id, payload) => {
+
+  const token = localStorage.getItem("token");
+
+  const response =
+    await axios.patch(
+      `${API_URL}/${id}`,
+      payload,
       {
         headers: {
           Authorization:

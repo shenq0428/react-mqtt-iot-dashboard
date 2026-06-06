@@ -10,8 +10,10 @@ function UserManagement() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [editingUserId, setEditingUserId] = useState(null);
-  // const [editedUsers, setEditedUsers] = useState({});
+  const [editedUsers, setEditedUsers] = useState({});
   const [pendingStatus, setPendingStatus] = useState({});
+
+  const [updatingUserId, setUpdatingUserId] = useState(null);
   //use for delete confirmation
   const [deleteUserId, setDeleteUserId] = useState(null);
   //用来生成createuser 弹窗
@@ -59,7 +61,7 @@ function UserManagement() {
     };
 
     loadUsers();
-    loadCompanies ();
+    loadCompanies();
 
   }, []);
 
@@ -104,9 +106,31 @@ function UserManagement() {
 
                 <td>{index + 1}</td>
                 <td>{user.id}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.company_name || "-"}</td>
+
+                <td>{updatingUserId === user.id
+                  ? (<input type="text" value={editedUsers[user.id]?.username || ""} onChange={(e) => setEditedUsers({
+                    ...editedUsers, [user.id]
+                      : { ...editedUsers[user.id], username: e.target.value }
+                  })} />)
+                  : (user.username)}</td>
+
+                <td>{updatingUserId === user.id
+                  ? (<input type="email" value={editedUsers[user.id]?.email || ""} onChange={(e) => setEditedUsers({
+                    ...editedUsers, [user.id]
+                      : { ...editedUsers[user.id], email: e.target.value }
+                  })} />)
+                  : (user.email)}</td>
+
+                <td>{updatingUserId === user.id ? (<select value={editedUsers[user.id]?.company_id || ""} onChange={(e) => setEditedUsers({
+                  ...editedUsers, [user.id]: 
+                  {
+                      ...editedUsers[user.id],
+                    company_id: Number(e.target.value)
+                  }
+                })}>{companies.map((company) => (<option key={company.id} value={company.id}>
+                  {company.company_name}</option>))}</select>) : (user.company_name || "-")}</td>
+
+
                 <td><span className={`role_badge ${user.role}`}>{user.role}</span></td>
                 <td>{user.privilege_type}</td>
                 <td>{user.expires_at}</td>
@@ -127,8 +151,25 @@ function UserManagement() {
                 <tr className="action_row">
 
                   <td colSpan="8">
-                    ↳
-                    ✏️ Update
+
+                    <button
+                      onClick={() => {
+
+                        const selectedCompany = companies.find(company => company.company_name === user.company_name);
+
+                        setUpdatingUserId(user.id);
+
+                        setEditedUsers({
+                          ...editedUsers,
+                          [user.id]: {
+                            username: user.username, email: user.email, company_id: selectedCompany?.id || "", role: user.role,
+                            privilege_type: user.privilege_type, expires_at: user.expires_at || "",
+                          }
+                        });
+                      }}>
+                      ↳  ✏️ Update
+                    </button>
+
                     <button onClick={() => setPendingStatus({
                       ...pendingStatus,
                       [user.id]:

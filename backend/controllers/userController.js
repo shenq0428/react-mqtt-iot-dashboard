@@ -101,7 +101,7 @@ const createUser = async (req, res) => {
             action: "CREATE_USER",
             target_type: "user",
             target_id: newUser.rows[0].id,
-            description: `Created ${role} account ${newUser.rows[0].username}`,
+            description: `Created ${role} account ${newUser.rows[0].username} (ID:${newUser.rows[0].id})`,
             ip_address: req.ip,
             user_agent: req.headers["user-agent"],
             location: "Unknown",
@@ -177,7 +177,7 @@ const updateUserStatus = async (req, res) => {
     const { status } = req.body;
     //放在try外面少一次 SQL 查询，确保status没有异常
     if (status !== "active" && status !== "inactive") { return res.status(400).json({ message: "Invalid status" }); }
-    
+
     try {
         //step 1 查目标用户 储存进去targetUser const里面.
         const targetUser = await pool.query(` SELECT username, role, status FROM users WHERE id = $1 `, [id]);
@@ -212,7 +212,7 @@ const updateUserStatus = async (req, res) => {
             action: "UPDATE_USER_STATUS",
             target_type: "user",
             target_id: Number(id),
-            description: `Changed status from ${oldStatus} to ${status} for ${role} account ${username}`,
+            description: `Changed status from ${oldStatus} to ${status} for ${role} account ${username} (ID:${id})`,
             ip_address: req.ip,
             user_agent: req.headers["user-agent"],
             location: "Unknown",
@@ -227,6 +227,229 @@ const updateUserStatus = async (req, res) => {
     }
 };
 
+//for updatebutton
+const updateUser = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // ====================
+        // Request Body
+        // ====================
+
+        let { username, email, phone_number, company_id, role, privilege_type, expires_at, } = req.body;
+
+        // ====================
+        // Validation
+        // ====================
+
+        if (!username || !email || !role || !privilege_type
+        ) {
+            return res.status(400).json({
+                message: "Required fields missing"
+            });
+        }
+
+        const validRoles = ["user", "admin", "superadmin"];
+
+        if (!validRoles.includes(role)) { return res.status(400).json({ message: "Invalid role" }); }
+
+        const validPrivilegeTypes = ["permanent", "temporary"];
+
+        if (!validPrivilegeTypes.includes(privilege_type)
+        ) {
+            return res.status(400).json({ message: "Invalid privilege type" });
+        }
+
+        if (privilege_type === "temporary" && !expires_at) {
+            return res.status(400).json({ message: "Temporary account requires expiry date" });
+        }
+
+        // ====================
+        // Find Target User
+        // ====================
+
+        const targetUser = await pool.query(
+            `
+            SELECT *
+            FROM users
+            WHERE id = $1
+            `,
+            [id]
+        );
+
+        if (targetUser.rows.length === 0) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        const oldUser = targetUser.rows[0];
+        
+        //avoid existing email
+        const existingEmail = await pool.query(`SELECT id FROM users WHERE email = $1AND id != $2`, [email, id]);
+
+        if (existingEmail.rows.length > 0) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+
+        // ====================
+        // Permission Check
+        // ====================
+
+        // nobody can modify superadmin
+
+        if (
+            oldUser.role === "superadmin"
+        ) {
+            return res.status(403).json({
+                message: "Cannot modify superadmin account"
+            });
+        }
+
+        // admin restrictions
+
+        if (req.user.role === "admin"
+        ) {
+            if (oldUser.company_id !== req.user.company_id) {
+                return res.status(403).json({
+                    message: "Cannot modify users from another company"
+                });
+            }
+
+            if (oldUser.role !== "user") {
+                return res.status(403).json({
+                    message: "Admin can only modify users"
+                });
+            }
+
+            // admin cannot change role
+
+            if (
+                role !== oldUser.role
+            ) {
+                return res.status(403).json({
+                    message: "Admin cannot modify roles"
+                });
+            }
+
+            // admin cannot change company
+
+            if (
+                Number(company_id) !==
+                Number(oldUser.company_id)
+            ) {
+                return res.status(403).json({
+                    message: "Admin cannot change company"
+                });
+            }
+        }
+
+        // ====================
+        // Data Normalization
+        // ====================
+
+        if (
+            privilege_type === "permanent"
+        ) {
+            expires_at = null;
+        }
+
+        // ====================
+        // Change Detection
+        // ====================
+
+        const changes = [];
+
+        if (oldUser.username !== username) {
+            changes.push(`username from ${oldUser.username} to ${username}`
+            );
+        }
+
+        if (oldUser.email !== email) {
+            changes.push(`email from ${oldUser.email} to ${email}`
+            );
+        }
+
+        if (oldUser.phone_number !== phone_number) {
+            changes.push(`phone number updated`
+            );
+        }
+
+        if (oldUser.role !== role) {
+            changes.push(`role from ${oldUser.role} to ${role}`
+            );
+        }
+
+        if (Number(oldUser.company_id) !== Number(company_id)) {
+            changes.push(`company from ${oldUser.company_id} to ${company_id}`
+            );
+        }
+
+        if (oldUser.privilege_type !== privilege_type) {
+            changes.push(`privilege type from ${oldUser.privilege_type} to ${privilege_type}`
+            );
+        }
+
+        if (String(oldUser.expires_at) !== String(expires_at)) {
+            changes.push(`expiry date updated`
+            );
+        }
+
+        if (changes.length === 0) { return res.status(400).json({ message: "No changes detected" }); }
+
+        // ====================
+        // Update User
+        // ====================
+
+        const updatedUser = await pool.query(
+            `
+            UPDATE users
+            SET
+                username = $1,
+                email = $2,
+                phone_number = $3,
+                company_id = $4,
+                role = $5,
+                privilege_type = $6,
+                expires_at = $7
+            WHERE id = $8
+            RETURNING *
+            `,
+            [username, email, phone_number, company_id, role, privilege_type, expires_at, id,]
+        );
+
+        // ====================
+        // Audit Log
+        // ====================
+
+        await createAuditLog({
+            actor_user_id: req.user.id,
+            actor_username: req.user.username,
+            actor_role: req.user.role,
+            company_id: req.user.company_id,
+            action: "UPDATE_USER",
+            target_type: "user",
+            target_id: Number(id),
+            description: `Updated user ID ${id}: ${changes.join(", ")} `,
+            ip_address: req.ip,
+            user_agent: req.headers["user-agent"],
+            location: "Unknown",
+        });
+
+        // ====================
+        // Response
+        // ====================
+
+        res.status(200).json({
+            message: "User updated successfully",
+            user: updatedUser.rows[0],
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
 //later set disable superadmin account been delete
 const deleteUser = async (req, res) => {
 
@@ -266,7 +489,7 @@ const deleteUser = async (req, res) => {
             action: "DELETE_USER",
             target_type: "user",
             target_id: Number(id),
-            description: `Deleted ${role} account ${username}`,
+            description: `Deleted ${role} account ${username} (ID: ${id})`,
             ip_address: req.ip,
             user_agent: req.headers["user-agent"],
             location: "Unknown",
@@ -280,5 +503,4 @@ const deleteUser = async (req, res) => {
     }
 };
 
-//module.exports = {createUser, getUsers, updateUserStatus, updateUser, deleteUser, createAuditLog };
-module.exports = { getUsers, updateUserStatus, deleteUser, createUser, createAuditLog }; 
+module.exports = { createUser, getUsers, updateUserStatus, updateUser, deleteUser, createAuditLog };

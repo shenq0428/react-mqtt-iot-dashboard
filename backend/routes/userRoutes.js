@@ -2,7 +2,7 @@
 //VERIFY TOKEN TO PROTECT THIS ROUTE, ONLY ADMIN AND SUPERADMIN CAN ACCESS THIS ROUTE
 const { verifyToken } = require("../middleware/authMiddleware");
 
-const { getUsers, updateUserStatus, deleteUser, createUser} = require("../controllers/userController");
+const { getUsers, updateUserStatus, deleteUser, createUser, updateUser} = require("../controllers/userController");
 //requireRole function to check if the user has the required role to access this route, only admin and superadmin can access this route
 const { requireRole } = require("../middleware/roleMiddleware");
 
@@ -28,11 +28,19 @@ router.get(
 );
 
 //save button in user management page not working, need to add more routes here for update user info, delete user, etc.
+//patch 是给部分更新，update 是给完全替代的更新
 router.patch(
     "/:id/status", 
     verifyToken, 
     requireRole("admin", "superadmin"),
     updateUserStatus
+);
+
+routter.patch(
+    "/:id",
+    verifyToken,
+    requireRole("admin", "superadmin"),
+    updateUser
 );
 
 router.delete(
