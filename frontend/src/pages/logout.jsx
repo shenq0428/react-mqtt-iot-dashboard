@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
+import { logoutUser } from "../services/authService";
 import "./LoginLogout.css";
 
 function Logout() {
@@ -12,13 +12,28 @@ function Logout() {
 
     const [confirmLogout, setConfirmLogout] = useState(false);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+    const handleLogout = async () => {
 
-        setUser(null);
-        navigate("/login");
+        try {
+            await logoutUser();
+
+            //为了避免token expire而logout不到 而使用finally 不管Jwt有没有过期都能推出，但是代价是logoutaudit不会记录 因为jwttoken过期了
+        } catch (error) {
+
+            console.log(               "Logout audit skipped"
+            );
+
+        } finally {
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            setUser(null);
+
+            navigate("/login");
+        }
     };
+
 
     return (
         <div className="auth_container">

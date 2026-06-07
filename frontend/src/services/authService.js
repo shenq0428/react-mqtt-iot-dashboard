@@ -26,3 +26,23 @@ export const getCurrentUser = async () => {
     );
     return response.data;
 };
+
+export const logoutUser = async () => {
+
+    const token =
+        localStorage.getItem("token");
+
+    const response =
+        await axios.post(
+            "http://localhost:3001/api/auth/logout",
+            {},
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+    return response.data;
+};
