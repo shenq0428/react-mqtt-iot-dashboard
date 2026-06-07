@@ -36,7 +36,7 @@ router.patch(
     updateUserStatus
 );
 
-routter.patch(
+router.patch(
     "/:id",
     verifyToken,
     requireRole("admin", "superadmin"),

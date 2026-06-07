@@ -1,12 +1,13 @@
-import { useEffect, useState, Fragment } from "react";
-import { getUsers, updateUserStatus, deleteUser, createUser, getCompanies } from "../services/userService.js";
+import { useEffect, useState, Fragment, useContext } from "react";
+import { getUsers, updateUserStatus, deleteUser, createUser, getCompanies, updateUser } from "../services/userService.js";
 import './UserManagement.css';
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { MdVisibility } from "react-icons/md";
 import { MdVisibilityOff } from "react-icons/md";
+import { AuthContext } from "../context/AuthContext";
 
 function UserManagement() {
-
+  const { user: currentUser } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [editingUserId, setEditingUserId] = useState(null);
@@ -116,24 +117,74 @@ function UserManagement() {
 
                 <td>{updatingUserId === user.id
                   ? (<input type="email" value={editedUsers[user.id]?.email || ""} onChange={(e) => setEditedUsers({
-                    ...editedUsers, [user.id]
+                    ...editedUsers,
+                    [user.id]
                       : { ...editedUsers[user.id], email: e.target.value }
                   })} />)
                   : (user.email)}</td>
 
-                <td>{updatingUserId === user.id ? (<select value={editedUsers[user.id]?.company_id || ""} onChange={(e) => setEditedUsers({
-                  ...editedUsers, [user.id]: 
-                  {
+                <td>{updatingUserId === user.id ? (currentUser?.role === "superadmin" ?(
+                  <select value={editedUsers[user.id]?.company_id || ""} onChange={(e) => setEditedUsers({
+                    ...editedUsers,
+                    [user.id]:
+                    {
                       ...editedUsers[user.id],
-                    company_id: Number(e.target.value)
-                  }
-                })}>{companies.map((company) => (<option key={company.id} value={company.id}>
-                  {company.company_name}</option>))}</select>) : (user.company_name || "-")}</td>
+                      company_id: Number(e.target.value)
+                    }
+                  })}>{companies.map((company) => (<option key={company.id} value={company.id}>
+                    {company.company_name}</option>))}
+                  </select>)
+                  : (user.company_name || "-")):(user.company_name)}</td>
 
 
-                <td><span className={`role_badge ${user.role}`}>{user.role}</span></td>
-                <td>{user.privilege_type}</td>
-                <td>{user.expires_at}</td>
+                <td>
+                  {updatingUserId === user.id
+                    ? (currentUser?.role === "superadmin"
+                      ? (<select value={editedUsers[user.id]?.role || ""} onChange={(e) => setEditedUsers({
+                        ...editedUsers,
+                        [user.id]: {
+                          ...editedUsers[user.id],
+                          role: e.target.value
+                        }
+                      })}>
+                        <option value="user">User</option>
+                        <option value="admin">Admin </option>
+                      </select>
+                      )
+                      : (<span className={`role_badge ${user.role}`}>{user.role}</span>)
+                    )
+                    : (<span className={`role_badge ${user.role}`}>{user.role}</span>)}</td>
+
+                <td>{updatingUserId === user.id
+                  ? (<select value={editedUsers[user.id]?.privilege_type || ""} onChange={(e) => setEditedUsers({
+                    ...editedUsers,
+                    [user.id]: {
+                      ...editedUsers[user.id],
+                      privilege_type: e.target.value
+                    }
+                  })}>
+                    <option value="permanent">Permanent</option>
+                    <option value="temporary">Temporary </option>
+                  </select>
+                  )
+                  : (user.privilege_type)}</td>
+
+                <td> {updatingUserId === user.id
+                  ? (editedUsers[user.id]?.privilege_type === "temporary" ? (
+                    <input type="datetime-local" value={editedUsers[user.id]?.expires_at || ""} onChange={(e) => setEditedUsers({
+                      ...editedUsers,
+                      [user.id]: {
+                        ...editedUsers[user.id],
+                        expires_at: e.target.value
+                      }
+                    })
+                    }
+                    />
+                  ) : ("-")
+                  )
+                  : (user.expires_at || "-")}</td>
+
+
                 {/*status column*/}
                 <td>
                   <span className={`status_badge ${pendingStatus[user.id] || user.status}`}>{(pendingStatus[user.id] || user.status || "").toUpperCase()}</span>
@@ -179,17 +230,26 @@ function UserManagement() {
                     </button>
 
                     <button onClick={async () => {
-                      await updateUserStatus(user.id, pendingStatus[user.id] || user.status);
 
+                      if (editedUsers[user.id]) {
+                        // User Info Update
+                        await updateUser(user.id, editedUsers[user.id]);
+                      }
+                      //Status update
+                      if (pendingStatus[user.id] && pendingStatus[user.id] !== user.status) {
+                        await updateUserStatus(user.id, pendingStatus[user.id]);
+                      }
                       const data = await getUsers();
                       setUsers(data);
                       setEditingUserId(null);
+                      setUpdatingUserId(null)
                       setPendingStatus({});
+                      setEditedUsers({});
                     }}>
                       💾 Save
                     </button>
 
-                    <button onClick={() => { setPendingStatus({}); setEditingUserId(null); }} >
+                    <button onClick={() => { setPendingStatus({}); setEditingUserId(null); setUpdatingUserId(null); setEditedUsers({}); }} >
                       ❌ Cancel
                     </button>
 

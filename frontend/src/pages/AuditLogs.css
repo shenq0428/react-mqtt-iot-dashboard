@@ -1,0 +1,11 @@
+.audit_logs_container {
+  padding: 20px;
+}
+
+.audit_logs_title {
+  color: white;
+}
+
+.audit_logs_paragraph {
+  color:yellow;
+}

@@ -286,7 +286,7 @@ const updateUser = async (req, res) => {
         const oldUser = targetUser.rows[0];
         
         //avoid existing email
-        const existingEmail = await pool.query(`SELECT id FROM users WHERE email = $1AND id != $2`, [email, id]);
+        const existingEmail = await pool.query(`SELECT id FROM users WHERE email = $1 AND id != $2`, [email, id]);
 
         if (existingEmail.rows.length > 0) {
             return res.status(400).json({ message: "Email already exists" });
@@ -370,10 +370,11 @@ const updateUser = async (req, res) => {
             );
         }
 
+        /*目前前端没有显示也没有的修改phonenumber
         if (oldUser.phone_number !== phone_number) {
             changes.push(`phone number updated`
             );
-        }
+        }*/
 
         if (oldUser.role !== role) {
             changes.push(`role from ${oldUser.role} to ${role}`
