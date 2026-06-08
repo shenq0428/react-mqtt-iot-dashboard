@@ -1,4 +1,4 @@
-import MQTTGraphChart from "../../components/Dashboard/MQTTGraphChart"
+import MQTTGraphChart from "../../components/Dashboard/MqttGraphChart";
 
 function MQTTPage() {
 
