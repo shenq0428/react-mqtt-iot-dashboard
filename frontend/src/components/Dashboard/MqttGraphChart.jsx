@@ -200,14 +200,14 @@ function MQTTGraphChart() {
 
     })
     //testing  get api 
-    fetch("http://localhost:3001/api/test")
+    fetch(`${import.meta.env.VITE_API_URL}/api/test`)
       .then((res) => res.json())
       .then((data) => {
         //console.log("FRONTEND GET response:", data)
       })
 
     //testing post api
-    fetch("http://localhost:3001/api/alarm", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/alarm`, {
       method: "POST",
 
       headers: {
@@ -223,13 +223,13 @@ function MQTTGraphChart() {
     // Cleanup websocket
 
 
-    fetch("http://localhost:3001/api/threshold")
+    fetch(`${import.meta.env.VITE_API_URL}/api/threshold`)
       .then((res) => res.json())
       .then((data) => {
         //console.log("FRONTEND GET response (Threshold):", data.currentThreshold)
       })
     //frontend patch function
-    fetch("http://localhost:3001/api/device/123",{
+    fetch(`${import.meta.env.VITE_API_URL}/api/device/123`,{
       method:"PATCH",
       headers:{"Content-Type":"application/json",},
       body:JSON.stringify({
@@ -237,7 +237,7 @@ function MQTTGraphChart() {
       })
     })
     //frotend delete function
-    fetch("http://localhost:3001/api/alarm/999",{
+    fetch(`${import.meta.env.VITE_API_URL}/api/alarm/999`,{
       method:"DELETE"
     })
 
