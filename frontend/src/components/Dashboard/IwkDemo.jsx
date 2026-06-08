@@ -42,7 +42,7 @@ function IwkDemo() {
         })
     }
     function fetchHistoryData() {
-        fetch("http://localhost:3001/api/history")
+        fetch(`${import.meta.env.VITE_API_URL}/api/history`)
             .then((response) => response.json())
             .then((data) => {
                 console.log(

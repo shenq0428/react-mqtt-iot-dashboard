@@ -7,7 +7,10 @@ delete 需要id 因为是根据id来知道delete哪一行的数据。*/
 
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/api/users";
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+const USER_URL = `${BASE_URL}/api/users`;
+const COMPANY_URL = `${BASE_URL}/api/companies`;
 
 export const createUser = async (userData) => {
 
@@ -80,7 +83,7 @@ export const getCompanies = async () => {
 
   const response =
     await axios.get(
-      "http://localhost:3001/api/companies",
+      `${BASE_URL}/api/companies`,
       {
         headers: {
           Authorization:
@@ -98,7 +101,7 @@ export const updateUser = async (id, payload) => {
 
   const response =
     await axios.patch(
-      `${API_URL}/${id}`,
+      `${USER_URL}/${id}`,
       payload,
       {
         headers: {
