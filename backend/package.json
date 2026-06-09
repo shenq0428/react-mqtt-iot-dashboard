@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node apiTesting/server.js"
-  },
+  "start": "node server.js",
+  "dev": "node server.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
