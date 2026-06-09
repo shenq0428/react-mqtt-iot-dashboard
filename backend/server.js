@@ -43,8 +43,12 @@ const allowedOrigins = [
 ];
 
 const io = new Server(server, {
-    cors: { origin:allowedOrigins, methods: ["GET", "POST"] },
+    cors: {
+        origin: allowedOrigins,
+        methods: ["GET", "POST"],
+    },
 });
+
 // Frontend websocket connected
 io.on("connection", (socket) => { console.log("Frontend connected"); });
 
