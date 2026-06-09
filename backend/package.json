@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "start": "node server.js",
-  "dev": "node server.js"
-},
+    "dev": "dotenv -e .env.development -- node server.js",
+    "start": "dotenv -e .env.production -- node server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -22,5 +22,8 @@
     "mqtt": "^5.15.1",
     "pg": "^8.21.0",
     "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^11.0.0"
   }
 }
