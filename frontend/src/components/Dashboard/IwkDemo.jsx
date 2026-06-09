@@ -46,25 +46,17 @@ function IwkDemo() {
             .then((response) => response.json())
             .then((data) => {
                 console.log(
-                    data.filter(
-                        (item) =>
-                            item.equipment?.includes("blower")
-                    )
+                    data.filter((item) => item.equipment?.includes("blower"))
                 )
 
                 const filteredData = data
-                    .filter(
-                        (item) =>
-                            selectedEquipments.includes(item.equipment) &&
-                            item._field === "motor_amp"
-                    )
+                    .filter((item) => selectedEquipments.includes(item.equipment) && item._field === "motor_amp")
                 console.log(
                     "LAST 20 FILTERED:",
                     filteredData.slice(-20)
                 )
 
-                const slicedData =
-                    filteredData.slice(-300)
+                const slicedData = filteredData.slice(-300)
                 //step 2 : fix the main point
                 const groupedData = []
                 // step 3: fix the timestamp sychronization
@@ -72,36 +64,25 @@ function IwkDemo() {
 
                     // ROUND TO SECOND
                     const roundedTime =
-                        Math.floor(
-                            new Date(item._time).getTime() / 1000
-                        ) * 1000
+                        Math.floor(new Date(item._time).getTime() / 1000) * 1000
 
                     let existingPoint =
                         groupedData.find(
-                            (point) =>
-                                point.timestamp === roundedTime
-                        )
+                            (point) => point.timestamp === roundedTime)
 
                     // CREATE NEW POINT
                     if (!existingPoint) {
-
                         existingPoint = {
-
                             timestamp: roundedTime,
-
-                            time: new Date(
-                                roundedTime
-                            ).toLocaleTimeString()
+                            time: new Date(roundedTime).toLocaleTimeString()
 
                         }
-
                         groupedData.push(existingPoint)
 
                     }
 
                     // ADD EQUIPMENT VALUE
-                    existingPoint[item.equipment] =
-                        item._value
+                    existingPoint[item.equipment] = item._value
 
                 })
                 //  step 4:SORT TIME

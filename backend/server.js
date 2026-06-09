@@ -37,7 +37,7 @@ const server = http.createServer(app);
 http://43.216.195.182 is for online after deploy at aws, 
 is a frontend URL and could be setup in .env example:origin: process.env.FRONTEND_URL,*/
 const io = new Server(server, {
-    cors: { origin: ["http://localhost:5173", "http://43.216.195.182"], methods: ["GET", "POST"] },
+    cors: { origin: ["http://localhost:5173", process.env.FRONTEND_URL], methods: ["GET", "POST"] },
 });
 // Frontend websocket connected
 io.on("connection", (socket) => { console.log("Frontend connected"); });
