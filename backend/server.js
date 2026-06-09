@@ -36,8 +36,14 @@ const server = http.createServer(app);
 /* "http://localhost:5173" is for localhost
 http://43.216.195.182 is for online after deploy at aws, 
 is a frontend URL and could be setup in .env example:origin: process.env.FRONTEND_URL,*/
+const allowedOrigins = [
+    "http://localhost:5173",
+    process.env.FRONTEND_URL,
+    "https://www.novalobster.app",
+];
+
 const io = new Server(server, {
-    cors: { origin: ["http://localhost:5173", process.env.FRONTEND_URL], methods: ["GET", "POST"] },
+    cors: { origin:allowedOrigins, methods: ["GET", "POST"] },
 });
 // Frontend websocket connected
 io.on("connection", (socket) => { console.log("Frontend connected"); });
