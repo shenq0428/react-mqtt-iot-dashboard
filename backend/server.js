@@ -13,7 +13,7 @@ const testRoutes = require("./routes/testRoutes");
 const historyRoutes = require("./routes/historyRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const companyRoutes =  require("./routes/companyRoutes");
+const companyRoutes = require("./routes/companyRoutes");
 const auditRoutes = require("./routes/auditRoutes")
 const app = express();
 
@@ -26,17 +26,20 @@ app.use("/api", testRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use( "/api/companies",  companyRoutes);
-app.use("/api/audit-logs",auditRoutes)
+app.use("/api/companies", companyRoutes);
+app.use("/api/audit-logs", auditRoutes)
 
 // Create HTTP server
 const server = http.createServer(app);
 
 // Create websocket server
-const io = new Server(server, { cors: {   origin: "http://localhost:5173", },});
-
+/* "http://localhost:5173" is for localhost
+http://43.216.195.182 is for online after deploy at aws*/
+const io = new Server(server, {
+    cors: { origin: ["http://localhost:5173", "http://43.216.195.182"], methods: ["GET", "POST"] },
+});
 // Frontend websocket connected
-io.on("connection", (socket) => { console.log("Frontend connected");});
+io.on("connection", (socket) => { console.log("Frontend connected"); });
 
 console.log("Start MQTT Bridge");
 
@@ -46,6 +49,6 @@ startMQTTBridge(io);
 const PORT = process.env.PORT || 3001;
 
 // Start backend server
-server.listen(PORT, () => { console.log(`Backend server running on port ${PORT}`);});
+server.listen(PORT, () => { console.log(`Backend server running on port ${PORT}`); });
 
-console.log( listEndpoints(app));
+console.log(listEndpoints(app));
