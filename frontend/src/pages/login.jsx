@@ -20,20 +20,11 @@ function Login() {
 
         try {
 
-            const data = await loginUser(
-                email,
-                password
-            );
+            const data = await loginUser(email, password);
 
-            localStorage.setItem(
-                "token",
-                data.token
-            );
+            localStorage.setItem("token", data.token);
 
-            console.log(
-                "LOGIN:",
-                data
-            );
+            console.log("LOGIN:", data);
 
             const userData = await getCurrentUser();
 
@@ -41,10 +32,7 @@ function Login() {
 
             setUser(userData.user);
 
-            console.log(
-                "USER:",
-                userData
-            );
+            console.log("USER:", userData);
 
             navigate("/");
 
@@ -54,7 +42,9 @@ function Login() {
     };
 
     return (
+        <div>
 
+      
         <div className="auth_container">
             <div className="auth_card">
 
@@ -78,6 +68,23 @@ function Login() {
                     CONNECT
                 </button>
             </div>
+        </div>
+        {/* login form */}
+
+      {import.meta.env.DEV && (
+        <div>
+          <h2>Developer Cheatsheet</h2>
+
+          <p>SUPERADMIN</p>
+          <p>superadmin@novalobster.com</p>
+
+          <p>ADMIN</p>
+          <p>admin@pikachu.com</p>
+
+          <p>USER</p>
+          <p>pikachu1@pikachu.com</p>
+        </div>
+      )}
         </div>
     );
 }
