@@ -39,6 +39,9 @@ function Navbar() {
         {currentTitle}
       </div>
 
+      <div className="navbar_searchbar">
+        <input placeholder="Search Anything..."></input>
+      </div>
       {/* Right */}
       <div className="navbar_user">
 

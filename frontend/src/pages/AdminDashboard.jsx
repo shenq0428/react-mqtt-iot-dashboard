@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDashboardStats } from "../services/dashboardService";
+import { formatDistanceToNow } from "date-fns";
 
 function AdminDashboard() {
 
@@ -8,6 +9,8 @@ function AdminDashboard() {
         totalCompanies: 0,
         todayLogins: 0,
         onlineUsers: 9,
+        lastLoginUser: "",
+        lastLoginTime: "",
     });
 
 
@@ -17,7 +20,7 @@ function AdminDashboard() {
             try {
 
                 const data = await getDashboardStats();
-
+                // close console after done
                 console.log("Dashboard Stats:", data);
 
                 setStats(prev => ({ ...prev, ...data, }));
@@ -34,19 +37,15 @@ function AdminDashboard() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6">
+        <div className="min-h-screen bg-slate-50 p-4">
 
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900">
-                    Admin Dashboard
-                </h1>
-
                 <p className="text-slate-500">
                     System overview and statistics
                 </p>
             </div>
 
-            <div className="grid grid-cols-4 gap-5">
+            <div className="grid grid-cols-4 gap-3">
 
                 {/* Total Users */}
                 <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
@@ -93,13 +92,54 @@ function AdminDashboard() {
                     <p className="text-slate-500 text-sm font-medium">
                         Online Users
                     </p>
-
-                   <h2 className="text-slate-900 text-4xl font-bold mt-2">
+                    <h2 className="text-slate-900 text-4xl font-bold mt-2">
                         {stats.onlineUsers}
                     </h2>
 
                 </div>
 
+                <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm col-span-2">
+
+                    <div className="flex items-center justify-between">
+
+                        <div className="flex gap-4">
+
+                            {/* Icon */}
+                            <div className="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center text-purple-500 text-2xl">
+                                🕒
+                            </div>
+
+                            {/* Login Info */}
+                            <div>
+
+                                <p className="text-slate-500 text-sm">
+                                    Last Login
+                                </p>
+
+                                <h3 className="text-slate-900 font-semibold text-xl">
+                                    {stats.lastLoginUser}
+                                </h3>
+
+                                <p className="text-slate-500 text-sm mt-1">
+                                    {stats.lastLoginTime &&
+                                        new Date(stats.lastLoginTime).toLocaleString("en-MY", { 
+                                            day: "numeric", month: "short", year: "numeric", 
+                                            hour: "2-digit", minute: "2-digit", 
+                                            })}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        {/* Badge */}
+                        <div className="   bg-green-100   text-green-700   text-sm    font-medium    px-3    py-1    rounded-lg    ">
+                            {stats.lastLoginTime && formatDistanceToNow(new Date(stats.lastLoginTime), { addSuffix: true })}
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
 
         </div>
