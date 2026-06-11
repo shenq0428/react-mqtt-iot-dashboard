@@ -21,6 +21,10 @@ jobs:
           script: |
             cd /home/ubuntu/react-mqtt-iot-dashboard
 
+            echo "Reset local changes..."
+            git reset --hard HEAD
+            git clean -fd
+
             echo "Pulling latest code..."
             git pull origin main
 
@@ -33,7 +37,12 @@ jobs:
             npm install
             npm run build
 
+            echo "Deploy frontend..."
+            sudo rm -rf /var/www/novalobster/*
+            sudo cp -r dist/* /var/www/novalobster/
+            
             echo "Restarting backend..."
+            cd ../backend
             pm2 restart backend
 
             echo "Deployment complete!"

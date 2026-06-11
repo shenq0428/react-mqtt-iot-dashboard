@@ -23,6 +23,7 @@ import CompanyManagement from "./pages/CompanyManagement.jsx";
 import AuditLogs from "./pages/AuditLogs.jsx";
 
 import ProtectedRoute from "./components/ProtectedRoute"
+import AdminDashboard from './pages/AdminDashboard.jsx';
 
 function App() {
   const [data, setData] = useState([])
@@ -36,15 +37,16 @@ function App() {
     { label: "Fake Graph", key: "fake-graphchart" },
     { label: "AI Assistants", key: "ai-assistants" },
     { label: "Diary", key: "diary" },
-]
+  ]
 
   const menuConfig = [
-    { label: "Developer Playground", page: "developer-playground", icon: "🧪", roles: ["superadmin"] },
-    { label: "Audit Logs", page: "audit-logs", icon: "📜", roles: ["superadmin"] },
+    { label: "Admin Dashboard", page: "admin-dashboard", icon: "📊", roles: ["superadmin"] },
     { label: "User Management", page: "user-management", icon: "🧑‍💻", roles: ["admin", "superadmin"] },
     { label: "Company Management", page: "company-management", icon: "🏢", roles: ["superadmin"] },
+    { label: "Audit Logs", page: "audit-logs", icon: "📜", roles: ["superadmin"] },
     { label: "Profile", page: "profile", icon: "👤", roles: ["user", "admin", "superadmin"] },
     { label: "Settings", page: "settings", icon: "⚙️", roles: ["admin", "superadmin"] },
+    ...(import.meta.env.DEV ? [{ label: "Developer Playground", page: "developer-playground", icon: "🧪", roles: ["superadmin"] }] : []),
   ]
 
   useEffect(() => {
@@ -58,27 +60,28 @@ function App() {
 
   return (
 
-      <div className="layout">
-        <Sidebar
-          menus={menuConfig}
-          developerMenu={developerMenu}
-        />
-        <div className="content">
-          <Navbar />
+    <div className="layout">
+      <Sidebar
+        menus={menuConfig}
+        developerMenu={developerMenu}
+      />
+      <div className="content">
+        <Navbar />
         <div className="main">
           <Routes>
             <Route path="/" element={<DeveloperCheatSheet />} />
             {/* Nested routes for dashboard sub-pages */}
             <Route path="/developer-playground" element={<DashboardLayout />} >
-              <Route index element={<div><h1>Developer Playground</h1><p>Select a page from sidebar</p></div>}/>
+              <Route index element={<div><h1>Developer Playground</h1><p>Select a page from sidebar</p></div>} />
               <Route path="testing" element={<TestingPage data={data} loading={loading} />} />
               <Route path="fake-data" element={<FakeDataPage />} />
               <Route path="fake-graphchart" element={<FakeGraphPage />} />
               <Route path="mqtt-graphchart" element={<MQTTPage />} />
               <Route path="iwk-demo" element={<IwkDemoPage />} />
-              <Route path="ai-assistants" element={<ProtectedRoute allowedRoles={["superadmin"]}><AIAssistants /></ProtectedRoute>}/>
-              <Route path="diary"element={<ProtectedRoute allowedRoles={["superadmin"]}><Diary /></ProtectedRoute>}/>
+              <Route path="ai-assistants" element={<ProtectedRoute allowedRoles={["superadmin"]}><AIAssistants /></ProtectedRoute>} />
+              <Route path="diary" element={<ProtectedRoute allowedRoles={["superadmin"]}><Diary /></ProtectedRoute>} />
             </Route>
+            <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminDashboard /></ProtectedRoute>} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<ProtectedRoute allowedRoles={["user", "admin", "superadmin"]}><Profile /></ProtectedRoute>} />
             <Route path="audit-logs" element={<ProtectedRoute allowedRoles={["superadmin"]}><AuditLogs /></ProtectedRoute>} />

@@ -32,7 +32,7 @@ function Sidebar({ menus, developerMenu, }) {
 
                 <div
                   className={isDeveloperPage ? "sidebar_link active" : "sidebar_link"}
-                  onClick={() => setIsDeveloperSubmenuOpen(!isDeveloperSubmenuOpen )}
+                  onClick={() => setIsDeveloperSubmenuOpen(!isDeveloperSubmenuOpen)}
                 >
 
                   {menu.icon && (<span style={{ marginRight: 6 }}>            {menu.icon}       </span>)}

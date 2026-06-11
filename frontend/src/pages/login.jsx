@@ -34,7 +34,7 @@ function Login() {
 
             console.log("USER:", userData);
 
-            navigate("/");
+            navigate("/admin-dashboard");
 
         } catch (err) {
             console.error(err);
