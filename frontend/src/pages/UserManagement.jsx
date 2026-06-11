@@ -66,7 +66,7 @@ function UserManagement() {
 
   }, []);
 
-  console.log("USERS:", users);
+  //console.log("USERS:", users);
   return (
     <div className="user_management_container">
 
