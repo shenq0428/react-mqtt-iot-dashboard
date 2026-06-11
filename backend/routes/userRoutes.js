@@ -1,9 +1,10 @@
 // routes/userRoutes.js start from /api/users
 //VERIFY TOKEN TO PROTECT THIS ROUTE, ONLY ADMIN AND SUPERADMIN CAN ACCESS THIS ROUTE
-const { verifyToken } = require("../middleware/authMiddleware");
+
 
 const { getUsers, updateUserStatus, deleteUser, createUser, updateUser} = require("../controllers/userController");
 //requireRole function to check if the user has the required role to access this route, only admin and superadmin can access this route
+const { verifyToken } = require("../middleware/authMiddleware");
 const { requireRole } = require("../middleware/roleMiddleware");
 
 const express = require("express");

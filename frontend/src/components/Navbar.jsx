@@ -9,7 +9,7 @@ function Navbar() {
   const { user } = useContext(AuthContext);
 
   const pageTitles = {
-    "/": "Home",
+    "/admin-dashboard": "ADMIN dashboard",
     "/settings": "Settings",
     "/profile": "Profile",
     "/diary": "Diary",
@@ -21,9 +21,9 @@ function Navbar() {
     "/ai-assistants": "AI Assistants",
     "/login": "Login",
     "/logout": "Logout",
-    "/dashboard/testing": "Dashboard Overview/ Testing",
-    "/dashboard/fake-data": "Dashboard Overview/ Fake Data",
-    "/dashboard/fake-graphchart": "Dashboard Overview/ Fake Graph Chart",
+    "/developer-playground/testing": "Developer Playground/testing",
+    "/developer-playground/fake-data": "Developer Playground/ Fake Data",
+    "/developer-playground/fake-graphchart": "Developer Playground/Fake Graph Chart",
   };
 
   const currentTitle =

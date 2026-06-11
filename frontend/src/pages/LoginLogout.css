@@ -7,7 +7,7 @@
 }
 
 .auth_card {
-  width: 550px;
+  width: 700px;
 
   padding: 90px;
 
@@ -23,10 +23,10 @@
 
 .auth_logo {
   color: white;
-
   text-align: center;
-
   margin-bottom: 75px;
+
+  white-space: nowrap;
 }
 
 .auth_subtitle {
@@ -57,16 +57,30 @@
 
 .auth_button {
   width: 100%;
-
   padding: 12px;
 
-  border: none;
+  background: linear-gradient(
+    135deg,
+    #0ea5e9,
+    #2563eb
+  );
 
+  color: white;
+
+  border: none;
   border-radius: 10px;
 
   cursor: pointer;
-
   font-weight: 600;
+
+  transition: 0.2s;
+}
+
+.auth_button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 0 20px rgba(59,130,246,.4);
 }
 
 .auth_button.warning {

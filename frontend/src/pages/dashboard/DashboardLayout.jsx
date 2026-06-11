@@ -26,20 +26,16 @@ function DashboardLayout({ data, loading }) {
 
             
             <div className="dashboard_tabs">
-                <NavLink to="/dashboard/overview" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
-                    Overview</NavLink>
-                <NavLink to="/dashboard/testing" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
+                <NavLink to="/developer-playground/testing" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
                     Testing</NavLink>
-                <NavLink to="/dashboard/fake-data" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
+                <NavLink to="/developer-playground/fake-data" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
                     Fake Data</NavLink>
-                <NavLink to="/dashboard/fake-graphchart" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
+                <NavLink to="/developer-playground/fake-graphchart" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
                     Fake Graph</NavLink>
-                <NavLink to="/dashboard/mqtt-graphchart" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
+                <NavLink to="/developer-playground/mqtt-graphchart" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
                     MQTT Graph</NavLink>
-                <NavLink to="/dashboard/iwk-demo" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
+                <NavLink to="/developer-playground/iwk-demo" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
                     IWK Demo</NavLink>
-                <NavLink to="/dashboard/new-label" className={({ isActive }) => isActive ? "dashboard_tab active_dashboard_tab" : "dashboard_tab"}>
-                    New Label</NavLink>
             </div>
 
             <Outlet />
