@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL =
-  `${import.meta.env.VITE_API_URL}/api/dashboard/stats`;
+  `${import.meta.env.VITE_API_URL}/api/dashboard`;
 
 export const getDashboardStats =
   async () => {
@@ -11,7 +11,7 @@ export const getDashboardStats =
 
     const response =
       await axios.get(
-        API_URL,
+        `${API_URL}/stats`,
         {
           headers: {
             Authorization:
@@ -21,4 +21,36 @@ export const getDashboardStats =
       );
 
     return response.data;
+};
+
+export const getRecentActivities = async () => {
+
+  const token = localStorage.getItem("token");
+
+  const response = await axios.get(
+    `${API_URL}/recent-activities`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return response.data;
+};
+
+export const getRecentLoginActivities = async () => {
+
+  const token = localStorage.getItem("token");
+
+  const response = await axios.get(
+    `${API_URL}/recent-login-activities`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return response.data;
 };

@@ -26,7 +26,7 @@ body {
 }
 
 .sidebar {
-  width: 240px;        /* 固定宽度 */
+  width: 215px;        /* 固定宽度 */
   flex-shrink: 0;        /* ❗防止被压缩（重点） */
   background: var(--bg-sidebar);
   padding: 0px;
@@ -74,7 +74,7 @@ flex-direction: column;
 
 }
 .navbar {
-  height:70px;
+  height:30px;
 
   display:flex;
 
@@ -168,7 +168,7 @@ flex:1;
 .sidebar_link {
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding:10px 14px;
   border-radius: 6px;
   cursor: pointer;
   color: var(--text-main);
@@ -659,6 +659,7 @@ gap: 20px;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  padding:20px;
 }
 
 .support_content {

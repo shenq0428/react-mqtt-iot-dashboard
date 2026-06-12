@@ -24,4 +24,32 @@ const getDashboardStatus = async (req, res) => {
     }
 };
 
-module.exports = { getDashboardStatus };
+const getRecentActivities = async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT a.description, u.email, a.created_at FROM audit_logs a JOIN users u ON a.actor_user_id = u.id ORDER BY a.created_at DESC LIMIT 5 `);   
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({message: "Failed to load activities,might be query error "   });
+  }
+};
+
+const getRecentLoginActivities = async (req,res) => {
+    try {
+    const result = await pool.query(`SELECT u.email, a.ip_address, a.created_at, a.action FROM audit_logs a 
+        JOIN users u ON a.actor_user_id = u.id 
+        WHERE a.action = 'LOGIN_SUCCESS' 
+        OR a.action = 'LOGIN_FAILED'
+        ORDER BY a.created_at DESC 
+        LIMIT 5 `);   
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({message: "Failed to load activities,might be query error "   });
+  }
+};
+module.exports = { getDashboardStatus, getRecentActivities, getRecentLoginActivities };

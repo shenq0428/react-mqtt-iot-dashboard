@@ -1,5 +1,5 @@
 const { verifyToken } = require("../middleware/authMiddleware");
-const { getDashboardStatus } = require("../controllers/dashboardController");
+const { getDashboardStatus, getRecentActivities, getRecentLoginActivities} = require("../controllers/dashboardController");
 
 const express = require("express");
 const router = express.Router();
@@ -12,4 +12,15 @@ router.get(
     getDashboardStatus
 );
 
+router.get(
+    "/recent-activities",
+    verifyToken,
+    getRecentActivities
+)
+
+router.get(
+    "/recent-login-activities",
+    verifyToken,
+    getRecentLoginActivities
+)
 module.exports = router;
