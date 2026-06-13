@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDashboardStats, getRecentActivities, getRecentLoginActivities, getUserGrowth } from "../services/dashboardService";
+import { getDashboardStats, getRecentActivities, getRecentLoginActivities, getUserGrowth, getAuditSummary } from "../services/dashboardService";
 import { formatDistanceToNow, format } from "date-fns";
 import { FaUsers, FaBuilding, FaSignInAlt, FaWifi } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -24,22 +24,16 @@ function AdminDashboard() {
     const [loginActivities, setLoginActivities] = useState([]);
     const [userGrowth, setUserGrowth] = useState([]);
 
-    const auditSummary = [
-        { action: "LOGIN", count: 45, },
-        { action: "CREATE USER", count: 12, },
-        { action: "UPDATE USER", count: 10, },
-        { action: "DELETE USER", count: 3, },
-        { action: "CREATE COMPANY", count: 9, },
-        { action: "OTHERS", count: 8, },
-    ];
+    const [auditSummary, setAuditSummary] = useState([]);
 
     const COLORS = [
-        "#2563eb", // Login
-        "#22c55e", // Create User
-        "#f59e0b", // Update User
-        "#ef4444", // Delete User
-        "#8b5cf6", // Create Company
-        "#8a8a8a",  //Others
+        "#2563eb", // LOGIN_SUCCESS
+        "#22c55e", // LOGOUT
+        "#f59e0b", // UPDATE_USER_STATUS
+        "#ef4444", // LOGIN_FAILED
+        "#8b5cf6", // UPDATE_USER
+        "#8a8a8a",  //DELETE_USER
+        "#000000",  //CREATE_USER
     ];
 
 
@@ -52,17 +46,22 @@ function AdminDashboard() {
                 const activityData = await getRecentActivities();
                 const loginData = await getRecentLoginActivities();
                 const growthData = await getUserGrowth();
+                const auditData = await getAuditSummary();
 
                 setStats(prev => ({ ...prev, ...data, }));
                 setActivities(activityData);
                 setLoginActivities(loginData);
+
                 //格式化后端的日期
                 const formattedGrowthData = growthData.map(item => ({
                     ...item,
                     date: format(new Date(item.date), "dd MMM")
                 }));
                 setUserGrowth(formattedGrowthData)
+                console.log(formattedGrowthData)
 
+                setAuditSummary(auditData);
+                console.log(auditData)
             } catch (err) {
 
                 console.error("Failed to load dashboard stats:", err);

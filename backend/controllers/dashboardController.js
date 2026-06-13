@@ -68,4 +68,29 @@ const getUserGrowth = async (req, res) => {
   }
 }
 
-module.exports = { getDashboardStatus, getRecentActivities, getRecentLoginActivities, getUserGrowth };
+const getAuditSummary = async (req, res) => {
+  try {
+
+    const result = await pool.query(`
+      SELECT
+        action,
+        COUNT(*)::int AS count
+      FROM audit_logs
+      WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
+      GROUP BY action
+      ORDER BY count DESC
+    `);
+
+    res.json(result.rows);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to load audit summary"
+    });
+
+  }
+};
+module.exports = { getDashboardStatus, getRecentActivities, getRecentLoginActivities, getUserGrowth, getAuditSummary };
