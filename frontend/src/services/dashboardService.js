@@ -54,3 +54,19 @@ export const getRecentLoginActivities = async () => {
 
   return response.data;
 };
+
+export const getUserGrowth = async () => {
+
+  const token = localStorage.getItem("token");
+
+  const response = await axios.get(
+    `${API_URL}/user-growth`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return response.data;
+};

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getDashboardStats, getRecentActivities, getRecentLoginActivities } from "../services/dashboardService";
-import { formatDistanceToNow } from "date-fns";
+import { getDashboardStats, getRecentActivities, getRecentLoginActivities, getUserGrowth } from "../services/dashboardService";
+import { formatDistanceToNow, format } from "date-fns";
 import { FaUsers, FaBuilding, FaSignInAlt, FaWifi } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend, Area, AreaChart } from "recharts";
@@ -22,38 +22,7 @@ function AdminDashboard() {
 
     const [activities, setActivities] = useState([]);
     const [loginActivities, setLoginActivities] = useState([]);
-    const userGrowth = [
-        { date: "May 12", users: 6 },
-        { date: "May 13", users: 10 },
-        { date: "May 14", users: 8 },
-        { date: "May 15", users: 12 },
-        { date: "May 16", users: 15 },
-        { date: "May 17", users: 13 },
-        { date: "May 18", users: 17 },
-        { date: "May 19", users: 16 },
-        { date: "May 20", users: 20 },
-        { date: "May 21", users: 22 },
-        { date: "May 22", users: 19 },
-        { date: "May 23", users: 24 },
-        { date: "May 24", users: 21 },
-        { date: "May 25", users: 26 },
-        { date: "May 26", users: 29 },
-        { date: "May 27", users: 33 },
-        { date: "May 28", users: 41 },
-        { date: "May 29", users: 36 },
-        { date: "May 30", users: 39 },
-        { date: "May 31", users: 37 },
-        { date: "Jun 01", users: 43 },
-        { date: "Jun 02", users: 38 },
-        { date: "Jun 03", users: 35 },
-        { date: "Jun 04", users: 31 },
-        { date: "Jun 05", users: 28 },
-        { date: "Jun 06", users: 30 },
-        { date: "Jun 07", users: 29 },
-        { date: "Jun 08", users: 32 },
-        { date: "Jun 09", users: 31 },
-        { date: "Jun 10", users: 34 },
-    ];
+    const [userGrowth, setUserGrowth] = useState([]);
 
     const auditSummary = [
         { action: "LOGIN", count: 45, },
@@ -82,10 +51,17 @@ function AdminDashboard() {
                 const data = await getDashboardStats();
                 const activityData = await getRecentActivities();
                 const loginData = await getRecentLoginActivities();
+                const growthData = await getUserGrowth();
 
                 setStats(prev => ({ ...prev, ...data, }));
                 setActivities(activityData);
                 setLoginActivities(loginData);
+                //格式化后端的日期
+                const formattedGrowthData = growthData.map(item => ({
+                    ...item,
+                    date: format(new Date(item.date), "dd MMM")
+                }));
+                setUserGrowth(formattedGrowthData)
 
             } catch (err) {
 
@@ -296,7 +272,7 @@ function AdminDashboard() {
                             <Legend />
                             <Area
                                 type="linear"
-                                dataKey="users"
+                                dataKey="created_users"
                                 name="Users Created"
                                 stroke="#2563eb"
                                 fill="#dbeafe"
