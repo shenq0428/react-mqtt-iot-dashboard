@@ -57,7 +57,13 @@ const loginUser = async (req, res) => {
             "SELECT * FROM users WHERE email = $1",
             [email]
         );
+         console.log("req.ip =", req.ip);
 
+    console.log(
+      "x-forwarded-for =",
+      req.headers["x-forwarded-for"]
+    );
+    
         if (userResult.rows.length === 0) {
             console.log("EMAIL NOT FOUND");
             //wrong email written in audit log

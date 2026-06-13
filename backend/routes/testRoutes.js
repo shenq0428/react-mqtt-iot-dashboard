@@ -83,5 +83,15 @@ router.get("/device/:id", (req, res) => {
   })
 })
 
+router.get("/debug-ip", (req, res) => {
+
+    res.json({
+        ip: req.ip,
+        forwardedFor: req.headers["x-forwarded-for"],
+        remoteAddress: req.socket.remoteAddress,
+        userAgent: req.headers["user-agent"],
+    });
+
+});
 
 module.exports = router

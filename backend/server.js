@@ -18,6 +18,9 @@ const auditRoutes = require("./routes/auditRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const app = express();
 
+//set true to get ip address in audit log
+app.set("trust proxy", true);
+
 // Middleware
 app.use(cors());
 app.use(express.json());

@@ -13,7 +13,7 @@ function AdminDashboard() {
         totalUsers: 0,
         totalCompanies: 0,
         todayLogins: 0,
-        onlineUsers: "fake",
+        onlineUsers: " 6 (fake)",
         lastLoginUser: "",
         lastLoginTime: "",
     });
@@ -380,7 +380,7 @@ function AdminDashboard() {
                         <thead>
                             <tr className="text-left border-b">
                                 <th>Email</th>
-                                <th>IP</th>
+                                <th>IP Address</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
