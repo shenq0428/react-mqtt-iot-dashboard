@@ -57,13 +57,7 @@ const loginUser = async (req, res) => {
             "SELECT * FROM users WHERE email = $1",
             [email]
         );
-         console.log("req.ip =", req.ip);
 
-    console.log(
-      "x-forwarded-for =",
-      req.headers["x-forwarded-for"]
-    );
-    
         if (userResult.rows.length === 0) {
             console.log("EMAIL NOT FOUND");
             //wrong email written in audit log
@@ -158,7 +152,7 @@ const loginUser = async (req, res) => {
             action: "LOGIN_SUCCESS",
             target_type: "user",
             target_id: user.id,
-            description: `User ${user.username} logged in successfully`,
+            description: `User ${user.username} logged in`,
             ip_address: req.ip,
             user_agent: req.headers["user-agent"],
             location: null

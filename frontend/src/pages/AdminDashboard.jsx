@@ -381,6 +381,7 @@ function AdminDashboard() {
                             <tr className="text-left border-b">
                                 <th>Email</th>
                                 <th>IP Address</th>
+                                <th>Time</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -398,7 +399,19 @@ function AdminDashboard() {
                                     <td>
                                         {login.ip_address}
                                     </td>
-
+                                    <td>
+                                        {new Date(login.created_at)
+                                            .toLocaleString(
+                                                "en-MY",
+                                                {
+                                                    day: "numeric",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                }
+                                            )}
+                                    </td>
                                     <td>
 
                                         <span className={login.action === "LOGIN_SUCCESS" ? "text-green-600" : "text-red-600"}                                  >
