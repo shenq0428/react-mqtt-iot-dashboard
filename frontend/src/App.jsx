@@ -30,11 +30,11 @@ function App() {
   const [loading, setLoading] = useState(true)
 
   const developerMenu = [
-    { label: "MQTT Dashboard", key: "mqtt-graphchart" },
-    { label: "IWK Demo", key: "iwk-demo" },
     { label: "Testing", key: "testing" },
     { label: "Fake Data", key: "fake-data" },
-    { label: "Fake Graph", key: "fake-graphchart" },
+     { label: "Fake Graph", key: "fake-graphchart" },
+    { label: "MQTT Dashboard", key: "mqtt-graphchart" },
+    { label: "IWK Demo", key: "iwk-demo" },
     { label: "AI Assistants", key: "ai-assistants" },
     { label: "Diary", key: "diary" },
   ]

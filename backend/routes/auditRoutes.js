@@ -4,6 +4,8 @@ const { getAuditLogs } = require("../controllers/auditController");
 const { verifyToken } = require("../middleware/authMiddleware");
 const { requireRole } = require("../middleware/roleMiddleware");
 
+//start from /api/audit-logs
+
 router.get(
     "/",
     verifyToken,
