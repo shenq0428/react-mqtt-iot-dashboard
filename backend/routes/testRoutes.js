@@ -7,10 +7,11 @@ router.get("/test", (req, res) => {
     message: "Backend get api working from routes/testRoutes.js",
   })
 })
+
 //post api use with frontend fetch to test post api
 router.post("/alarm", (req, res) => {
-  console.log("Received post data from routes/testRoutes.js")
-  console.log(req.body)
+  //console.log("Received post data from routes/testRoutes.js")
+  //console.log(req.body)
 
   res.json({
     message: "Alarm received",
@@ -21,7 +22,7 @@ router.post("/alarm", (req, res) => {
 //memory state example
 let threshold = 16
 router.get("/threshold", (req, res) => {
-  console.log("Threshold requested, current value:", threshold)
+  //console.log("Threshold requested, current value:", threshold)
   res.json({
     currentThreshold: threshold,
   })
@@ -40,6 +41,7 @@ router.post("/threshold", (req, res) => {
   })
 
 })
+
 //patch
 router.patch("/device/:id", (req, res) => {
 
@@ -54,6 +56,7 @@ router.patch("/device/:id", (req, res) => {
   })
 
 })
+
 //delete function 
 router.delete("/alarm/:id", (req, res) => {
 
@@ -65,18 +68,20 @@ router.delete("/alarm/:id", (req, res) => {
   })
 
 })
+
 // req.query exmaple
 router.get("/search", (req, res) => {
 
-  console.log(req.query)
+  //console.log(req.query)
 
   res.json({
     queryData: req.query,
   })
 })
+
 //route.params example
 router.get("/device/:id", (req, res) => {
-  console.log("Device id:", req.params.id)
+  //console.log("Device id:", req.params.id)
 
   res.json({
     deviceId: req.params.id,

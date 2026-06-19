@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { getAuditLogs } from "../services/auditService";
 import "./AuditLogs.css"
+import { useSearchParams } from "react-router-dom";
+//import { search } from "../../../backend/routes/testRoutes";
 
 function AuditLogs() {
 
-  const [logs, setLogs] = useState([]);
 
   const actionColors = {
     LOGIN_SUCCESS: "bg-blue-100 text-blue-700",
@@ -16,13 +17,17 @@ function AuditLogs() {
     LOGOUT: "bg-slate-100 text-slate-700",
   };
 
+  //读取url
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [logs, setLogs] = useState([]);
+
   //filter
-  const [selectedAction, setSelectedAction] = useState("");
-  const [searchEmail, setSearchEmail] = useState("");
+  const [selectedAction, setSelectedAction] = useState(searchParams.get("action") || "");
+  const [searchEmail, setSearchEmail] = useState(searchParams.get("email") || "");
 
 
   //pagination
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
   const LOGS_PER_PAGE = 20;
 
 
@@ -38,8 +43,11 @@ function AuditLogs() {
           await getAuditLogs(
             currentPage,
             LOGS_PER_PAGE,
-            selectedAction
+            selectedAction,
+            searchEmail
           );
+
+        console.log(data)
 
         setLogs(data.logs);
         setTotalPages(data.totalPages);
@@ -51,7 +59,7 @@ function AuditLogs() {
     };
 
     loadLogs();
-  }, [currentPage, selectedAction]);
+  }, [currentPage, selectedAction, searchEmail]);
 
   //负责修正状态 避免 Page 5 of 1 的bug
   useEffect(() => {
@@ -59,6 +67,16 @@ function AuditLogs() {
     setCurrentPage(1);
 
   }, [selectedAction, searchEmail]);
+
+  useEffect(() => {
+
+  setSearchParams({
+    page: currentPage,
+    action: selectedAction,
+    email: searchEmail,
+  });
+
+}, [ currentPage,selectedAction,searchEmail]);
 
 
   return (
@@ -77,7 +95,7 @@ function AuditLogs() {
           placeholder="Search email..."
           value={searchEmail}
           onChange={(e) =>
-            
+
             setSearchEmail(e.target.value)
           }
           className="border rounded-lg px-3 py-2 w-64"
@@ -85,7 +103,7 @@ function AuditLogs() {
 
         <select
           value={selectedAction}
-          onChange={(e) => {console.log("Selected:", e.target.value); setSelectedAction(e.target.value)}}
+          onChange={(e) => { console.log("Selected:", e.target.value); setSelectedAction(e.target.value) }}
           className="border rounded-lg px-3 py-2"
         >
           <option value="">All Actions</option>
@@ -182,13 +200,7 @@ function AuditLogs() {
             setCurrentPage(prev => prev - 1)
           }
           disabled={currentPage === 1}
-          className="
-      px-3
-      py-2
-      border
-      rounded-lg
-      disabled:opacity-50
-    "
+          className="px-3 py-2 border rounded-lg disabled:opacity-50"
         >
           Previous
         </button>

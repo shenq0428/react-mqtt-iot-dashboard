@@ -10,6 +10,7 @@ const { verifyToken } = require("../middleware/authMiddleware");
 
 const { checkAdmin } = require("../middleware/authAdminMiddleware");
 
+//start from /api/auth
 router.get("/protected", verifyToken, (req, res) => {
     res.status(200).json({
         message: "Protected Route Accessed",
@@ -25,7 +26,7 @@ router.get("/adminTest", verifyToken, checkAdmin, (req, res) => {
     });
 }
 );
-//start from /api/auth
+
 router.get("/me", verifyToken, getCurrentUser);
 
 
