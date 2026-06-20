@@ -70,13 +70,13 @@ function AuditLogs() {
 
   useEffect(() => {
 
-  setSearchParams({
-    page: currentPage,
-    action: selectedAction,
-    email: searchEmail,
-  });
+    setSearchParams({
+      page: currentPage,
+      action: selectedAction,
+      email: searchEmail,
+    });
 
-}, [ currentPage,selectedAction,searchEmail]);
+  }, [currentPage, selectedAction, searchEmail]);
 
 
   return (
@@ -136,9 +136,7 @@ function AuditLogs() {
         <tbody>
 
           {logs.map((log) => (
-
             <tr key={log.id}>
-
               <td>{log.id}</td>
 
               <td>
@@ -154,7 +152,6 @@ function AuditLogs() {
               </td>
 
               <td>
-
                 <span
                   className={`px-2 py-1 rounded-md font-medium ${actionColors[log.action] ||
                     "bg-slate-100 text-slate-700"
@@ -162,7 +159,6 @@ function AuditLogs() {
                 >
                   {log.action}
                 </span>
-
               </td>
 
               <td>
@@ -196,9 +192,7 @@ function AuditLogs() {
       <div className="flex items-center justify-between mt-4">
 
         <button
-          onClick={() =>
-            setCurrentPage(prev => prev - 1)
-          }
+          onClick={() => setCurrentPage(prev => prev - 1)}
           disabled={currentPage === 1}
           className="px-3 py-2 border rounded-lg disabled:opacity-50"
         >
