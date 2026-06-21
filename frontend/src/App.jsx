@@ -21,7 +21,7 @@ import Diary from "./pages/Diary.jsx";
 import UserManagement from "./pages/UserManagement.jsx";
 import CompanyManagement from "./pages/CompanyManagement.jsx";
 import AuditLogs from "./pages/AuditLogs.jsx";
-
+import CompanyDetails from "./pages/CompanyDetails.jsx";
 import ProtectedRoute from "./components/ProtectedRoute"
 import AdminDashboard from './pages/AdminDashboard.jsx';
 
@@ -86,10 +86,8 @@ function App() {
             <Route path="/profile" element={<ProtectedRoute allowedRoles={["user", "admin", "superadmin"]}><Profile /></ProtectedRoute>} />
             <Route path="audit-logs" element={<ProtectedRoute allowedRoles={["superadmin"]}><AuditLogs /></ProtectedRoute>} />
             <Route path="user-management" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><UserManagement /></ProtectedRoute>} />
-            <Route path="company-management" element={<ProtectedRoute allowedRoles={["superadmin"]}><CompanyManagement /></ProtectedRoute>} >
-              <Route path="view users" element={<h1>View Users</h1>} />
-              <Route path="add user" element={<h1>Add User</h1>} />
-            </Route>
+            <Route path="/company-management" element={<ProtectedRoute allowedRoles={["superadmin"]}><CompanyManagement /></ProtectedRoute>} />
+            <Route path="/company-management/:id" element={<ProtectedRoute allowedRoles={["superadmin"]}><CompanyDetails /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
           </Routes>
