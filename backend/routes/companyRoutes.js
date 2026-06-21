@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const { getCompanies, createCompany, updateCompany, deactivateCompany, deleteCompany } = require("../controllers/companyController");
+const { getCompanies,getCompanyById, createCompany, updateCompany, deactivateCompany, deleteCompany } = require("../controllers/companyController");
 
 const { verifyToken } = require("../middleware/authMiddleware");
 const { requireRole } = require("../middleware/roleMiddleware");
@@ -14,6 +14,11 @@ router.get(
     getCompanies
 );
 
+router.get(
+    "/:id",
+    verifyToken,
+    getCompanyById
+)
 router.post(
     "/",
     verifyToken,

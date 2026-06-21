@@ -11,9 +11,13 @@ function AuditLogs() {
     LOGIN_SUCCESS: "bg-blue-100 text-blue-700",
     LOGIN_FAILED: "bg-red-100 text-red-700",
     DELETE_USER: "bg-red-100 text-red-700",
+    DELETE_COMPANY: "bg-red-100 text-red-700",
     UPDATE_USER_STATUS: "bg-yellow-100 text-yellow-700",
+    UPDATE_COMPANY_STATUS: "bg-yellow-100 text-yellow-700",
     CREATE_USER: "bg-green-100 text-green-700",
+    CREATE_COMPANY: "bg-green-100 text-green-700",
     UPDATE_USER: "bg-orange-100 text-orange-700",
+    UPDATE_COMPANY: "bg-orange-100 text-orange-700",
     LOGOUT: "bg-slate-100 text-slate-700",
   };
 
@@ -83,11 +87,8 @@ function AuditLogs() {
     <div className="audit_logs_container">
 
       <h1 className="audit_logs_title">
-        Audit Logs
+        😀
       </h1>
-      <h3 className="audit_logs_paragraph">
-        Add filter button in future,make (ID:XX) become red in description
-      </h3>
       {/*filter*/}
       <div className="flex gap-3 mb-4">
         <input
@@ -111,9 +112,13 @@ function AuditLogs() {
           <option value="LOGIN_FAILED">LOGIN_FAILED</option>
           <option value="LOGOUT">LOGOUT</option>
           <option value="CREATE_USER">CREATE_USER</option>
+          <option value="CREATE_COMPANY">CREATE_COMPANY</option>
           <option value="UPDATE_USER">UPDATE_USER</option>
+          <option value="UPDATE_COMPANY">UPDATE_COMPANY</option>
           <option value="UPDATE_USER_STATUS">UPDATE_USER_STATUS</option>
+          <option value="UPDATE_COMPANY_STATUS">UPDATE_COMPANY_STATUS</option>
           <option value="DELETE_USER">DELETE_USER</option>
+          <option value="DELETE_COMPANY">DELETE_COMPANY</option>
         </select>
 
       </div>
@@ -161,7 +166,7 @@ function AuditLogs() {
                 </span>
               </td>
 
-              <td>
+              <td className="whitespace-pre-line font-mono text-sm">
                 {log.description}
               </td>
 
