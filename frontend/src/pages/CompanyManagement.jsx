@@ -1,98 +1,200 @@
-import { useEffect,useState } from "react";
-import {getCompanies} from "../services/companyService";
+import { useEffect, useState } from "react";
+import { getCompanies, createCompany } from "../services/companyService";
 import { useNavigate } from "react-router-dom";
+import './CompanyManagement.css';
+
 
 function CompanyManagement() {
-  const [companies,setCompanies]=useState([]);
-  const navigate = useNavigate();
+    const [companies, setCompanies] = useState([]);
+    const navigate = useNavigate();
+    const [showCreatePanel, setShowCreatePanel] = useState(false);
+    const [newCompany, setNewCompany] = useState({
+        company_name: "",
+        company_email: "",
+        company_phone: "",
+        company_address: "",
+        registration_number: ""
+    });
 
-  useEffect(()=>{
-    const loadCompanies = async () => {
-
+const handleCreateCompany = async () => {
     try {
-        const data = await getCompanies();
-        setCompanies(data);
-        console.log(data);
+        const result = await createCompany(newCompany);
+        console.log(result);
     } catch (err) {
         console.error(err);
     }
-
 };
 
-  loadCompanies();
-},[])
-  return (
-    <>
-    <h1 style={{color:"white"}}>Company Management Page</h1>
-    <p>Company Overview outside click in will show details like below</p>
-     <p>   Company Information
-Company Admin
-Users In This Company
-IoT Devices
-MQTT Topics
-Subscription Plan ,start date, end date
-Company Name
-Company Address
-Company Email
-Company Phone
-Created Date
-Company Admin
-Number Of Users
-    </p>
-    <p>Company Name, Admin, Users, Status, Action</p>
-    <table>
+    useEffect(() => {
+        const loadCompanies = async () => {
 
-    <thead>
+            try {
+                const data = await getCompanies();
+                setCompanies(data);
+                console.log(data);
+            } catch (err) {
+                console.error(err);
+            }
 
-        <tr>
-            <th>Company ID</th>
-            <th>Company Name</th>
+        };
 
-            <th>Email</th>
-            <th>Phone</th>
-  
-            <th>Users</th>
+        loadCompanies();
+    }, [])
+    return (
+        <div className="company_management_container">
 
-            <th>Status</th>
+            <h1 className="company_management_title">
+                Company Management
+            </h1>
+            <input className="company_search" type="text" placeholder="Search Company..." />
 
-            <th>Action</th>
+            <div className="company_management_header">
 
-        </tr>
+                <div className="company_count">
+                    Total Companies: {companies.length}
+                </div>
 
-    </thead>
+                <button className="create_company_btn" onClick={() => setShowCreatePanel(true)}>
+                    Create Company
+                </button >
 
-    <tbody>
 
-        {companies.map((company) => (
+            </div>
+            <table className="company_table">
 
-            <tr key={company.id}>
-                <td>{company.id}</td>
-                <td>{company.company_name}</td>
+                <thead>
 
-                <td>{company.company_email}</td>
-<td>{company.company_phone}</td>
+                    <tr>
+                        <th>Company ID</th>
+                        <th>Company Name</th>
 
-                <td>{company.total_users}</td>
+                        <th>Email</th>
+                        <th>Phone</th>
 
-                <td>{company.status}</td>
+                        <th>Users</th>
 
-                <td>
+                        <th>Status</th>
 
-                    <button onClick={()=> navigate(`/company-management/${company.id}`)}>
-                        View
-                    </button>
+                        <th>Details</th>
 
-                </td>
+                    </tr>
 
-            </tr>
+                </thead>
 
-        ))}
+                <tbody>
 
-    </tbody>
+                    {companies.map((company) => (
 
-</table>
-  </>
-  )
+                        <tr key={company.id}>
+                            <td>{company.id}</td>
+                            <td>{company.company_name}</td>
+
+                            <td>{company.company_email}</td>
+                            <td>{company.company_phone}</td>
+
+                            <td>{company.total_users}</td>
+
+                            <td>{company.status}</td>
+
+                            <td>
+
+                                <button onClick={() => navigate(`/company-management/${company.id}`)}>
+                                    View
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    ))}
+
+                </tbody>
+
+            </table>
+            {
+                showCreatePanel && (
+
+                    <div className="create_company_panel">
+
+                        <div className="panel_header">
+
+                            <h2>Create Company</h2>
+
+                            <button onClick={() =>setShowCreatePanel(false)} >
+                                ✕
+                            </button>
+
+                        </div>
+
+                        <label>Company Name</label>
+                        <input
+                            type="text"
+                            value={newCompany.company_name}
+                            onChange={(e) =>
+                                setNewCompany({
+                                    ...newCompany,
+                                    company_name: e.target.value
+                                })
+                            }
+                        />
+
+                        <label>Company Email</label>
+                        <input
+                            type="email"
+                            value={newCompany.company_email}
+                            onChange={(e) =>
+                                setNewCompany({
+                                    ...newCompany,
+                                    company_email: e.target.value
+                                })
+                            }
+                        />
+
+                        <label>Company Phone</label>
+                        <input
+                            type="text"
+                            value={newCompany.company_phone}
+                            onChange={(e) =>
+                                setNewCompany({
+                                    ...newCompany,
+                                    company_phone: e.target.value
+                                })
+                            }
+                        />
+
+                        <label>Company Address</label>
+                        <input
+                            type="text"
+                            value={newCompany.company_address}
+                            onChange={(e) =>
+                                setNewCompany({
+                                    ...newCompany,
+                                    company_address: e.target.value
+                                })
+                            }
+                        />
+
+                        <label>Registration Number</label>
+                        <input
+                            type="text"
+                            value={newCompany.registration_number}
+                            onChange={(e) =>
+                                setNewCompany({
+                                    ...newCompany,
+                                    registration_number: e.target.value
+                                })
+                            }
+                        />
+
+                        <button className="create_submit_btn" onClick={handleCreateCompany}>
+                            Create Company
+                        </button>
+
+                    </div>
+                )}
+
+        </div>
+    )
 
 }
 

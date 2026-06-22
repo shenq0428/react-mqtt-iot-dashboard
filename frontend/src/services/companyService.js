@@ -15,3 +15,36 @@ export const getCompanies = async () => {
 
     return response.data;
 };
+
+export const getCompanyById = async (id) => {
+
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+        `${API_URL}/${id}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};
+
+export const createCompany = async (companyData) => {
+
+    const token = localStorage.getItem("token");
+
+    const response = await axios.post(
+        API_URL,
+        companyData,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};
