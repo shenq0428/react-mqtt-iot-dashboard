@@ -5,6 +5,8 @@ import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { MdVisibility } from "react-icons/md";
 import { MdVisibilityOff } from "react-icons/md";
 import { AuthContext } from "../context/AuthContext";
+import { useSearchParams } from "react-router-dom";
+
 
 function UserManagement() {
   const { user: currentUser } = useContext(AuthContext);
@@ -38,10 +40,20 @@ function UserManagement() {
   //frontend validation
   const [errors, setErrors] = useState({});
 
+  const [searchParams] = useSearchParams();
+  const companyId = searchParams.get("companyId");
 
-  const filteredUsers = users.filter((user) =>
-    user.username?.toLowerCase().includes(search.toLowerCase())
-    || user.company_name?.toLowerCase().includes(search.toLowerCase()));
+  const filteredUsers = users.filter((user) => {
+
+    const searchMatch =
+      user.username?.toLowerCase().includes(search.toLowerCase()) || user.company_name?.toLowerCase().includes(search.toLowerCase());
+
+    const companyMatch =
+      !companyId || String(user.company_id) === companyId;
+
+    return searchMatch && companyMatch;
+
+  });
 
   useEffect(() => {
 
@@ -123,7 +135,7 @@ function UserManagement() {
                   })} />)
                   : (user.email)}</td>
 
-                <td>{updatingUserId === user.id ? (currentUser?.role === "superadmin" ?(
+                <td>{updatingUserId === user.id ? (currentUser?.role === "superadmin" ? (
                   <select value={editedUsers[user.id]?.company_id || ""} onChange={(e) => setEditedUsers({
                     ...editedUsers,
                     [user.id]:
@@ -134,7 +146,7 @@ function UserManagement() {
                   })}>{companies.map((company) => (<option key={company.id} value={company.id}>
                     {company.company_name}</option>))}
                   </select>)
-                  : (user.company_name || "-")):(user.company_name)}</td>
+                  : (user.company_name || "-")) : (user.company_name)}</td>
 
 
                 <td>
@@ -191,10 +203,10 @@ function UserManagement() {
                 </td>
                 <td>
                   <button className="edit_button"
-                  onClick={() => {
-                    setDeleteUserId(null);
-                    setEditingUserId(editingUserId === user.id ? null : user.id)
-                  }}>
+                    onClick={() => {
+                      setDeleteUserId(null);
+                      setEditingUserId(editingUserId === user.id ? null : user.id)
+                    }}>
                     ✏️ Edit
                   </button>
                 </td>
@@ -444,6 +456,37 @@ function UserManagement() {
           </div >
         )
       }
+      {
+companyId && (
+
+<div
+className="
+mb-4
+
+px-4
+py-3
+
+rounded-lg
+
+bg-cyan-500/10
+
+border
+border-cyan-500/20
+
+text-cyan-300
+"
+>
+
+Showing Users For Company ID:
+
+<strong className="ml-2">
+    {companyId}
+</strong>
+
+</div>
+
+)
+}
     </div >);
 }
 

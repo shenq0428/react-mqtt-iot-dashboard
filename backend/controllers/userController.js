@@ -134,7 +134,9 @@ const getUsers = async (req, res) => {
                     u.privilege_type,
                     u.expires_at,
                     u.status,
+                    u.company_id,
                     c.company_name
+
                 FROM users u
                 LEFT JOIN companies c
                 ON u.company_id = c.id
