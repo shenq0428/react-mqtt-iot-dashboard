@@ -325,3 +325,33 @@
 
     color: white;
 }
+
+.toast {
+
+    position: fixed;
+
+    top: 30px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 9999;
+
+    background: #111;
+
+    color: #00ff88;
+
+    padding: 12px 24px;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(0,255,136,.3);
+
+    box-shadow:
+        0 0 15px rgba(0,255,136,.15);
+}
+
+.view_button:hover{
+  text-decoration: underline;
+}

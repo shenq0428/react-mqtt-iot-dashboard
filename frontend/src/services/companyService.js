@@ -48,3 +48,44 @@ export const createCompany = async (companyData) => {
 
     return response.data;
 };
+
+export const updateCompany = async ( id, companyData) => {
+
+    const token = localStorage.getItem("token");
+
+    const response = await axios.patch(
+
+        `${API_URL}/${id}`,
+
+        companyData,
+
+        {
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
+        }
+
+    );
+
+    return response.data;
+};
+
+export const deleteCompany = async (id) => {
+
+    const token = localStorage.getItem("token");
+
+    const response = await axios.delete(
+
+        `${API_URL}/${id}`,
+
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+    );
+
+    return response.data;
+};

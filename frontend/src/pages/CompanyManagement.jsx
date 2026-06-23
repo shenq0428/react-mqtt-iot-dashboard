@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCompanies, createCompany } from "../services/companyService";
+import { getCompanies, createCompany} from "../services/companyService";
 import { useNavigate } from "react-router-dom";
 import './CompanyManagement.css';
 
@@ -15,33 +15,62 @@ function CompanyManagement() {
         company_address: "",
         registration_number: ""
     });
+    const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+    const [toast, setToast] = useState("");
 
-const handleCreateCompany = async () => {
-    try {
-        const result = await createCompany(newCompany);
-        console.log(result);
-    } catch (err) {
-        console.error(err);
-    }
-};
+    const handleCreateCompany = async () => {
+        try {
+            setError("");
+            setMessage("");
+            const result = await createCompany(newCompany);
+
+            setToast("Company Created Successfully");
+            setTimeout(() => { setToast(""); }, 3000);
+
+            setMessage(result.message);
+            setNewCompany({
+                company_name: "",
+                company_email: "",
+                company_phone: "",
+                company_address: "",
+                registration_number: ""
+            });
+            setShowCreatePanel(false);
+            await loadCompanies();
+
+        } catch (err) {
+            //frontend validation error display
+            setError(err.reponse?.data?.message || "Something went wrong");
+            console.error(err);
+        }
+    };
+
+    const loadCompanies = async () => {
+
+        try {
+            const data = await getCompanies();
+            setCompanies(data);
+            console.log(data);
+
+        } catch (err) {
+            console.error(err);
+        }
+
+    };
 
     useEffect(() => {
-        const loadCompanies = async () => {
-
-            try {
-                const data = await getCompanies();
-                setCompanies(data);
-                console.log(data);
-            } catch (err) {
-                console.error(err);
-            }
-
-        };
-
         loadCompanies();
     }, [])
+
     return (
         <div className="company_management_container">
+
+            {/* Toast */}
+
+            {
+                toast && (<div className="toast">{toast}</div>)
+            }
 
             <h1 className="company_management_title">
                 Company Management
@@ -98,7 +127,7 @@ const handleCreateCompany = async () => {
 
                             <td>
 
-                                <button onClick={() => navigate(`/company-management/${company.id}`)}>
+                                <button className="view_button" onClick={() => navigate(`/company-management/${company.id}`)}>
                                     View
                                 </button>
 
@@ -120,7 +149,7 @@ const handleCreateCompany = async () => {
 
                             <h2>Create Company</h2>
 
-                            <button onClick={() =>setShowCreatePanel(false)} >
+                            <button onClick={() => setShowCreatePanel(false)} >
                                 ✕
                             </button>
 
@@ -189,7 +218,9 @@ const handleCreateCompany = async () => {
                         <button className="create_submit_btn" onClick={handleCreateCompany}>
                             Create Company
                         </button>
-
+                        {
+                            error && (<div className="error_message">{error}</div>)
+                        }
                     </div>
                 )}
 

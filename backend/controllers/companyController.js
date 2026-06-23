@@ -38,12 +38,12 @@ const getCompanies = async (req, res) => {
 };
 
 //get specific company detail according choosen company id 
-const getCompanyById = async (req, res)=>{
-    try{
-    const {id} = req.params;
+const getCompanyById = async (req, res) => {
+    try {
+        const { id } = req.params;
 
-    const result = await pool.query(
-        `
+        const result = await pool.query(
+            `
         SELECT 
         c.*,
         COUNT(u.id)::int AS total_users
@@ -53,20 +53,20 @@ const getCompanyById = async (req, res)=>{
         WHERE c.id = $1
         GROUP BY c.id
         `,
-        [id]
-    )
+            [id]
+        )
 
-    if(result.rows.length === 0){
-        return res.status(404).json({message:"company not found"});
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "company not found" });
+        }
+
+        return res.status(200).json(result.rows[0]);
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).json({ message: "server not found ?" });
     }
-
-    return res.status(200).json(result.rows[0]);
-
-}catch(err){
-    console.error(err)
-    return res.status(500).json({message:"server not found ?"});
-}
-}
+};
 
 const createCompany = async (req, res) => {
     try {
@@ -78,12 +78,66 @@ const createCompany = async (req, res) => {
             company_address,
             registration_number
         } = req.body;
+        // ====================
+        // Company Name
+        // ====================
 
-        if (!company_name) {
-            return res.status(400).json({
-                message: "Company name is required"
-            });
+        if (!company_name) { return res.status(400).json({ message: "Company name is required" }); }
+
+        // ====================
+        // Email Format
+        // ====================
+
+        if (company_email && !company_email.includes("@")
+        ) {
+            return res.status(400).json({ message: "Invalid company email" });
         }
+
+        // ====================
+        // Duplicate Email
+        // ====================
+
+        if (company_email) {
+
+            const existingEmail = await pool.query(
+                `
+                SELECT *
+                FROM companies
+                WHERE company_email = $1
+                `,
+                [company_email]
+            );
+
+            if (existingEmail.rows.length > 0) {
+
+                return res.status(400).json({ message: "Company email already exists" });
+
+            }
+        }
+
+        // ====================
+        // Duplicate Registration Number
+        // ====================
+
+        if (registration_number) {
+
+            const existingRegistration = await pool.query(
+                `
+                SELECT *
+                FROM companies
+                WHERE registration_number = $1
+                `,
+                [registration_number]
+            );
+
+            if (existingRegistration.rows.length > 0) {
+                return res.status(400).json({ message: "Registration number already exists" });
+            }
+        }
+
+        // ====================
+        // Duplicate Company Name
+        // ====================
 
         const existingCompany = await pool.query(
             `
@@ -95,9 +149,11 @@ const createCompany = async (req, res) => {
         );
 
         if (existingCompany.rows.length > 0) {
+
             return res.status(400).json({
                 message: "Company already exists"
             });
+
         }
 
         const result = await pool.query(
@@ -180,6 +236,59 @@ const updateCompany = async (req, res) => {
         const registration_number = req.body.registration_number ?? oldCompany.registration_number;
         const status = req.body.status ?? oldCompany.status;
 
+        // ====================
+        // Email Format
+        // ====================
+
+        if (company_email && !company_email.includes("@")) {
+            return res.status(400).json({ message: "Invalid company email" });
+        }
+
+        // ====================
+        // Duplicate Email
+        // ====================
+
+        if (company_email) {
+
+            const existingEmail = await pool.query(
+                `
+                SELECT *
+                FROM companies
+                WHERE company_email = $1
+                AND id != $2
+                `,
+                [company_email, id]
+            );
+
+            if (existingEmail.rows.length > 0) {
+                return res.status(400).json({ message: "Company email already exists" });
+            }
+
+        }
+
+        // ====================
+        // Duplicate Registration Number
+        // ====================
+
+        if (registration_number) {
+
+            const existingRegistration =
+                await pool.query(
+                    `
+                    SELECT *
+                    FROM companies
+                    WHERE registration_number = $1
+                    AND id != $2
+                    `,
+                    [registration_number, id]
+                );
+
+            if (existingRegistration.rows.length > 0) {
+                return res.status(400).json({ message: "Registration number already exists" });
+            }
+
+        }
+
         const result = await pool.query(
             `
             UPDATE companies
@@ -252,11 +361,12 @@ const updateCompany = async (req, res) => {
 
         /*
         console.log(`Updated company ${updatedCompany.company_name}\n\n${changes.join("\n")}`);
-           res.status(200).json({
-           message: "Company updated successfully",
-           company: result.rows[0]
-       });
-       */
+        */
+        res.status(200).json({
+            message: "Company updated successfully",
+            company: result.rows[0]
+        });
+
 
     } catch (err) {
 
@@ -382,6 +492,6 @@ const deleteCompany = async (req, res) => {
             message: "Server error"
         });
     }
-}
+};
 
 module.exports = { getCompanies, getCompanyById, createCompany, updateCompany, deactivateCompany, deleteCompany };

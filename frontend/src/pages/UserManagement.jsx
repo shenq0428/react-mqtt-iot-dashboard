@@ -190,7 +190,8 @@ function UserManagement() {
                   <span className={`status_badge ${pendingStatus[user.id] || user.status}`}>{(pendingStatus[user.id] || user.status || "").toUpperCase()}</span>
                 </td>
                 <td>
-                  <button onClick={() => {
+                  <button className="edit_button"
+                  onClick={() => {
                     setDeleteUserId(null);
                     setEditingUserId(editingUserId === user.id ? null : user.id)
                   }}>
