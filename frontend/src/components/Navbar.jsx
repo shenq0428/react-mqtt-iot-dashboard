@@ -24,10 +24,23 @@ function Navbar() {
     "/developer-playground/testing": "Developer Playground/testing",
     "/developer-playground/fake-data": "Developer Playground/ Fake Data",
     "/developer-playground/fake-graphchart": "Developer Playground/Fake Graph Chart",
+    "/leave-requests": "Leave Requests",
+    "/claim-requests": "Claim Requests"
   };
 
-  const currentTitle =
-    pageTitles[location.pathname] || "Nova Lobster";
+  const getPageTitle = () => {
+
+    const path = location.pathname;
+
+    if (path.startsWith("/company-management/")) { return "Company Details"; }
+    if (path === "/leave-requests/create") { return "Request Leave"; }
+    if (path.startsWith("/leave-requests/")) { return "Leave Details"; }
+    if (path === "/claim-requests/create") { return "Create Claim"; }
+
+    return pageTitles[path] || "Nova Lobster";
+  };
+
+  const currentTitle = getPageTitle();
 
   return (
 

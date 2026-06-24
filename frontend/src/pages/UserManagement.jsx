@@ -82,7 +82,6 @@ function UserManagement() {
   return (
     <div className="user_management_container">
 
-      <h1 className="user_management_title">User Management Page</h1>
       <input className="user_search" type="text" placeholder="Insert Username to Search" value={search} onChange={(e) => setSearch(e.target.value)} />
 
       <div className="user_management_header">

@@ -29,6 +29,8 @@ import ClaimRequests from "./pages/ClaimRequests.jsx";
 import Outsite from "./pages/Outsite.jsx";
 import Calendar from "./pages/Calendar.jsx";
 import Notification from './pages/Notification.jsx';
+import LeaveRequestsCreate from './pages/LeaveRequestCreate.jsx';
+
 
 function App() {
   const [data, setData] = useState([])
@@ -101,6 +103,7 @@ function App() {
             <Route path="/company-management" element={<ProtectedRoute allowedRoles={["superadmin"]}><CompanyManagement /></ProtectedRoute>} />
             <Route path="/company-management/:id" element={<ProtectedRoute allowedRoles={["superadmin"]}><CompanyDetails /></ProtectedRoute>} />
             <Route path="/leave-requests" element={<ProtectedRoute allowedRoles={["user", "admin", "company_super_admin", "superadmin"]}   > <LeaveRequests /> </ProtectedRoute>} />
+            <Route path="/leave-requests/create" element={<ProtectedRoute allowedRoles={["user", "admin", "company_super_admin", "superadmin"]}   > <LeaveRequestsCreate /> </ProtectedRoute>} />
             <Route path="/claim-requests" element={<ProtectedRoute allowedRoles={["user", "admin", "company_super_admin", "superadmin"]} > <ClaimRequests /></ProtectedRoute>} />
             <Route path="/outsite" element={<ProtectedRoute allowedRoles={["user", "admin", "company_super_admin", "superadmin"]}> <Outsite /></ProtectedRoute>} />
             <Route path="/calendar" element={<ProtectedRoute allowedRoles={["user","admin","company_super_admin", "superadmin" ]}>  <Calendar /></ProtectedRoute> }/>

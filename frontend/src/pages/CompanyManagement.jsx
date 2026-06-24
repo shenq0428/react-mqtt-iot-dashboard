@@ -72,9 +72,7 @@ function CompanyManagement() {
                 toast && (<div className="toast">{toast}</div>)
             }
 
-            <h1 className="company_management_title">
-                Company Management
-            </h1>
+
             <input className="company_search" type="text" placeholder="Search Company..." />
 
             <div className="company_management_header">
