@@ -342,6 +342,7 @@ function UserManagement() {
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="user">User</option>
               <option value="admin">Admin</option>
+              <option value="company_super_admin">Company Super Admin</option>
             </select>
 
             <label>Privelege Type</label>

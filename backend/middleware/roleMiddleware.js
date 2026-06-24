@@ -1,6 +1,17 @@
 function requireRole(...allowedRoles) {
 
     return (req, res, next) => {
+        /* debug
+         console.log(
+            "Current Role:",
+            req.user.role
+        );
+
+        console.log(
+            "Allowed Roles:",
+            allowedRoles
+        );
+        */
 
         if (!allowedRoles.includes(req.user.role)
         ) {
@@ -15,6 +26,4 @@ function requireRole(...allowedRoles) {
 
 }
 
-module.exports = {
-    requireRole
-};
+module.exports = { requireRole};

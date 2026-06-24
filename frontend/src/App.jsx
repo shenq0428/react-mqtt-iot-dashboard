@@ -24,6 +24,11 @@ import AuditLogs from "./pages/AuditLogs.jsx";
 import CompanyDetails from "./pages/CompanyDetails.jsx";
 import ProtectedRoute from "./components/ProtectedRoute"
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import LeaveRequests from "./pages/LeaveRequests.jsx";
+import ClaimRequests from "./pages/ClaimRequests.jsx";
+import Outsite from "./pages/Outsite.jsx";
+import Calendar from "./pages/Calendar.jsx";
+import Notification from './pages/Notification.jsx';
 
 function App() {
   const [data, setData] = useState([])
@@ -32,7 +37,7 @@ function App() {
   const developerMenu = [
     { label: "Testing", key: "testing" },
     { label: "Fake Data", key: "fake-data" },
-     { label: "Fake Graph", key: "fake-graphchart" },
+    { label: "Fake Graph", key: "fake-graphchart" },
     { label: "MQTT Dashboard", key: "mqtt-graphchart" },
     { label: "IWK Demo", key: "iwk-demo" },
     { label: "AI Assistants", key: "ai-assistants" },
@@ -44,6 +49,13 @@ function App() {
     { label: "User Management", page: "user-management", icon: "🧑‍💻", roles: ["admin", "superadmin"] },
     { label: "Company Management", page: "company-management", icon: "🏢", roles: ["superadmin"] },
     { label: "Audit Logs", page: "audit-logs", icon: "📜", roles: ["superadmin"] },
+    // Employee Portal
+    { label: "Leave Requests", page: "leave-requests", icon: "🏖️", roles: ["user", "admin", "company_super_admin", "superadmin"] },
+    { label: "Claim Requests", page: "claim-requests", icon: "🧾", roles: ["user", "admin", "company_super_admin", "superadmin"] },
+    { label: "Outsite", page: "outsite", icon: "🚗", roles: ["user", "admin", "company_super_admin", "superadmin"] },
+    { label: "Calendar", page: "calendar", icon: "📅", roles: ["user", "admin", "company_super_admin", "superadmin"] },
+    { label: "Notification", page: "notification", icon: "!!!", roles: ["user", "admin", "company_super_admin", "superadmin"] },
+
     { label: "Profile", page: "profile", icon: "👤", roles: ["user", "admin", "superadmin"] },
     { label: "Settings", page: "settings", icon: "⚙️", roles: ["admin", "superadmin"] },
     ...(import.meta.env.DEV ? [{ label: "Developer Playground", page: "developer-playground", icon: "🧪", roles: ["superadmin"] }] : []),
@@ -88,6 +100,11 @@ function App() {
             <Route path="user-management" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><UserManagement /></ProtectedRoute>} />
             <Route path="/company-management" element={<ProtectedRoute allowedRoles={["superadmin"]}><CompanyManagement /></ProtectedRoute>} />
             <Route path="/company-management/:id" element={<ProtectedRoute allowedRoles={["superadmin"]}><CompanyDetails /></ProtectedRoute>} />
+            <Route path="/leave-requests" element={<ProtectedRoute allowedRoles={["user", "admin", "company_super_admin", "superadmin"]}   > <LeaveRequests /> </ProtectedRoute>} />
+            <Route path="/claim-requests" element={<ProtectedRoute allowedRoles={["user", "admin", "company_super_admin", "superadmin"]} > <ClaimRequests /></ProtectedRoute>} />
+            <Route path="/outsite" element={<ProtectedRoute allowedRoles={["user", "admin", "company_super_admin", "superadmin"]}> <Outsite /></ProtectedRoute>} />
+            <Route path="/calendar" element={<ProtectedRoute allowedRoles={["user","admin","company_super_admin", "superadmin" ]}>  <Calendar /></ProtectedRoute> }/>
+            <Route path="/notification" element={<ProtectedRoute allowedRoles={["user","admin","company_super_admin", "superadmin" ]}>  <Notification /></ProtectedRoute> }/>
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
           </Routes>

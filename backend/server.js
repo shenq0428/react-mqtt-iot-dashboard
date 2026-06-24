@@ -16,6 +16,7 @@ const userRoutes = require("./routes/userRoutes");
 const companyRoutes = require("./routes/companyRoutes");
 const auditRoutes = require("./routes/auditRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const leaveRequestRoutes = require("./routes/leaveRequestRoutes");
 const app = express();
 
 //set true to get ip address in audit log
@@ -33,7 +34,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/audit-logs", auditRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
+app.use( "/api/leave-requests", leaveRequestRoutes);
 // Create HTTP server
 const server = http.createServer(app);
 
