@@ -1,5 +1,5 @@
 const { verifyToken } = require("../middleware/authMiddleware");
-const { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus } = require("../controllers/leaveRequestcontroller");
+const { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus } = require("../controllers/leaveRequestController");
 const {requireRole} = require("../middleware/roleMiddleware");
 
 const express = require("express");
