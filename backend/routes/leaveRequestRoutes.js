@@ -1,5 +1,5 @@
 const { verifyToken } = require("../middleware/authMiddleware");
-const { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus } = require("../controllers/leaveRequestController");
+const { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus, getLeaveRequestById, updateLeaveRequest } = require("../controllers/leaveRequestController");
 const {requireRole} = require("../middleware/roleMiddleware");
 
 const express = require("express");
@@ -22,6 +22,13 @@ router.get(
     getMyLeaveRequests
 );
 
+//user view 1 leave request
+router.get(
+    "/:id/status",
+    verifyToken,
+    getLeaveRequestById
+);
+
 //admin check all leave request
 router.get(
     "/",
@@ -32,10 +39,18 @@ router.get(
 
 //admin approve or reject in status
 router.patch(
-    "/:id",
+    "/:id/status",
     verifyToken,
     requireRole("admin","company_super_admin"),
     updateLeaveRequestStatus
+);
+
+//user edit own request 
+router.patch(
+    "/:id",
+    verifyToken,
+    requireRole("admin","company_super_admin"),
+    updateLeaveRequest
 );
 
 module.exports = router;

@@ -139,5 +139,83 @@ const updateLeaveRequestStatus = async (req, res) => {
     }
 };
 
+const getLeaveRequestById = async (req, res) => {
 
-module.exports = { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus }
+    try {
+
+        const { id } = req.params;
+
+        const result = await pool.query(
+            `
+            SELECT *
+            FROM leave_requests
+            WHERE id = $1
+            AND user_id = $2
+            `,
+            [
+                id,
+                req.user.id
+            ]
+        );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                message: "Leave request not found"
+            });
+
+        }
+
+        res.status(200).json(result.rows[0]);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
+    }
+
+};
+
+const updateLeaveRequest = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { leave_type, start_date, end_date, reason } = req.body;
+
+        const result = await pool.query(`
+        UPDATE 
+            leave_requests
+        SET 
+            leave_type=$1,
+            start_date=$2,
+            end_date=$3,
+            reason=$4
+        WHERE
+            id=$5
+        AND 
+            user_id=$6
+        AND
+            status='pending'
+        RETURNING *
+         `, [leave_type, start_date, end_date, reason, id, req.user.id])
+
+        if (result.rows.length === 0) {
+            return res.status(400).json({ message: "Only pending leave requests can be updated." });
+        }
+
+        res.status(200).json({
+            message: "Leave request updated successfully",
+            leaveRequest: result.rows[0]
+        });
+
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
+module.exports = { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus, getLeaveRequestById, updateLeaveRequest }

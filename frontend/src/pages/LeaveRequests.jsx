@@ -6,37 +6,61 @@ import { useNavigate } from "react-router-dom";
 function LeaveRequests() {
 
     const [leaveRequests, setLeaveRequests] = useState([]);
-    const [leaveType, setLeaveType] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [reason, setReason] = useState("");
+    const [loading, setLoading] = useState(true);
+
     const navigate = useNavigate();
 
     useEffect(() => {
 
-        const loadLeaveRequests =
-            async () => {
+        const loadLeaveRequests = async () => {
 
-                try {
+            try {
 
-                    const data =
-                        await getMyLeaveRequests();
+                const data = await getMyLeaveRequests();
 
-                    setLeaveRequests(
-                        data
-                    );
+                setLeaveRequests(data);
 
-                } catch (err) {
+            } catch (err) {
 
-                    console.error(err);
+                console.error(err);
 
-                }
+            } finally {
+                setLoading(false);
+            }
 
-            };
+        };
 
         loadLeaveRequests();
 
     }, []);
+
+    // ==========================
+    // Helper Functions
+    // ==========================
+
+    const renderStatus = (status) => {
+
+        switch (status) {
+
+            case "pending":
+
+                return (<span className="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400"> Pending </span>);
+
+            case "approved":
+
+                return (<span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400"> Approved </span>);
+
+            case "rejected":
+
+                return (<span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400"> Rejected </span>);
+
+            default:
+
+                return (<span>{status}</span>);
+
+        }
+
+    };
 
     return (
 
@@ -73,7 +97,7 @@ function LeaveRequests() {
 
                     hover:bg-cyan-500/30
                     "
-                    onClick={()=>navigate("/leave-requests/create")}
+                    onClick={() => navigate("/leave-requests/create")}
                 >
                     + Request Leave
                 </button>
@@ -115,6 +139,10 @@ function LeaveRequests() {
                                 Status
                             </th>
 
+                            <th className="p-4 text-left">
+                                Details
+                            </th>
+
                         </tr>
 
                     </thead>
@@ -144,49 +172,21 @@ function LeaveRequests() {
                                 </td>
 
                                 <td className="p-4">
-                                    {
-                                        leave.status === "pending" &&
-                                        (
-                                            <span
-                                                className="
-                                                px-3 py-1
-                                                rounded-full
-                                                bg-yellow-500/20
-                                                text-yellow-400
-                                                "
-                                            >
-                                                Pending
-                                            </span>
-                                        )
-                                        || leave.status === "approved" &&
-                                        (
-                                            <span
-                                                className="
+                                    {renderStatus(leave.status)}
+                                </td>
+
+                                <td className="p-4">{leave.status === 'pending' ? (<button className="
                                                 px-3 py-1
                                                 rounded-full
                                                 bg-green-500/20
                                                 text-green-400
-                                                "
-                                            >
-                                                Approved
-                                            </span>
-                                        )
-                                        || leave.status === "rejected" &&
-                                        (
-                                            <span
-                                                className="
+                                                ">Edit</button>)
+                                    : (<button className="
                                                 px-3 py-1
                                                 rounded-full
-                                                bg-red-500/20
-                                                text-red-400
-                                                "
-                                            >
-                                                Rejected
-                                            </span>
-                                        )
-                                    }
-                                </td>
-
+                                                bg-blue-500/20
+                                                text-blue-400
+                                                ">View</button>)}</td>
                             </tr>
 
                         ))}
@@ -196,7 +196,7 @@ function LeaveRequests() {
                 </table>
 
             </div>
-           
+
         </div>
 
     );
