@@ -127,10 +127,13 @@ const updateLeaveRequestStatus = async (req, res) => {
                                         SET 
                                             status = $1,
                                             approved_by = $2
+                                            updated_at = CURRENT_TIMESTAMP
                                         WHERE 
                                             id = $3
                                         AND 
                                             company_id = $4
+                                        AND
+                                            status = 'pending'
                                         RETURNING *
                                         `,
             //如果被修改的人的company id和修改者的company id不一样就失败避免其他人修改
@@ -149,7 +152,8 @@ const getLeaveRequestById = async (req, res) => {
 
     try {
 
-        const { id } = req.params;
+        const leaveRequestId = req.params.id;
+        const userId = req.user.id;
 
         const result = await pool.query(
             `
@@ -158,19 +162,10 @@ const getLeaveRequestById = async (req, res) => {
             WHERE id = $1
             AND user_id = $2
             `,
-            [
-                id,
-                req.user.id
-            ]
+            [leaveRequestId, userId]
         );
 
-        if (result.rows.length === 0) {
-
-            return res.status(404).json({
-                message: "Leave request not found"
-            });
-
-        }
+        if (result.rowCount === 0) { return res.status(404).json({ message: "Leave request not found" }); }
 
         res.status(200).json(result.rows[0]);
 
@@ -198,7 +193,8 @@ const updateLeaveRequest = async (req, res) => {
             leave_type=$1,
             start_date=$2,
             end_date=$3,
-            reason=$4
+            reason=$4,
+            updated_at = CURRENT_TIMESTAMP
         WHERE
             id=$5
         AND 

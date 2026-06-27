@@ -24,7 +24,7 @@ router.get(
 
 //user view 1 leave request
 router.get(
-    "/:id/status",
+    "/:id",
     verifyToken,
     getLeaveRequestById
 );
@@ -46,7 +46,7 @@ router.patch(
 );
 
 //user edit own request 
-router.patch(
+router.put(
     "/:id",
     verifyToken,
     updateLeaveRequest

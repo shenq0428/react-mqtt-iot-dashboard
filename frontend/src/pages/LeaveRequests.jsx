@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getMyLeaveRequests } from "../services/leaveRequestService";
 import { formatDate } from "../utils/dateFormatter";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function LeaveRequests() {
 
@@ -122,8 +123,8 @@ function LeaveRequests() {
                             className="
                             bg-cyan-500/10
                             "
-                        >   
-                        <th className="p-4 text-left">
+                        >
+                            <th className="p-4 text-left">
                                 Requst ID
                             </th>
 
@@ -182,18 +183,19 @@ function LeaveRequests() {
                                     {renderStatus(leave.status)}
                                 </td>
 
-                                <td className="p-4">{leave.status === 'pending' ? (<button className="
+                                <td className="p-4">
+                                    <Link
+                                        to={`/leave-requests/${leave.id}`}
+                                        className={`
+                                                inline-block
                                                 px-3 py-1
                                                 rounded-full
-                                                bg-green-500/20
-                                                text-green-400
-                                                ">Edit</button>)
-                                    : (<button className="
-                                                px-3 py-1
-                                                rounded-full
-                                                bg-blue-500/20
-                                                text-blue-400
-                                                ">View</button>)}</td>
+                                                ${leave.status === "pending" ? "bg-green-500/20 text-green-400" : "bg-blue-500/20 text-blue-400"}
+                                            `}
+                                    >
+                                        {leave.status === "pending" ? "✏️ Edit" : "👁 View"}
+                                    </Link>
+                                </td>
                             </tr>
 
                         ))}
