@@ -45,8 +45,7 @@ function LeaveRequestCreate() {
 
             await createLeaveRequest({
 
-                leave_type:
-                    leaveType === "Other"
+                leave_type:  leaveType === "Other"
                         ? otherLeaveType
                         : leaveType,
 
@@ -103,7 +102,7 @@ function LeaveRequestCreate() {
                     font-bold
                     "
                     >
-                        Request Leave
+                     click here to back ( ←)    Create Request Leave
                     </h1>
 
                 </div>

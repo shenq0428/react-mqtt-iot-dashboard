@@ -11,9 +11,12 @@ const createLeaveRequest = async (req, res) => {
             reason
         } = req.body;
 
+        const requestNumber = `TEMP-${Date.now()}`;
+
         const result = await pool.query(
             `
             INSERT INTO leave_requests (
+                request_number,
                 user_id,
                 company_id,
                 leave_type,
@@ -21,11 +24,12 @@ const createLeaveRequest = async (req, res) => {
                 end_date,
                 reason
             )
-            VALUES ($1,$2,$3,$4,$5,$6)
+            VALUES ($1,$2,$3,$4,$5,$6,$7)
 
             RETURNING *
             `,
             [
+                requestNumber,
                 req.user.id,
                 req.user.company_id,
                 leave_type,
@@ -107,30 +111,32 @@ const getAllLeaveRequest = async (req, res) => {
 
 const updateLeaveRequestStatus = async (req, res) => {
     try {
-        //params from url, user from jwt decode, user from frontend input
+        //params from url, user from jwt decode, body from frontend input
         const id = req.params.id;
         const approvedBy = req.user.id;
-        const status = req.body.status;
         const actorCompanyId = req.user.company_id
+        const status = req.body.status;
 
         if (status !== "approved" && status !== "rejected") {
             return res.status(400).json("status is undefined");
         }
 
         const result = await pool.query(`
-        UPDATE 
-            leave_requests
-        SET 
-            status = $1,
-            approved_by = $2
-        WHERE 
-            id = $3
-        AND 
-            company_id = $4
-        RETURNING *
-         `,
+                                        UPDATE 
+                                            leave_requests
+                                        SET 
+                                            status = $1,
+                                            approved_by = $2
+                                        WHERE 
+                                            id = $3
+                                        AND 
+                                            company_id = $4
+                                        RETURNING *
+                                        `,
             //如果被修改的人的company id和修改者的company id不一样就失败避免其他人修改
             [status, approvedBy, id, actorCompanyId]);
+
+        if (result.rows.length === 0) { return res.status(400).json({ message: "Only pending leave requests can be updated." }); }
 
         res.status(200).json(result.rows);
     } catch (err) {
@@ -202,9 +208,7 @@ const updateLeaveRequest = async (req, res) => {
         RETURNING *
          `, [leave_type, start_date, end_date, reason, id, req.user.id])
 
-        if (result.rows.length === 0) {
-            return res.status(400).json({ message: "Only pending leave requests can be updated." });
-        }
+        if (result.rows.length === 0) { return res.status(400).json({ message: "Only pending leave requests can be updated." }); }
 
         res.status(200).json({
             message: "Leave request updated successfully",

@@ -49,7 +49,6 @@ router.patch(
 router.patch(
     "/:id",
     verifyToken,
-    requireRole("admin","company_super_admin"),
     updateLeaveRequest
 );
 

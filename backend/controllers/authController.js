@@ -105,7 +105,7 @@ const loginUser = async (req, res) => {
         // compare password
         const isMatch = await bcrypt.compare(
             password,
-            user.password
+            user.password_hash
         );
 
         if (!isMatch) {

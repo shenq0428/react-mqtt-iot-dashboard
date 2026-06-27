@@ -122,7 +122,11 @@ function LeaveRequests() {
                             className="
                             bg-cyan-500/10
                             "
-                        >
+                        >   
+                        <th className="p-4 text-left">
+                                Requst ID
+                            </th>
+
                             <th className="p-4 text-left">
                                 Leave Type
                             </th>
@@ -158,6 +162,9 @@ function LeaveRequests() {
                                 border-gray-700
                                 "
                             >
+                                <td className="p-4">
+                                    {leave.request_number}
+                                </td>
 
                                 <td className="p-4">
                                     {leave.leave_type}

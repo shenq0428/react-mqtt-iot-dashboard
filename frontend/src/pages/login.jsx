@@ -76,13 +76,13 @@ function Login() {
           <h2>Developer Cheatsheet</h2>
 
           <p>SUPERADMIN</p>
-          <p>superadmin@novalobster.com</p>
+          <p>superadmin@novalobster.app</p>
 
           <p>ADMIN</p>
-          <p>admin@pikachu.com</p>
+          <p>kevin.wong@novapalm.com</p>
 
           <p>USER</p>
-          <p>pikachu1@pikachu.com</p>
+          <p>jason.chan@novapalm.com</p>
         </div>
       )}
         </div>
