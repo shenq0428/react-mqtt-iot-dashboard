@@ -19,6 +19,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: |
+            set -e
+            
             cd /home/ubuntu/react-mqtt-iot-dashboard
 
             echo "Reset local changes..."
@@ -31,6 +33,9 @@ jobs:
             echo "Installing backend dependencies..."
             cd backend
             npm install
+
+            echo "Running production database migrations..."
+            npm run migrate:production
 
             echo "Building frontend..."
             cd ../frontend

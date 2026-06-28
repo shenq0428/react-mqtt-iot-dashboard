@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getLeaveRequestById, updateLeaveRequest} from "../services/leaveRequestService";
+import { getLeaveRequestById, updateLeaveRequest } from "../services/leaveRequestService";
 
 function LeaveRequestDetails() {
 
@@ -11,8 +11,8 @@ function LeaveRequestDetails() {
     const [error, setError] = useState("");
 
     const [updating, setUpdating] = useState(false);
-const [actionError, setActionError] = useState("");
-const [successMessage, setSuccessMessage] = useState("");
+    const [actionError, setActionError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
 
@@ -49,54 +49,45 @@ const [successMessage, setSuccessMessage] = useState("");
 
         const { name, value } = event.target;
 
-        setLeave((currentLeave) => ({
-            ...currentLeave,
-            [name]: value
-        }));
+        setLeave((currentLeave) => ({ ...currentLeave, [name]: value }));
 
     };
 
     const handleUpdate = async () => {
 
-    try {
+        try {
 
-        setUpdating(true);
-        setActionError("");
-        setSuccessMessage("");
+            setUpdating(true);
+            setActionError("");
+            setSuccessMessage("");
 
-        const response = await updateLeaveRequest(
-            id,
-            {
-                leave_type: leave.leave_type,
-                start_date: getDateInputValue(leave.start_date),
-                end_date: getDateInputValue(leave.end_date),
-                reason: leave.reason
-            }
-        );
+            const response = await updateLeaveRequest(
+                id,
+                {
+                    leave_type: leave.leave_type,
+                    start_date: getDateInputValue(leave.start_date),
+                    end_date: getDateInputValue(leave.end_date),
+                    reason: leave.reason
+                }
+            );
 
-        setLeave(response.leaveRequest);
+            setLeave(response.leaveRequest);
 
-        setSuccessMessage(
-            response.message ||
-            "Leave request updated successfully."
-        );
+            setSuccessMessage(response.message || "Leave request updated successfully.");
 
-    } catch (err) {
+        } catch (err) {
 
-        console.error("Failed to update leave request:", err);
+            console.error("Failed to update leave request:", err);
 
-        setActionError(
-            err.response?.data?.message ||
-            "Failed to update leave request."
-        );
+            setActionError(err.response?.data?.message || "Failed to update leave request.");
 
-    } finally {
+        } finally {
 
-        setUpdating(false);
+            setUpdating(false);
 
-    }
+        }
 
-};
+    };
 
     const formatDate = (dateValue) => {
 
@@ -671,26 +662,26 @@ const [successMessage, setSuccessMessage] = useState("");
                 </div>
 
             </div>
-                    
-                    {actionError && (
 
-    <div className="mt-8 rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-red-300">
+            {actionError && (
 
-        {actionError}
+                <div className="mt-8 rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-red-300">
 
-    </div>
+                    {actionError}
 
-)}
+                </div>
 
-{successMessage && (
+            )}
 
-    <div className="mt-8 rounded-xl border border-green-500/30 bg-green-500/10 px-5 py-4 text-green-300">
+            {successMessage && (
 
-        {successMessage}
+                <div className="mt-8 rounded-xl border border-green-500/30 bg-green-500/10 px-5 py-4 text-green-300">
 
-    </div>
+                    {successMessage}
 
-)}
+                </div>
+
+            )}
 
             {/* Actions: API endpoints are not implemented yet */}
             {isEditable && (
@@ -714,25 +705,25 @@ const [successMessage, setSuccessMessage] = useState("");
                     </button>
 
                     <button
-    type="button"
-    onClick={handleUpdate}
-    disabled={updating}
-    className="
-        px-6
-        py-3
-        rounded-xl
-        bg-blue-600
-        hover:bg-blue-700
-        transition
-        text-white
-        disabled:cursor-not-allowed
-        disabled:opacity-50
-    "
->
-    {updating
-        ? "Updating..."
-        : "Update Request"}
-</button>
+                        type="button"
+                        onClick={handleUpdate}
+                        disabled={updating}
+                        className="
+                                    px-6
+                                    py-3
+                                    rounded-xl
+                                    bg-blue-600
+                                    hover:bg-blue-700
+                                    transition
+                                    text-white
+                                    disabled:cursor-not-allowed
+                                    disabled:opacity-50
+                                "
+                    >
+                        {updating
+                            ? "Updating..."
+                            : "Update Request"}
+                    </button>
 
                 </div>
 
