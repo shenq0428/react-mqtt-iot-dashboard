@@ -1,5 +1,5 @@
 const { verifyToken } = require("../middleware/authMiddleware");
-const { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus, getLeaveRequestById, updateLeaveRequest } = require("../controllers/leaveRequestController");
+const { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus, getLeaveRequestById, updateLeaveRequest, cancelLeaveRequest } = require("../controllers/leaveRequestController");
 const {requireRole} = require("../middleware/roleMiddleware");
 
 const express = require("express");
@@ -52,4 +52,10 @@ router.put(
     updateLeaveRequest
 );
 
+//user cancel own request when status still in pending
+router.patch(
+    "/:id/cancel",
+    verifyToken,
+    cancelLeaveRequest
+)
 module.exports = router;

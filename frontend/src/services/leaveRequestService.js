@@ -25,6 +25,15 @@ export const getMyLeaveRequests = async () => {
 
 };
 
+export const getAllLeaveRequests = async () => {
+    const response = await axios.get(
+        API_URL,
+        getAuthConfig()
+    );
+
+    return response.data;
+};
+
 export const getLeaveRequestById = async (id) => {
 
     const response = await axios.get(
@@ -57,6 +66,16 @@ export const updateLeaveRequest = async (id, leaveData) => {
 
     return response.data;
 
+};
+
+export const updateLeaveRequestStatus = async (id, statusData) => {
+    const response = await axios.patch(
+        `${API_URL}/${id}/status`,
+        statusData,
+        getAuthConfig()
+    );
+
+    return response.data;
 };
 
 export const cancelLeaveRequest = async (id) => {

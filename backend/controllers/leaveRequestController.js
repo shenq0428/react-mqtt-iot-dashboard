@@ -113,12 +113,20 @@ const updateLeaveRequestStatus = async (req, res) => {
     try {
         //params from url, user from jwt decode, body from frontend input
         const id = req.params.id;
-        const approvedBy = req.user.id;
-        const actorCompanyId = req.user.company_id
-        const status = req.body.status;
+        const reviewedBy = req.user.id;
+        const actorCompanyId = req.user.company_id;
 
-        if (status !== "approved" && status !== "rejected") {
-            return res.status(400).json("status is undefined");
+        const { status, rejected_reason } = req.body;
+
+        const rejectionReason =
+            status === "rejected"
+                ? rejected_reason?.trim()
+                : null;
+
+        if (status === "rejected" && !rejectionReason) {
+            return res.status(400).json({
+                message: "A rejection reason is required."
+            });
         }
 
         const result = await pool.query(`
@@ -126,7 +134,9 @@ const updateLeaveRequestStatus = async (req, res) => {
                                             leave_requests
                                         SET 
                                             status = $1,
-                                            approved_by = $2
+                                            reviewed_by = $2,
+                                            reviewed_at = CURRENT_TIMESTAMP,
+                                            rejected_reason = $5,
                                             updated_at = CURRENT_TIMESTAMP
                                         WHERE 
                                             id = $3
@@ -137,7 +147,7 @@ const updateLeaveRequestStatus = async (req, res) => {
                                         RETURNING *
                                         `,
             //如果被修改的人的company id和修改者的company id不一样就失败避免其他人修改
-            [status, approvedBy, id, actorCompanyId]);
+            [status, reviewedBy, id, actorCompanyId, rejectionReason]);
 
         if (result.rows.length === 0) { return res.status(400).json({ message: "Only pending leave requests can be updated." }); }
 
@@ -151,19 +161,42 @@ const updateLeaveRequestStatus = async (req, res) => {
 const getLeaveRequestById = async (req, res) => {
 
     try {
-
         const leaveRequestId = req.params.id;
         const userId = req.user.id;
+        const userRole = req.user.role;
+        const companyId = req.user.company_id;
 
-        const result = await pool.query(
-            `
-            SELECT *
-            FROM leave_requests
-            WHERE id = $1
-            AND user_id = $2
-            `,
-            [leaveRequestId, userId]
-        );
+        const canViewCompanyLeaveRequests = ["admin", "company_super_admin"].includes(userRole);
+
+        const result = canViewCompanyLeaveRequests
+            ? await pool.query(
+                `
+                SELECT
+                    lr.*,
+                    u.username,
+                    u.email,
+                    u.role AS requester_role
+                FROM leave_requests lr
+                INNER JOIN users u
+                    ON lr.user_id = u.id
+                WHERE
+                    lr.id = $1
+                AND
+                    lr.company_id = $2
+                `,
+                [leaveRequestId, companyId]
+            )
+            : await pool.query(
+                `
+                SELECT *
+                FROM leave_requests
+                WHERE
+                    id = $1
+                AND
+                    user_id = $2
+                `,
+                [leaveRequestId, userId]
+            );
 
         if (result.rowCount === 0) { return res.status(404).json({ message: "Leave request not found" }); }
 
@@ -218,4 +251,46 @@ const updateLeaveRequest = async (req, res) => {
     }
 }
 
-module.exports = { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus, getLeaveRequestById, updateLeaveRequest }
+const cancelLeaveRequest = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const result = await pool.query(
+            `
+            UPDATE leave_requests
+            SET
+                status = 'cancelled',
+                cancelled_at = CURRENT_TIMESTAMP,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE
+                id = $1
+            AND
+                user_id = $2
+            AND
+                status = 'pending'
+            RETURNING *
+            `,
+            [id, req.user.id]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(400).json({
+                message: "Only pending leave requests can be cancelled."
+            });
+        }
+
+        res.status(200).json({
+            message: "Leave request cancelled successfully",
+            leaveRequest: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+    }
+};
+
+module.exports = { createLeaveRequest, getMyLeaveRequests, getAllLeaveRequest, updateLeaveRequestStatus, getLeaveRequestById, updateLeaveRequest, cancelLeaveRequest }

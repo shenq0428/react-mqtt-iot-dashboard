@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { getLeaveRequestById, updateLeaveRequest } from "../services/leaveRequestService";
+import { useEffect, useState,useContext } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { getLeaveRequestById, updateLeaveRequest, cancelLeaveRequest, updateLeaveRequestStatus } from "../services/leaveRequestService";
+import { AuthContext } from "../context/AuthContext";
 
 function LeaveRequestDetails() {
 
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
+    const [processingStatus, setProcessingStatus] = useState(false);
 
     const [leave, setLeave] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -13,6 +17,7 @@ function LeaveRequestDetails() {
     const [updating, setUpdating] = useState(false);
     const [actionError, setActionError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [cancelling, setCancelling] = useState(false);
 
     useEffect(() => {
 
@@ -87,6 +92,119 @@ function LeaveRequestDetails() {
 
         }
 
+    };
+
+    const handleCancel = async () => {
+        const confirmed = window.confirm("Are you sure you want to cancel this leave request?");
+
+        if (!confirmed) { return; }
+
+        try {
+            setCancelling(true);
+            setActionError("");
+            setSuccessMessage("");
+
+            const data = await cancelLeaveRequest(id);
+
+            setLeave(data.leaveRequest);
+
+            setSuccessMessage(
+                data.message || "Leave request cancelled successfully."
+            );
+
+        } catch (err) {
+            console.error(err);
+
+            setActionError(err.response?.data?.message || "Failed to cancel leave request.");
+
+        } finally {
+            setCancelling(false);
+        }
+    };
+
+    const handleApprove = async () => {
+        const confirmed = window.confirm(
+            "Are you sure you want to approve this leave request?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setProcessingStatus(true);
+            setActionError("");
+            setSuccessMessage("");
+
+            const data = await updateLeaveRequestStatus(id, {
+                status: "approved"
+            });
+
+            setLeave(data.leaveRequest);
+
+            setSuccessMessage(
+                data.message || "Leave request approved successfully."
+            );
+
+            navigate("/leave-requests");
+
+        } catch (err) {
+            console.error(err);
+
+            setActionError(
+                err.response?.data?.message ||
+                "Failed to approve leave request."
+            );
+
+        } finally {
+            setProcessingStatus(false);
+        }
+    };
+
+    const handleReject = async () => {
+        const rejectedReason = window.prompt("Enter a rejection reason:");
+
+        if (rejectedReason === null) {
+            return;
+        }
+
+        if (!rejectedReason.trim()) {
+            setActionError("A rejection reason is required.");
+            return;
+        }
+
+        const confirmed = window.confirm(
+            "Are you sure you want to reject this leave request?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setProcessingStatus(true);
+            setActionError("");
+            setSuccessMessage("");
+
+            const data = await updateLeaveRequestStatus(id, {
+                status: "rejected",
+                rejected_reason: rejectedReason.trim()
+            });
+
+            setLeave(data.leaveRequest);
+
+            setSuccessMessage(data.message || "Leave request rejected successfully.");
+            
+            navigate("/leave-requests");
+        } catch (err) {
+            console.error(err);
+
+            setActionError(err.response?.data?.message || "Failed to reject leave request.");
+
+        } finally {
+            setProcessingStatus(false);
+            
+        }
     };
 
     const formatDate = (dateValue) => {
@@ -169,12 +287,14 @@ function LeaveRequestDetails() {
     }
 
     if (!leave) {
-
         return null;
-
     }
 
-    const isEditable = leave.status === "pending";
+    const isOwnRequest = Number(leave.user_id) === Number(user?.id);
+
+    const canEditOwnRequest = isOwnRequest && leave.status === "pending";
+
+    const canProcessLeaveRequest = ["admin", "company_super_admin"].includes(user?.role) && leave.status === "pending";
 
     const statusStyles = {
 
@@ -330,7 +450,7 @@ function LeaveRequestDetails() {
                             name="leave_type"
                             value={leave.leave_type || ""}
                             onChange={handleChange}
-                            disabled={!isEditable}
+                            disabled={!canEditOwnRequest}
                             className="
                                 w-full
                                 rounded-xl
@@ -377,7 +497,7 @@ function LeaveRequestDetails() {
                                 name="start_date"
                                 value={getDateInputValue(leave.start_date)}
                                 onChange={handleChange}
-                                disabled={!isEditable}
+                                disabled={!canEditOwnRequest}
                                 className="
                                     w-full
                                     rounded-xl
@@ -406,7 +526,7 @@ function LeaveRequestDetails() {
                                 name="end_date"
                                 value={getDateInputValue(leave.end_date)}
                                 onChange={handleChange}
-                                disabled={!isEditable}
+                                disabled={!canEditOwnRequest}
                                 className="
                                     w-full
                                     rounded-xl
@@ -437,7 +557,7 @@ function LeaveRequestDetails() {
                             name="reason"
                             value={leave.reason || ""}
                             onChange={handleChange}
-                            disabled={!isEditable}
+                            disabled={!canEditOwnRequest}
                             className="
                                 w-full
                                 rounded-xl
@@ -509,7 +629,7 @@ function LeaveRequestDetails() {
 
                                 <p className="text-white mt-1">
 
-                                    {formatDateTime(leave.approved_at)}
+                                    {formatDateTime(leave.reviewed_at)}
 
                                 </p>
 
@@ -611,7 +731,7 @@ function LeaveRequestDetails() {
 
                             <p className="text-gray-400 text-sm mt-1">
 
-                                {formatDateTime(leave.approved_at)}
+                                {formatDateTime(leave.reviewed_at)}
 
                             </p>
 
@@ -684,41 +804,53 @@ function LeaveRequestDetails() {
             )}
 
             {/* Actions: API endpoints are not implemented yet */}
-            {isEditable && (
-
+            {canEditOwnRequest && (
                 <div className="flex justify-end gap-4 mt-8">
 
                     <button
                         type="button"
-                        disabled
+                        onClick={handleCancel}
+                        disabled={
+                            updating ||
+                            cancelling ||
+                            processingStatus
+                        }
                         className="
-                            px-6
-                            py-3
-                            rounded-xl
-                            bg-red-500/20
-                            text-red-400
-                            opacity-50
-                            cursor-not-allowed
-                        "
+                px-6
+                py-3
+                rounded-xl
+                bg-red-500/20
+                text-red-400
+                hover:bg-red-500/30
+                transition
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+            "
                     >
-                        Cancel Request
+                        {cancelling
+                            ? "Cancelling..."
+                            : "Cancel Leave Request"}
                     </button>
 
                     <button
                         type="button"
                         onClick={handleUpdate}
-                        disabled={updating}
+                        disabled={
+                            updating ||
+                            cancelling ||
+                            processingStatus
+                        }
                         className="
-                                    px-6
-                                    py-3
-                                    rounded-xl
-                                    bg-blue-600
-                                    hover:bg-blue-700
-                                    transition
-                                    text-white
-                                    disabled:cursor-not-allowed
-                                    disabled:opacity-50
-                                "
+                px-6
+                py-3
+                rounded-xl
+                bg-blue-600
+                hover:bg-blue-700
+                transition
+                text-white
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+            "
                     >
                         {updating
                             ? "Updating..."
@@ -726,7 +858,62 @@ function LeaveRequestDetails() {
                     </button>
 
                 </div>
+            )}
 
+            {canProcessLeaveRequest && (
+                <div className="flex justify-end gap-4 mt-4">
+
+                    <button
+                        type="button"
+                        onClick={handleReject}
+                        disabled={
+                            updating ||
+                            cancelling ||
+                            processingStatus
+                        }
+                        className="
+                px-6
+                py-3
+                rounded-xl
+                bg-red-500/20
+                text-red-400
+                hover:bg-red-500/30
+                transition
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+            "
+                    >
+                        {processingStatus
+                            ? "Processing..."
+                            : "Reject"}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleApprove}
+                        disabled={
+                            updating ||
+                            cancelling ||
+                            processingStatus
+                        }
+                        className="
+                px-6
+                py-3
+                rounded-xl
+                bg-green-500/20
+                text-green-300
+                hover:bg-green-500/30
+                transition
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+            "
+                    >
+                        {processingStatus
+                            ? "Processing..."
+                            : "Approve"}
+                    </button>
+
+                </div>
             )}
 
         </div>

@@ -1,15 +1,19 @@
-import { useEffect, useState } from "react";
-import { getMyLeaveRequests } from "../services/leaveRequestService";
+import { useContext, useEffect, useState } from "react";
+import { getMyLeaveRequests, getAllLeaveRequests, } from "../services/leaveRequestService";
 import { formatDate } from "../utils/dateFormatter";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function LeaveRequests() {
 
     const [leaveRequests, setLeaveRequests] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
+
+    const canViewCompanyAllLeaveRequests = ["admin", "company_super_admin"].includes(user?.role);
 
     useEffect(() => {
 
@@ -17,7 +21,12 @@ function LeaveRequests() {
 
             try {
 
-                const data = await getMyLeaveRequests();
+                setLoading(true);
+                setError("");
+
+                const data = canViewCompanyAllLeaveRequests
+                    ? await getAllLeaveRequests()
+                    : await getMyLeaveRequests();
 
                 setLeaveRequests(data);
 
@@ -25,15 +34,22 @@ function LeaveRequests() {
 
                 console.error(err);
 
+                setError(
+                    err.response?.data?.message ||
+                    "Failed to load leave requests."
+                );
+
             } finally {
+
                 setLoading(false);
+
             }
 
         };
 
         loadLeaveRequests();
 
-    }, []);
+    }, [canViewCompanyAllLeaveRequests]);
 
     // ==========================
     // Helper Functions
@@ -54,6 +70,10 @@ function LeaveRequests() {
             case "rejected":
 
                 return (<span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400"> Rejected </span>);
+
+            case "cancelled":
+
+                return (<span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400"> Cancelled </span>);
 
             default:
 
@@ -125,8 +145,15 @@ function LeaveRequests() {
                             "
                         >
                             <th className="p-4 text-left">
-                                Requst ID
+                                Request ID
                             </th>
+
+
+                            {canViewCompanyAllLeaveRequests && (
+                                <th className="p-4 text-left">
+                                    Employee
+                                </th>
+                            )}
 
                             <th className="p-4 text-left">
                                 Leave Type
@@ -166,6 +193,18 @@ function LeaveRequests() {
                                 <td className="p-4">
                                     {leave.request_number}
                                 </td>
+
+                                {canViewCompanyAllLeaveRequests && (
+                                    <td className="p-4">
+                                        <p className="text-white">
+                                            {leave.username}
+                                        </p>
+
+                                        <p className="text-sm text-gray-400 mt-1">
+                                            {leave.email}
+                                        </p>
+                                    </td>
+                                )}
 
                                 <td className="p-4">
                                     {leave.leave_type}
