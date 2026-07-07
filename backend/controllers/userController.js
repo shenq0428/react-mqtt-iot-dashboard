@@ -59,6 +59,17 @@ const createUser = async (req, res) => {
             expires_at = null;
         }
 
+        const existingUsername = await pool.query(
+            "SELECT id FROM users WHERE username = $1",
+            [username]
+        );
+
+        if (existingUsername.rows.length > 0) {
+            return res.status(400).json({
+                message: "Username already exists"
+            });
+        }
+
         // ====================
         // Existing User Check
         // ====================
@@ -85,7 +96,7 @@ const createUser = async (req, res) => {
         // ====================
         // Insert user
         const newUser = await pool.query(
-            `  INSERT INTO users (username, email, password, role, privilege_type, expires_at,  phone_number,company_id)
+            `  INSERT INTO users (username, email, password_hash, role, privilege_type, expires_at, phone_number, company_id)
             VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *  `,
             [username, email, hashedPassword, role, privilege_type, expires_at, phone_number, company_id,]
         );
@@ -131,10 +142,11 @@ const getUsers = async (req, res) => {
                     u.username,
                     u.email,
                     u.role,
+                    u.phone_number,
+                    u.company_id,
                     u.privilege_type,
                     u.expires_at,
                     u.status,
-                    u.company_id,
                     c.company_name
 
                 FROM users u
@@ -150,6 +162,8 @@ const getUsers = async (req, res) => {
                     u.username,
                     u.email,
                     u.role,
+                    u.phone_number,
+                u.company_id,
                     u.privilege_type,
                     u.expires_at,
                     u.status,
@@ -201,7 +215,17 @@ const updateUserStatus = async (req, res) => {
         }
 
         //step6 输入进去postgre
-        const results = await pool.query("UPDATE users SET status = $1 WHERE id = $2 RETURNING *", [status, id]);
+        const results = await pool.query(
+            `
+                UPDATE users
+                SET
+                    status = $1,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = $2
+                RETURNING *
+                `,
+            [status, id]
+        );
 
         // ====================
         // step 7Insert audit log
@@ -286,7 +310,22 @@ const updateUser = async (req, res) => {
         }
 
         const oldUser = targetUser.rows[0];
-        
+
+const existingUsername = await pool.query(
+    `
+    SELECT id
+    FROM users
+    WHERE username = $1
+    AND id != $2
+    `,
+    [username, id]
+);
+
+if (existingUsername.rows.length > 0) {
+    return res.status(400).json({
+        message: "Username already exists"
+    });
+}
         //avoid existing email
         const existingEmail = await pool.query(`SELECT id FROM users WHERE email = $1 AND id != $2`, [email, id]);
 
@@ -414,7 +453,8 @@ const updateUser = async (req, res) => {
                 company_id = $4,
                 role = $5,
                 privilege_type = $6,
-                expires_at = $7
+                expires_at = $7,
+                updated_at = CURRENT_TIMESTAMP
             WHERE id = $8
             RETURNING *
             `,

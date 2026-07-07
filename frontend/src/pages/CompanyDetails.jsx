@@ -558,165 +558,135 @@ function CompanyDetails() {
 
             </div>
             {
-                showEditPanel && (
+    showEditPanel && (
 
-                    <div className="create_company_panel">
+        <div className="create_company_panel">
 
-                        <div className="panel_header">
+            <div className="panel_header">
 
-                            <h2>Edit Company</h2>
+                <h2>Edit Company</h2>
 
-                            <button
-                                onClick={() => { setShowEditPanel(false); setEditMode(!editMode); }
-                                }
-                            >
-                                ✕
-                            </button>
+                <button
+                    onClick={() => {
+                        setShowEditPanel(false);
+                        setEditMode(false);
+                        setError("");
+                    }}
+                >
+                    ✕
+                </button>
 
-                        </div>
+            </div>
 
-                        {error && (
-                            <div className="error_message">
-                                {error}
-                            </div>
-                        )}
+            {error && (
+                <div className="error_message">
+                    {error}
+                </div>
+            )}
 
-                        <label>
-                            Company Name
-                        </label>
+            <label>Company Name *</label>
 
-                        <input
-                            type="text"
+            <input
+                type="text"
+                value={editedCompany.company_name || ""}
+                onChange={(e) =>
+                    setEditedCompany({
+                        ...editedCompany,
+                        company_name: e.target.value
+                    })
+                }
+            />
 
-                            value={
-                                editedCompany.company_name || ""
-                            }
+            <label>Short Name *</label>
 
-                            onChange={(e) =>
+            <input
+                type="text"
+                value={editedCompany.short_name || ""}
+                placeholder="Example: DEMO"
+                onChange={(e) =>
+                    setEditedCompany({
+                        ...editedCompany,
+                        short_name: e.target.value
+                    })
+                }
+            />
 
-                                setEditedCompany({
+            <label>Company Email</label>
 
-                                    ...editedCompany,
+            <input
+                type="email"
+                value={editedCompany.company_email || ""}
+                onChange={(e) =>
+                    setEditedCompany({
+                        ...editedCompany,
+                        company_email: e.target.value
+                    })
+                }
+            />
 
-                                    company_name:
-                                        e.target.value
+            <label>Company Phone</label>
 
-                                })
+            <input
+                type="text"
+                value={editedCompany.company_phone || ""}
+                onChange={(e) =>
+                    setEditedCompany({
+                        ...editedCompany,
+                        company_phone: e.target.value
+                    })
+                }
+            />
 
-                            }
-                        />
+            <label>Company Address</label>
 
-                        <label>
-                            Company Email
-                        </label>
+            <input
+                type="text"
+                value={editedCompany.company_address || ""}
+                onChange={(e) =>
+                    setEditedCompany({
+                        ...editedCompany,
+                        company_address: e.target.value
+                    })
+                }
+            />
 
-                        <input
-                            type="email"
+            <label>Registration Number</label>
 
-                            value={
-                                editedCompany.company_email || ""
-                            }
+            <input
+                type="text"
+                value={editedCompany.registration_number || ""}
+                onChange={(e) =>
+                    setEditedCompany({
+                        ...editedCompany,
+                        registration_number: e.target.value
+                    })
+                }
+            />
 
-                            onChange={(e) =>
+            <label>Industry</label>
 
-                                setEditedCompany({
+            <input
+                type="text"
+                value={editedCompany.industry || ""}
+                placeholder="Example: Palm Oil Mill"
+                onChange={(e) =>
+                    setEditedCompany({
+                        ...editedCompany,
+                        industry: e.target.value
+                    })
+                }
+            />
 
-                                    ...editedCompany,
+            <button
+                className="create_submit_btn"
+                onClick={handleUpdateCompany}
+            >
+                Save Changes
+            </button>
 
-                                    company_email:
-                                        e.target.value
-
-                                })
-
-                            }
-                        />
-
-                        <label>
-                            Company Phone
-                        </label>
-
-                        <input
-                            type="text"
-
-                            value={
-                                editedCompany.company_phone || ""
-                            }
-
-                            onChange={(e) =>
-
-                                setEditedCompany({
-
-                                    ...editedCompany,
-
-                                    company_phone:
-                                        e.target.value
-
-                                })
-
-                            }
-                        />
-
-                        <label>
-                            Company Address
-                        </label>
-
-                        <input
-                            type="text"
-
-                            value={
-                                editedCompany.company_address || ""
-                            }
-
-                            onChange={(e) =>
-
-                                setEditedCompany({
-
-                                    ...editedCompany,
-
-                                    company_address:
-                                        e.target.value
-
-                                })
-
-                            }
-                        />
-
-                        <label>
-                            Registration Number
-                        </label>
-
-                        <input
-                            type="text"
-
-                            value={
-                                editedCompany.registration_number || ""
-                            }
-
-                            onChange={(e) =>
-
-                                setEditedCompany({
-
-                                    ...editedCompany,
-
-                                    registration_number:
-                                        e.target.value
-
-                                })
-
-                            }
-                        />
-
-                        <button
-                            className="create_submit_btn"
-                            onClick={handleUpdateCompany}
-                        >
-                            Save Changes
-                        </button>
-
-                    </div>
-
-                )
-            }
+        </div>
+    )
+}
             {
                 showDeleteConfirm && (
 

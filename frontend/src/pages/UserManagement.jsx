@@ -225,8 +225,13 @@ function UserManagement() {
                         setEditedUsers({
                           ...editedUsers,
                           [user.id]: {
-                            username: user.username, email: user.email, company_id: selectedCompany?.id || "", role: user.role,
-                            privilege_type: user.privilege_type, expires_at: user.expires_at || "",
+                            username: user.username,
+                            email: user.email,
+                            phone_number: user.phone_number || "",
+                            company_id: user.company_id || "",
+                            role: user.role,
+                            privilege_type: user.privilege_type,
+                            expires_at: user.expires_at || ""
                           }
                         });
                       }}>
@@ -340,8 +345,7 @@ function UserManagement() {
             <label>Role</label>
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="user">User</option>
-              <option value="admin">Admin</option>
-              <option value="company_super_admin">Company Super Admin</option>
+              {currentUser?.role === "superadmin" && (<option value="admin">Admin</option>)}
             </select>
 
             <label>Privelege Type</label>
@@ -417,32 +421,36 @@ function UserManagement() {
                 privilege_type: privilegeType,
                 expires_at: expiresAt || null,
               };
-              const result = await createUser(payload);
-              console.log("selectedCompany:", selectedCompany);
-              console.log("payload:", payload);
-              console.log(result);
-              setMessage(result.message);
-              if (
-                result.message.includes("created successfully")
-              ) {
 
-                const data = await getUsers();
+              try {
+  const result = await createUser(payload);
 
-                setUsers(data);
+  console.log("payload:", payload);
+  console.log(result);
 
-                setUsername("");
-                setEmail("");
-                setPassword("");
-                setPhoneNumber("");
+  setMessage(result.message);
 
-                setSelectedCompany("");
+  const data = await getUsers();
+  setUsers(data);
 
-                setRole("user");
+  // Reset form：创建成功后清空全部输入框
+  setUsername("");
+  setEmail("");
+  setPassword("");
+  setPhoneNumber("");
+  setSelectedCompany("");
+  setRole("user");
+  setPrivilegeType("permanent");
+  setExpiresAt("");
 
-                setPrivilegeType("permanent");
+  setShowCreatePanel(false);
 
-                setExpiresAt("");
-              }
+} catch (err) {
+  setMessage(
+    err.response?.data?.message || "Failed to create user"
+  );
+}
+
             }} >
               Create User
             </button>
@@ -457,10 +465,10 @@ function UserManagement() {
         )
       }
       {
-companyId && (
+        companyId && (
 
-<div
-className="
+          <div
+            className="
 mb-4
 
 px-4
@@ -475,18 +483,18 @@ border-cyan-500/20
 
 text-cyan-300
 "
->
+          >
 
-Showing Users For Company ID:
+            Showing Users For Company ID:
 
-<strong className="ml-2">
-    {companyId}
-</strong>
+            <strong className="ml-2">
+              {companyId}
+            </strong>
 
-</div>
+          </div>
 
-)
-}
+        )
+      }
     </div >);
 }
 

@@ -167,7 +167,7 @@ const createCompany = async (req, res) => {
 
         }
 
-             const result = await pool.query(
+        const result = await pool.query(
             `
             INSERT INTO companies (
                 company_name,
@@ -247,10 +247,12 @@ const updateCompany = async (req, res) => {
         const oldCompany = oldCompanyResult.rows[0];
 
         const company_name = req.body.company_name ?? oldCompany.company_name;
+        const short_name = req.body.short_name ?? oldCompany.short_name;
         const company_email = req.body.company_email ?? oldCompany.company_email;
         const company_phone = req.body.company_phone ?? oldCompany.company_phone;
         const company_address = req.body.company_address ?? oldCompany.company_address;
         const registration_number = req.body.registration_number ?? oldCompany.registration_number;
+        const industry = req.body.industry ?? oldCompany.industry;
         const status = req.body.status ?? oldCompany.status;
 
         // ====================
@@ -306,25 +308,46 @@ const updateCompany = async (req, res) => {
 
         }
 
+        const existingShortName = await pool.query(
+            `
+    SELECT id
+    FROM companies
+    WHERE short_name = $1
+    AND id != $2
+    `,
+            [short_name, id]
+        );
+
+        if (existingShortName.rows.length > 0) {
+            return res.status(400).json({
+                message: "Short name already exists"
+            });
+        }
+
         const result = await pool.query(
             `
-            UPDATE companies
-            SET
-                company_name = $1,
-                company_email = $2,
-                company_phone = $3,
-                company_address = $4,
-                registration_number = $5,
-                status = $6
-            WHERE id = $7
-            RETURNING *
-            `,
+    UPDATE companies
+    SET
+        company_name = $1,
+        short_name = $2,
+        company_email = $3,
+        company_phone = $4,
+        company_address = $5,
+        registration_number = $6,
+        industry = $7,
+        status = $8,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = $9
+    RETURNING *
+    `,
             [
                 company_name,
+                short_name,
                 company_email,
                 company_phone,
                 company_address,
                 registration_number,
+                industry,
                 status,
                 id
             ]
@@ -351,6 +374,9 @@ const updateCompany = async (req, res) => {
         if (oldCompany.registration_number !== updatedCompany.registration_number) { changes.push(`Registration Number: ${oldCompany.registration_number} → ${updatedCompany.registration_number}`); }
         //status comparison
         if (oldCompany.status !== updatedCompany.status) { changes.push(`Status: ${oldCompany.status} → ${updatedCompany.status}`); }
+        if (oldCompany.short_name !== updatedCompany.short_name) { changes.push(`Short Name: ${oldCompany.short_name} → ${updatedCompany.short_name}`); }
+
+        if (oldCompany.industry !== updatedCompany.industry) { changes.push(`Industry: ${oldCompany.industry || "-"} → ${updatedCompany.industry || "-"}`); }
 
         if (changes.length === 0) {
             return res.status(200).json({ message: "No changes detected" })
