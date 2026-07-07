@@ -11,12 +11,14 @@ const { requireRole } = require("../middleware/roleMiddleware");
 router.get(
     "/",
     verifyToken,
+    requireRole("admin", "superadmin"),
     getCompanies
 );
 
 router.get(
     "/:id",
     verifyToken,
+    requireRole("admin", "superadmin"),
     getCompanyById
 )
 router.post(
