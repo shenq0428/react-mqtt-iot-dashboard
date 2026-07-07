@@ -38,11 +38,10 @@ async function seedUsers(companyMap) {
                 role,
                 status,
                 privilege_type,
-                is_active
             )
             VALUES
             (
-                $1,$2,$3,$4,$5,$6,$7,$8
+                $1,$2,$3,$4,$5,$6,$7
             )
             `,
             [
@@ -121,11 +120,10 @@ async function seedUsers(companyMap) {
                     phone_number,
                     status,
                     privilege_type,
-                    is_active
                 )
                 VALUES
                 (
-                    $1,$2,$3,$4,$5,$6,$7,$8,$9
+                    $1,$2,$3,$4,$5,$6,$7,$8,
                 )
                 `,
                 [

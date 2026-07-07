@@ -9,12 +9,25 @@ function CompanyManagement() {
     const navigate = useNavigate();
     const [showCreatePanel, setShowCreatePanel] = useState(false);
     const [newCompany, setNewCompany] = useState({
-        company_name: "",
-        company_email: "",
-        company_phone: "",
-        company_address: "",
-        registration_number: ""
+            company_name: "",
+    short_name: "",
+    company_email: "",
+    company_phone: "",
+    company_address: "",
+    registration_number: "",
+    industry: "",
+    status: "active"
     });
+
+     const handleCompanyFieldChange = (e) => {
+        const { name, value } = e.target;
+
+        setNewCompany((current) => ({
+            ...current,
+            [name]: value
+        }));
+    };
+
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const [toast, setToast] = useState("");
@@ -31,17 +44,20 @@ function CompanyManagement() {
             setMessage(result.message);
             setNewCompany({
                 company_name: "",
-                company_email: "",
-                company_phone: "",
-                company_address: "",
-                registration_number: ""
+    short_name: "",
+    company_email: "",
+    company_phone: "",
+    company_address: "",
+    registration_number: "",
+    industry: "",
+    status: "active"
             });
             setShowCreatePanel(false);
             await loadCompanies();
 
         } catch (err) {
             //frontend validation error display
-            setError(err.reponse?.data?.message || "Something went wrong");
+            setError(err.response?.data?.message || "Something went wrong");
             console.error(err);
         }
     };
@@ -153,72 +169,70 @@ function CompanyManagement() {
 
                         </div>
 
-                        <label>Company Name</label>
-                        <input
-                            type="text"
-                            value={newCompany.company_name}
-                            onChange={(e) =>
-                                setNewCompany({
-                                    ...newCompany,
-                                    company_name: e.target.value
-                                })
-                            }
-                        />
+                        
+                        <label>Company Name </label>
+<input
+    type="text"
+    name="company_name"
+    value={newCompany.company_name}
+    onChange={handleCompanyFieldChange}
+/>
 
-                        <label>Company Email</label>
-                        <input
-                            type="email"
-                            value={newCompany.company_email}
-                            onChange={(e) =>
-                                setNewCompany({
-                                    ...newCompany,
-                                    company_email: e.target.value
-                                })
-                            }
-                        />
+<label>Short Name </label>
+<input
+    type="text"
+    name="short_name"
+    value={newCompany.short_name}
+    onChange={handleCompanyFieldChange}
+    placeholder="Example: DEMO"
+/>
 
-                        <label>Company Phone</label>
-                        <input
-                            type="text"
-                            value={newCompany.company_phone}
-                            onChange={(e) =>
-                                setNewCompany({
-                                    ...newCompany,
-                                    company_phone: e.target.value
-                                })
-                            }
-                        />
+<label>Company Email</label>
+<input
+    type="email"
+    name="company_email"
+    value={newCompany.company_email}
+    onChange={handleCompanyFieldChange}
+/>
 
-                        <label>Company Address</label>
-                        <input
-                            type="text"
-                            value={newCompany.company_address}
-                            onChange={(e) =>
-                                setNewCompany({
-                                    ...newCompany,
-                                    company_address: e.target.value
-                                })
-                            }
-                        />
+<label>Company Phone</label>
+<input
+    type="text"
+    name="company_phone"
+    value={newCompany.company_phone}
+    onChange={handleCompanyFieldChange}
+/>
 
-                        <label>Registration Number</label>
-                        <input
-                            type="text"
-                            value={newCompany.registration_number}
-                            onChange={(e) =>
-                                setNewCompany({
-                                    ...newCompany,
-                                    registration_number: e.target.value
-                                })
-                            }
-                        />
+<label>Company Address</label>
+<input
+    type="text"
+    name="company_address"
+    value={newCompany.company_address}
+    onChange={handleCompanyFieldChange}
+/>
 
-                        <button className="create_submit_btn" onClick={handleCreateCompany}>
-                            Create Company
-                        </button>
-                        {
-                            error && (<div className="error_message">{error}</div>)
-                        }
+<label>Registration Number</label>
+<input
+    type="text"
+    name="registration_number"
+    value={newCompany.registration_number}
+    onChange={handleCompanyFieldChange}
+/>
+
+<label>Industry</label>
+<input
+    type="text"
+    name="industry"
+    value={newCompany.industry}
+    onChange={handleCompanyFieldChange}
+    placeholder="Example: Palm Oil Mill"
+/>
+
+<button className="create_submit_btn" onClick={handleCreateCompany}>
+    Create Company
+</button>
+
+{error && <div className="error_message">{error}</div>}
                     </div>
                 )}
 

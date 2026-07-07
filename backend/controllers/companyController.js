@@ -73,24 +73,35 @@ const createCompany = async (req, res) => {
 
         const {
             company_name,
+            short_name,
             company_email,
             company_phone,
             company_address,
-            registration_number
+            registration_number,
+            industry,
+            status
         } = req.body;
-        // ====================
-        // Company Name
-        // ====================
 
-        if (!company_name) { return res.status(400).json({ message: "Company name is required" }); }
+        const companyName = company_name?.trim();
+        const shortName = short_name?.trim();
+        const companyEmail = company_email?.trim()?.toLowerCase() || null;
 
-        // ====================
-        // Email Format
-        // ====================
+        if (!companyName) {
+            return res.status(400).json({
+                message: "Company name is required"
+            });
+        }
 
-        if (company_email && !company_email.includes("@")
-        ) {
-            return res.status(400).json({ message: "Invalid company email" });
+        if (!shortName) {
+            return res.status(400).json({
+                message: "Short name is required"
+            });
+        }
+
+        if (companyEmail && !companyEmail.includes("@")) {
+            return res.status(400).json({
+                message: "Invalid company email"
+            });
         }
 
         // ====================
@@ -156,24 +167,30 @@ const createCompany = async (req, res) => {
 
         }
 
-        const result = await pool.query(
+             const result = await pool.query(
             `
             INSERT INTO companies (
                 company_name,
+                short_name,
                 company_email,
                 company_phone,
                 company_address,
-                registration_number
+                registration_number,
+                industry,
+                status
             )
-            VALUES ($1,$2,$3,$4,$5)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *
             `,
             [
-                company_name,
-                company_email,
-                company_phone,
-                company_address,
-                registration_number
+                companyName,
+                shortName,
+                companyEmail,
+                company_phone?.trim() || null,
+                company_address?.trim() || null,
+                registration_number?.trim() || null,
+                industry?.trim() || null,
+                status || "active"
             ]
         );
 
